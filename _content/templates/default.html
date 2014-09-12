@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="{{site.author}}">
+  <meta name="description" content="{{site.description}}" />
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> {{ site.title }} {% if category %} &mdash; Category: {{ category }} {% elseif tag %} &mdash; Tag: {{ tag }} {% elseif page.title %} &mdash; {{ page.title }} {% endif %}</title>
+  <link href="/css/normalize.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/css/bootstrap.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/css/railscasts.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
+  <script src="/js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+    <div id="main" class="container">
+        <div class="row">
+            <header role="banner">
+                <hgroup>
+                    <h1><a href="/">Michal Zimmermann</a></h1>
+                    <strong>Pieces of knowledge from the world of GIS.</strong>
+                </hgroup>
+            </header>
+            <nav role="navigation">
+                <ul class="nav nav-pills main-navigation">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/categories/">Categories</a></li>
+                    <li><a href="/tags/">Tags</a></li>
+                    <li><a href="/feed.xml">RSS</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="shadow">
+            <div class="row white">
+                <div id="content">
+                    <div class="blog-index">
+                      {% block main %}
+                        {% if category %}
+                          <h1>Posts in category {{ category }}</h1>
+                        {% elseif tag %}
+                          <h1>Posts tagged with {{ tag }}</h1>
+                        {% elseif page.title %}
+                          <h1>{{page.title}}</h1>
+                        {% endif %}
+                          {{ content|raw }}
+                      {% endblock %}
+                    </div>
+                </div>
+            </div>
+            <div class="row white">
+                <footer role="contentinfo">
+                    {% block footer %}
+                      {% if pagination.prev_page %}
+                        <a class="pagination" href="{{pagination.prev_page}}">&laquo; Previous page</a>
+                      {% endif %}
+
+                      {% if pagination.next_page %}
+                        <a class="pagination" href="{{pagination.next_page}}">Next page &raquo;</a>
+                      {% endif %}
+                    {% endblock %}
+                    <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. {{piecrust.branding|raw}}</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
