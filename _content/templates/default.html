@@ -10,8 +10,15 @@
   <title> {{ site.title }} {% if category %} &mdash; Category: {{ category }} {% elseif tag %} &mdash; Tag: {{ tag }} {% elseif page.title %} &mdash; {{ page.title }} {% else %} &mdash; {{site.description}} {% endif %}</title>
   <link rel="stylesheet" type="text/css" href="/css/style.min.css" />
   <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
-  <script src="/js/highlight.pack.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script>
+  <script src="/js/highlight.pack.js" defer></script>
+  <script>
+    window.onload = function() {
+      var pre = document.getElementsByTagName('pre');
+      for (var i = 0; i < pre.length; i += 1) {
+        hljs.highlightBlock(pre[i].firstChild);
+      }
+    }
+  </script>
 </head>
 <body>
     <div id="main" class="container">
