@@ -6,6 +6,6 @@ format: none
 ---
 <ul>
 	{% for t in blog.tags %}
-		<li><a href="/tag/{{t.name}}">{{t.name}}</a></li>
+		<li><a href="{{pctagurl(t.name)}}">{{t.name}}</a></li>
 	{% endfor %}
 </ul>

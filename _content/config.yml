@@ -12,3 +12,5 @@ site:
     trailing_slash: true
 smartypants:
     enable: true
+baker:
+    processors: [imageoptimizer, cssmin, copy]

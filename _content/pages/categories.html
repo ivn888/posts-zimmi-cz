@@ -6,6 +6,6 @@ format: none
 ---
 <ul>
 	{% for c in blog.categories %}
-		<li><a href="/category/{{c.name}}">{{c.name}}</a></li>
+		<li><a href="{{pccaturl(c.name)}}">{{c.name}}</a></li>
 	{% endfor %}
 </ul>
