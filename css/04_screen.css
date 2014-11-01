@@ -31,6 +31,10 @@ blockquote {
 		line-height: inherit;
 	}
 
+code {
+	white-space: pre-wrap;
+}
+
 a {
 	-o-transition:.2s;
 	-ms-transition:.2s;
@@ -138,26 +142,27 @@ img.img-rounded {
 
 .nav {
 	font-weight: bold;
+	margin-bottom: 5px;
 	margin-top: 5px;
 	padding-left: 16px;
 }
 
 	.nav > li > a {
 		color: white;
-		border-bottom: 5px solid transparent;
-		/*padding-bottom: 5px;*/
+		border-bottom: 3px solid transparent;
 	}
 
 	.nav > li > a:hover,
 	.nav > li > a:focus {
 		background: transparent;
-		border-bottom: 5px solid #871B37;
+		border-bottom: 3px solid #871B37;
 		color: #871B37;
 		padding-bottom: 0px;
 	}
 
 	.nav-pills > li > a {
 		border-radius: 0;
+		padding-bottom: 0px;
 	}
 
 .blog-index section article {
