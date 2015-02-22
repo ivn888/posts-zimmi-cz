@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Michal Zimmermann">
+  <meta name="description" content="Pieces of knowledge from the world of GIS." />
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Michal Zimmermann  &mdash; PostGIS Spatial Indexing With ST_Intersects </title>
+  <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
+  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
+  <script src="/posts/js/highlight.pack.js" defer></script>
+  <script>
+    window.onload = function() {
+      var pre = document.getElementsByTagName('pre');
+      for (var i = 0; i < pre.length; i += 1) {
+        hljs.highlightBlock(pre[i].firstChild);
+      }
+    }
+  </script>
+</head>
+<body>
+    <div id="main" class="container">
+        <div class="row">
+            <header role="banner">
+                <hgroup>
+                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <strong>Pieces of knowledge from the world of GIS.</strong>
+                </hgroup>
+            </header>
+            <nav role="navigation">
+                <ul class="nav nav-pills main-navigation">
+                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts/categories/">Categories</a></li>
+                    <li><a href="/posts/tags/">Tags</a></li>
+                    <li><a href="/posts/feed.xml">RSS</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="shadow">
+            <div class="row white">
+                <div id="content">
+                    <div class="blog-index">
+                                                                        <h1>PostGIS Spatial Indexing With ST_Intersects</h1>
+                          <small>Written on November 23, 2014                                                     and marked as
+                                                    <a href="/posts/tag/postgis/">postgis</a>                                                                                                        | <a href="/posts/category/sql/">SQL</a>
+                                                    </small>
+                                                  <p><a href="http://postgis.net/docs/ST_Intersects.html">PostGIS docs</a> clearly states that:</p>
+
+<blockquote>
+  <p>This function call will automatically include a bounding box comparison that will make use of any indexes that are available on the geometries.</p>
+</blockquote>
+
+<p>That means (or at least I think so) that you shouldn&#8217;t bother with using <a href="http://postgis.net/docs/reference.html#Operators">operators</a> before calling this function.</p>
+
+<p><a href="http://slides.com/michalzimmermann">I was preparing</a> my second lecture on PostGIS and I was experimenting a bit and came up with an interesting thing on this matter:</p>
+
+<p>Let&#8217;s have two SQL relations, <code>roads</code> and <code>regions</code>. I would like to retrieve every road that intersects a certain region. Spatial indexes were built beforehand on both tables.</p>
+
+<p>First try:</p>
+
+<pre><code>EXPLAIN ANALYZE SELECT roads.* FROM roads
+JOIN regions ON ST_Intersects(roads.geom, regions.geom)
+WHERE regions."NAZEV" = 'Jihomoravský';`
+</code></pre>
+
+<p>And here comes the result:</p>
+
+<pre><code>Nested Loop  (cost=4.85..324.26 rows=249 width=214) (actual time=45.102..5101.472 rows=74253 loops=1)
+-&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.015..0.018 rows=1 loops=1)
+     Filter: (("NAZEV")::text = 'Jihomoravský'::text)
+     Rows Removed by Filter: 13
+-&gt;  Bitmap Heap Scan on roads  (cost=4.85..311.38 rows=25 width=214) (actual time=45.079..4931.495 rows=74253 loops=1)
+     Recheck Cond: (geom &amp;&amp; regions.geom)
+     Rows Removed by Index Recheck: 154841
+     Filter: _st_intersects(geom, regions.geom)
+     Rows Removed by Filter: 71212
+     -&gt;  Bitmap Index Scan on roads_idx  (cost=0.00..4.85 rows=75 width=0) (actual time=40.142..40.142 rows=145465 loops=1)
+           Index Cond: (geom &amp;&amp; regions.geom)
+Total runtime: 5181.459 ms
+</code></pre>
+
+<p>I was pretty satisfied with the result, I kept digging deeper though.</p>
+
+<p>Second try:</p>
+
+<pre><code>EXPLAIN ANALYZE SELECT roads.* FROM roads
+JOIN regions ON roads.geom &amp;&amp; regions.geom
+WHERE regions."NAZEV" = 'Jihomoravský' AND ST_Intersects(roads.geom, regions.geom);
+</code></pre>
+
+<p>And the result:</p>
+
+<pre><code>Nested Loop  (cost=0.29..21.19 rows=1 width=214) (actual time=3.041..3850.302 rows=74253 loops=1)
+-&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.021..0.024 rows=1 loops=1)
+     Filter: (("NAZEV")::text = 'Jihomoravský'::text)
+     Rows Removed by Filter: 13
+-&gt;  Index Scan using roads_idx on roads  (cost=0.29..8.55 rows=1 width=214) (actual time=2.938..3681.432 rows=74253 loops=1)
+     Index Cond: ((geom &amp;&amp; regions.geom) AND (geom &amp;&amp; regions.geom))
+     Filter: _st_intersects(geom, regions.geom)
+     Rows Removed by Filter: 71212
+Total runtime: 3930.270 ms
+</code></pre>
+
+<p>Now there&#8217;s a significant difference between total runtimes of both queries and - more important - also a difference between their query plans. The latter is like <strong>20 % faster</strong>.</p>
+
+<p>I&#8217;m puzzled about this behavior and would appreciate any thoughts on this. Reach me at <a href="http://twitter.com/zimmicz">Twitter</a>, <a href="https://www.linkedin.com/pub/michal-zimmermann/29/8/b30">LinkedIn</a> or e-mail (zimmicz[at]gmail.com).</p>
+
+                                          </div>
+                </div>
+            </div>
+            <div class="row white">
+                <footer role="contentinfo">
+                          <a class="pagination" href="/posts/2014/bash-prepend-to-filename/">&laquo; Bash: Prepend To Filename</a>
+  
+      <a class="pagination" href="/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/">PostGIS Case Study: VozejkMap Open Data (Part I) &raquo;</a>
+                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43432739-2', 'auto');
+      ga('send', 'pageview');
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Michal Zimmermann">
+  <meta name="description" content="Pieces of knowledge from the world of GIS." />
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Michal Zimmermann  &mdash; Degrees To Decimal With Javascript </title>
+  <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
+  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
+  <script src="/posts/js/highlight.pack.js" defer></script>
+  <script>
+    window.onload = function() {
+      var pre = document.getElementsByTagName('pre');
+      for (var i = 0; i < pre.length; i += 1) {
+        hljs.highlightBlock(pre[i].firstChild);
+      }
+    }
+  </script>
+</head>
+<body>
+    <div id="main" class="container">
+        <div class="row">
+            <header role="banner">
+                <hgroup>
+                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <strong>Pieces of knowledge from the world of GIS.</strong>
+                </hgroup>
+            </header>
+            <nav role="navigation">
+                <ul class="nav nav-pills main-navigation">
+                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts/categories/">Categories</a></li>
+                    <li><a href="/posts/tags/">Tags</a></li>
+                    <li><a href="/posts/feed.xml">RSS</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="shadow">
+            <div class="row white">
+                <div id="content">
+                    <div class="blog-index">
+                                                                        <h1>Degrees To Decimal With Javascript</h1>
+                          <small>Written on September 9, 2014                                                     and marked as
+                                                    <a href="/posts/tag/javascript/">javascript</a>                                                                                                        | <a href="/posts/category/development/">development</a>
+                                                    </small>
+                                                  <p>I have found a nice way to get decimal value from degrees of longitude and latitude recently:</p>
+
+<pre><code>function format(coords) {
+    var decimal = 0,
+        output  = [],
+        coords  = coords.split('  '); // it might be &lt;br&gt; as well
+
+    for (var i = 0; i &lt; coords.length; i += 1) {
+        var c = coords[i].split(' ');
+
+        for (var j = 0; j &lt; c.length; j += 1) {
+            decimal += c[j].slice(0, -1) / Math.pow(60, j);
+        }
+
+        output.push(parseFloat(decimal).toFixed(5));
+        decimal = 0;
+    }
+
+    prompt('Souřadnice bodu', output.join(', '));
+}
+</code></pre>
+
+<p>When you call <code>format("DD° MM' SS'  DD° MM' SS'");</code> you&#8217;ll get decimal value in return (or <code>prompt</code> to be accurate). What I like the most about this solution is the usage of Math.pow(). I think it is a neat way to transform the values as you need to divide parts of latitude or longitude by 60<sup>0</sup>, 60<sup>1</sup> and 60<sup>2</sup> respectively.</p>
+
+<p>There is definitely a googol of different solutions to this task, I just liked the simplicity of this one.</p>
+
+                                          </div>
+                </div>
+            </div>
+            <div class="row white">
+                <footer role="contentinfo">
+                          <a class="pagination" href="/posts/2014/geoserver-printing-with-mapfish/">&laquo; Geoserver Printing With Mapfish</a>
+  
+      <a class="pagination" href="/posts/2014/wmts-few-things-i-want-to-remember/">WMTS: Few Things I Want To Remember &raquo;</a>
+                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43432739-2', 'auto');
+      ga('send', 'pageview');
+    </script>
+</body>
+</html>
