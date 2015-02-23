@@ -5,6 +5,36 @@
 	<link>http://posts.zimmi.cz</link>
 	<description>Pieces of knowledge from the world of GIS.</description>
 		<item>
+		<title>Hosting Website On Openshift</title>
+		<link>http://posts.zimmi.cz/posts/2015/hosting-website-on-openshift/</link>
+		<description>&lt;p&gt;I decided to migrate &lt;a href=&quot;http://www.zimmi.cz&quot;&gt;my web&lt;/a&gt; to &lt;a href=&quot;http://openshift.com&quot;&gt;OpenShift&lt;/a&gt;. It was a bit frustrating but I got working eventually.&lt;/p&gt;
+
+&lt;h2&gt;Things to know before taking the leap&lt;/h2&gt;
+
+&lt;p&gt;Some domain providers don&amp;#8217;t support CNAME changes for root domains (zimmi.cz in my case). This means you can&amp;#8217;t simply tell your domain to serve content from OpenShift address. But what you can do is to tell your &lt;code&gt;www&lt;/code&gt; subdomain to do so:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;www.zimmi.cz CNAME hp-zimmi.rhcloud.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Which is great until you realize you&amp;#8217;ve just created two different websites. That&amp;#8217;s where &lt;a href=&quot;http://wwwizer.com/&quot;&gt;wwwizer&lt;/a&gt; lends you a hand and lets you redirect your naked domain to your &lt;code&gt;www&lt;/code&gt; domain:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;zimmi.cz A 174.129.25.170
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now everything works fine and you have your &lt;code&gt;www.domain.tld&lt;/code&gt; up and running.&lt;/p&gt;
+
+&lt;h2&gt;OpenShift subdomains&lt;/h2&gt;
+
+&lt;p&gt;I wasn&amp;#8217;t successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing DNS to it:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;posts.zimmi.cz A 174.179.25.170
+www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Just don&amp;#8217;t forget to handle both naked and &lt;code&gt;www&lt;/code&gt; version. When Google reindexes new URLs (http://www.zimmi.cz/posts instead of http://posts.zimmi.cz) subdomain application might be deleted.&lt;/p&gt;
+</description>
+	</item>
+		<item>
 		<title>PostGIS Case Study: Vozejkmap Open Data (Part II)</title>
 		<link>http://posts.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/</link>
 		<description>&lt;p&gt;&lt;a href=&quot;/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/&quot;&gt;In the first part of my little case study&lt;/a&gt; I downloaded &lt;a href=&quot;http://vozejkmap.cz&quot;&gt;vozejkmap.cz&lt;/a&gt; dataset and imported it into the PostGIS database. Having spatial data safely stored the time comes to get it onto the map. Libraries used are:&lt;/p&gt;
@@ -453,27 +483,6 @@ for ($i = 0; $i &amp;lt; $size; $i++) {
 &lt;p&gt;I made a simple benchmark with &lt;a href=&quot;http://php.net/manual/en/function.microtime.php&quot;&gt;&lt;code&gt;microtime()&lt;/code&gt;&lt;/a&gt; and found out that my solution (ran 100k times) took about ~12.3 seconds while Dave&amp;#8217;s took only ~7.4 seconds to finish. That makes his code almost twice faster than mine.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Lesson learned: do not stop learning!&lt;/strong&gt;&lt;/p&gt;
-</description>
-	</item>
-		<item>
-		<title>PostgreSQL Remote Access</title>
-		<link>http://posts.zimmi.cz/posts/2014/postgresql-remote-access/</link>
-		<description>&lt;p&gt;PostgreSQL is set to listen only to connections coming from localhost by default. I guess that&amp;#8217;s fine as far as you don&amp;#8217;t need access to the database from anywhere else (like your work network). If you do, you need to log via SSH or use some online database management tool (go for &lt;a href=&quot;http://adminer.org&quot;&gt;Adminer&lt;/a&gt; and forget about anything called php[pg|my]admin). Or you can set it up to access connections from other locations.&lt;/p&gt;
-
-&lt;p&gt;You need to:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;set &lt;code&gt;listen_addresses&lt;/code&gt; to &lt;code&gt;*&lt;/code&gt; in your postgres.conf. That does not mean anyone can connect to your database, that means that the server will listen to connections coming from any available IP interface.&lt;/li&gt;
-&lt;li&gt;insert new entry into pg_hba.conf looking like this: &lt;code&gt;host database user xxx.xxx.xxx.xxx md5&lt;/code&gt;. Now we&amp;#8217;re saying we only want connections coming from IP &lt;code&gt;xxx.xxx.xxx.xxx&lt;/code&gt; accepted.&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Add rule allowing the database server access to iptables. Number 5 says it will be the fifth rule in the order. It must come before the final REJECT ALL rule if present.&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;iptables -I INPUT 5 -p tcp --dport 5432 -s xxx.xxx.xxx.xxx -j ACCEPT&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Just to be sure noone else is able to connect, reject all on port 5432.&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;iptables -I INPUT 6 -p tcp --dport 5432 -j REJECT&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;You&amp;#8217;re set to remotely connect to your database server.&lt;/p&gt;
 </description>
 	</item>
 	</channel>

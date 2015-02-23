@@ -45,6 +45,42 @@
                                                                         	<section>
 			<article>
 	<header>
+	<h2><a href="/posts/2015/hosting-website-on-openshift/">Hosting Website On Openshift</a></h2>
+	<small>Written on February 23, 2015
+		and marked as
+		<a href="/posts/tag/openshift/">openshift</a>				| <a href="/posts/category/development/">development</a>
+		</small>
+	</header>
+	<section>
+	<p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got working eventually.</p>
+
+<h2>Things to know before taking the leap</h2>
+
+<p>Some domain providers don&#8217;t support CNAME changes for root domains (zimmi.cz in my case). This means you can&#8217;t simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do so:</p>
+
+<pre><code>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
+</code></pre>
+
+<p>Which is great until you realize you&#8217;ve just created two different websites. That&#8217;s where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
+
+<pre><code>zimmi.cz A 174.129.25.170
+</code></pre>
+
+<p>Now everything works fine and you have your <code>www.domain.tld</code> up and running.</p>
+
+<h2>OpenShift subdomains</h2>
+
+<p>I wasn&#8217;t successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing DNS to it:</p>
+
+<pre><code>posts.zimmi.cz A 174.179.25.170
+www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
+</code></pre>
+
+<p>Just don&#8217;t forget to handle both naked and <code>www</code> version. When Google reindexes new URLs (http://www.zimmi.cz/posts instead of http://posts.zimmi.cz) subdomain application might be deleted.</p>
+
+	</section>
+</article>			<article>
+	<header>
 	<h2><a href="/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/">PostGIS Case Study: Vozejkmap Open Data (Part II)</a></h2>
 	<small>Written on February 21, 2015
 		and marked as
@@ -546,33 +582,6 @@ for ($i = 0; $i &lt; $size; $i++) {
 <p>I made a simple benchmark with <a href="http://php.net/manual/en/function.microtime.php"><code>microtime()</code></a> and found out that my solution (ran 100k times) took about ~12.3 seconds while Dave&#8217;s took only ~7.4 seconds to finish. That makes his code almost twice faster than mine.</p>
 
 <p><strong>Lesson learned: do not stop learning!</strong></p>
-
-	</section>
-</article>			<article>
-	<header>
-	<h2><a href="/posts/2014/postgresql-remote-access/">PostgreSQL Remote Access</a></h2>
-	<small>Written on September 17, 2014
-		and marked as
-		<a href="/posts/tag/postgresql/">postgresql</a>, 		<a href="/posts/tag/linux/">linux</a>				| <a href="/posts/category/development/">development</a>
-		</small>
-	</header>
-	<section>
-	<p>PostgreSQL is set to listen only to connections coming from localhost by default. I guess that&#8217;s fine as far as you don&#8217;t need access to the database from anywhere else (like your work network). If you do, you need to log via SSH or use some online database management tool (go for <a href="http://adminer.org">Adminer</a> and forget about anything called php[pg|my]admin). Or you can set it up to access connections from other locations.</p>
-
-<p>You need to:</p>
-
-<ol>
-<li>set <code>listen_addresses</code> to <code>*</code> in your postgres.conf. That does not mean anyone can connect to your database, that means that the server will listen to connections coming from any available IP interface.</li>
-<li>insert new entry into pg_hba.conf looking like this: <code>host database user xxx.xxx.xxx.xxx md5</code>. Now we&#8217;re saying we only want connections coming from IP <code>xxx.xxx.xxx.xxx</code> accepted.</li>
-<li><p>Add rule allowing the database server access to iptables. Number 5 says it will be the fifth rule in the order. It must come before the final REJECT ALL rule if present.</p>
-
-<p><code>iptables -I INPUT 5 -p tcp --dport 5432 -s xxx.xxx.xxx.xxx -j ACCEPT</code></p></li>
-<li><p>Just to be sure noone else is able to connect, reject all on port 5432.</p>
-
-<p><code>iptables -I INPUT 6 -p tcp --dport 5432 -j REJECT</code></p></li>
-</ol>
-
-<p>You&#8217;re set to remotely connect to your database server.</p>
 
 	</section>
 </article>		</section>

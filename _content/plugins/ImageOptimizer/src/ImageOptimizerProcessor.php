@@ -17,9 +17,8 @@ class ImageOptimizerProcessor extends SimpleFileProcessor
 	{
 		$posts = $this->pieCrust->getPostsDir();
 		$bake  = $baker->getBakeDir();
-
-		exec("find " . $posts . " -newer " . $bake . "favicon.ico -iregex '.*\.\(png\|PNG\|gif\)' -type f -exec optipng -o7 {} ';'", $out);
-		exec("find " . $posts . " -newer " . $bake . "favicon.ico -iregex '.*\.\(jpg\|JPG\|jpeg\|JPG\)' -type f -exec jpegoptim {} ';'", $out);
+		exec("find " . $posts . " -newer " . $bake . "index.html -iregex '.*\.\(png\|PNG\|gif\)' -type f -exec optipng -o7 {} ';'", $out);
+		exec("find " . $posts . " -newer " . $bake . "index.html -iregex '.*\.\(jpg\|JPG\|jpeg\|JPG\)' -type f -exec jpegoptim {} ';'", $out);
 	}
 
 

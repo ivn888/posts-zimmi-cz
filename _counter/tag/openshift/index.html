@@ -7,7 +7,7 @@
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> Michal Zimmermann  &mdash; Tags </title>
+  <title> Michal Zimmermann  &mdash; Tag: openshift </title>
   <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
   <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
   <script src="/posts/js/highlight.pack.js" defer></script>
@@ -42,36 +42,53 @@
             <div class="row white">
                 <div id="content">
                     <div class="blog-index">
-                                                                        <h1>Tags</h1>
-                          <small>                                                                              </small>
-                                                  <ul>
-			<li><a href="/posts/tag/bash/">bash</a></li>
-			<li><a href="/posts/tag/docker/">docker</a></li>
-			<li><a href="/posts/tag/geoserver/">geoserver</a></li>
-			<li><a href="/posts/tag/javascript/">javascript</a></li>
-			<li><a href="/posts/tag/leaflet/">leaflet</a></li>
-			<li><a href="/posts/tag/linux/">linux</a></li>
-			<li><a href="/posts/tag/ogc/">ogc</a></li>
-			<li><a href="/posts/tag/openlayers/">openlayers</a></li>
-			<li><a href="/posts/tag/openshift/">openshift</a></li>
-			<li><a href="/posts/tag/php/">php</a></li>
-			<li><a href="/posts/tag/postgis/">postgis</a></li>
-			<li><a href="/posts/tag/postgresql/">postgresql</a></li>
-			<li><a href="/posts/tag/python/">python</a></li>
-			<li><a href="/posts/tag/regex/">regex</a></li>
-			<li><a href="/posts/tag/spatial/">spatial</a></li>
-			<li><a href="/posts/tag/sublime/">sublime</a></li>
-			<li><a href="/posts/tag/twitter/">twitter</a></li>
-			<li><a href="/posts/tag/wmts/">wmts</a></li>
-	</ul>
+                                                                        <h1>Posts tagged with openshift</h1>
+                                                  <section>
+		<article>
+	<header>
+	<h2><a href="/posts/2015/hosting-website-on-openshift/">Hosting Website On Openshift</a></h2>
+	<small>Written on February 23, 2015
+		and marked as
+		<a href="/posts/tag/openshift/">openshift</a>				| <a href="/posts/category/development/">development</a>
+		</small>
+	</header>
+	<section>
+	<p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got working eventually.</p>
+
+<h2>Things to know before taking the leap</h2>
+
+<p>Some domain providers don&#8217;t support CNAME changes for root domains (zimmi.cz in my case). This means you can&#8217;t simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do so:</p>
+
+<pre><code>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
+</code></pre>
+
+<p>Which is great until you realize you&#8217;ve just created two different websites. That&#8217;s where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
+
+<pre><code>zimmi.cz A 174.129.25.170
+</code></pre>
+
+<p>Now everything works fine and you have your <code>www.domain.tld</code> up and running.</p>
+
+<h2>OpenShift subdomains</h2>
+
+<p>I wasn&#8217;t successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing DNS to it:</p>
+
+<pre><code>posts.zimmi.cz A 174.179.25.170
+www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
+</code></pre>
+
+<p>Just don&#8217;t forget to handle both naked and <code>www</code> version. When Google reindexes new URLs (http://www.zimmi.cz/posts instead of http://posts.zimmi.cz) subdomain application might be deleted.</p>
+
+	</section>
+</article></section>
 
                                           </div>
                 </div>
             </div>
             <div class="row white">
                 <footer role="contentinfo">
-                    
-                    <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
+                                          
+                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
                 </footer>
             </div>
         </div>
