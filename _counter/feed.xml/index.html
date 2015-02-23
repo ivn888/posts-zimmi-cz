@@ -3,14 +3,14 @@
 <channel>
 	<title>Michal Zimmermann</title>
 	<link>http://zimmi.cz/posts</link>
-	<lastBuildDate>Mon, 23 Feb 2015 15:15:05 +0100</lastBuildDate>
-	<pubDate>Mon, 23 Feb 2015 15:15:05 +0100</pubDate>
+	<lastBuildDate>Mon, 23 Feb 2015 15:17:37 +0100</lastBuildDate>
+	<pubDate>Mon, 23 Feb 2015 15:17:37 +0100</pubDate>
 	<description>Pieces of knowledge from the world of GIS.</description>
 		<item>
 		<title>Hosting Website On Openshift</title>
-		<link>http://zimmi.cz/posts/posts/2015/hosting-website-on-openshift/</link>
+		<link>http://zimmi.cz/posts/2015/hosting-website-on-openshift/</link>
 		<pubDate>Mon, 23 Feb 2015 14:25:20 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2015/hosting-website-on-openshift/</guid>
+		<guid>http://zimmi.cz/posts/2015/hosting-website-on-openshift/</guid>
 		<description>&lt;p&gt;I decided to migrate &lt;a href=&quot;http://www.zimmi.cz&quot;&gt;my web&lt;/a&gt; to &lt;a href=&quot;http://openshift.com&quot;&gt;OpenShift&lt;/a&gt;. It was a bit frustrating but I got working eventually.&lt;/p&gt;
 
 &lt;h2&gt;Things to know before taking the leap&lt;/h2&gt;
@@ -40,9 +40,9 @@ www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
 	</item>
 		<item>
 		<title>PostGIS Case Study: Vozejkmap Open Data (Part II)</title>
-		<link>http://zimmi.cz/posts/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/</link>
+		<link>http://zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/</link>
 		<pubDate>Sat, 21 Feb 2015 20:54:44 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/</guid>
+		<guid>http://zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/</guid>
 		<description>&lt;p&gt;&lt;a href=&quot;/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/&quot;&gt;In the first part of my little case study&lt;/a&gt; I downloaded &lt;a href=&quot;http://vozejkmap.cz&quot;&gt;vozejkmap.cz&lt;/a&gt; dataset and imported it into the PostGIS database. Having spatial data safely stored the time comes to get it onto the map. Libraries used are:&lt;/p&gt;
 
 &lt;ul&gt;
@@ -124,9 +124,9 @@ FROM vozejkmap AS lg ) AS f
 	</item>
 		<item>
 		<title>Using PostgreSQL To Update Outdated Map Links</title>
-		<link>http://zimmi.cz/posts/posts/2015/using-postgresql-to-update-outdated-map-links/</link>
+		<link>http://zimmi.cz/posts/2015/using-postgresql-to-update-outdated-map-links/</link>
 		<pubDate>Mon, 16 Feb 2015 18:38:57 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2015/using-postgresql-to-update-outdated-map-links/</guid>
+		<guid>http://zimmi.cz/posts/2015/using-postgresql-to-update-outdated-map-links/</guid>
 		<description>&lt;p&gt;&lt;a href=&quot;http://www.edpp.cz/pdb_mapa-povodnoveho-planu-mesta/&quot;&gt;We&amp;#8217;ve rolled out&lt;/a&gt; completely new map GUI at &lt;a href=&quot;http://edpp.cz&quot;&gt;edpp.cz&lt;/a&gt; built on top of &lt;a href=&quot;http://ol3js.org&quot;&gt;OpenLayers 3&lt;/a&gt;. It looks great and has lots of functions both for BFU and power users. The only pitfall that came with moving away from OpenLayers 2 were remarkable differences in zoom levels between the old map and the new one.&lt;/p&gt;
 
 &lt;p&gt;Each of our maps is defined by our admins (center, zoom level, layers) at the map creation. Lots of links calling different views of map are created as well. They take form of &lt;code&gt;http://edpp.cz/some-map?0=0&amp;amp;1=0...zoom=5&lt;/code&gt;. That &lt;code&gt;zoom=&amp;lt;Number&amp;gt;&lt;/code&gt; started causing troubles immediately after the map switch. No way my workmates would update them one by one as there were ~4,500 of them. Sounds like a task for little bit of regular expressions and some SQL updates.&lt;/p&gt;
@@ -149,17 +149,17 @@ FROM vozejkmap AS lg ) AS f
 	</item>
 		<item>
 		<title>Leaflet With Custom CRS (EPSG:5514)</title>
-		<link>http://zimmi.cz/posts/posts/2015/leaflet-with-custom-crs-epsg-5514/</link>
+		<link>http://zimmi.cz/posts/2015/leaflet-with-custom-crs-epsg-5514/</link>
 		<pubDate>Thu, 15 Jan 2015 19:46:22 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2015/leaflet-with-custom-crs-epsg-5514/</guid>
+		<guid>http://zimmi.cz/posts/2015/leaflet-with-custom-crs-epsg-5514/</guid>
 		<description>&lt;p&gt;If you ever find yourself in need to use custom projection with Leaflet, feel free to start with this example of &lt;a href=&quot;https://github.com/zimmicz/leaflet-custom-crs-jtsk&quot;&gt;Czech national coordinate system&lt;/a&gt;. All you need is &lt;a href=&quot;http://leafletjs.com&quot;&gt;Leaflet&lt;/a&gt;, &lt;a href=&quot;http://proj4js.org/&quot;&gt;proj4.js&lt;/a&gt; and &lt;a href=&quot;https://github.com/kartena/Proj4Leaflet&quot;&gt;proj4 for Leaflet plugin&lt;/a&gt;. I&amp;#8217;m still not sure how &lt;code&gt;origin&lt;/code&gt; coordinates work though.&lt;/p&gt;
 </description>
 	</item>
 		<item>
 		<title>PostGIS Case Study: VozejkMap Open Data (Part I)</title>
-		<link>http://zimmi.cz/posts/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/</link>
+		<link>http://zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/</link>
 		<pubDate>Tue, 02 Dec 2014 17:59:40 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/</guid>
+		<guid>http://zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/</guid>
 		<description>&lt;p&gt;&lt;a href=&quot;http://www.vozejkmap.cz&quot;&gt;VozejkMap.cz&lt;/a&gt; is a Czech &lt;strong&gt;open data&lt;/strong&gt; iniatitive that collects data about wheelchair accessible places, e.g. pubs, toilets, cafes etc. As part of being open, they offer a &lt;a href=&quot;http://www.vozejkmap.cz/opendata/&quot;&gt;JSON data download&lt;/a&gt;. JSON is a great text format, not so great spatial format (leaving GeoJSON aside) though. Anyway, nothing that &lt;a href=&quot;http://posts.zimmi.cz/tag/postgis/&quot;&gt;PostGIS&lt;/a&gt; wouldn&amp;#8217;t be able to take care of.&lt;/p&gt;
 
 &lt;h3&gt;Let&amp;#8217;s get some data&lt;/h3&gt;
@@ -333,9 +333,9 @@ UPDATE vozejkmap SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326);
 	</item>
 		<item>
 		<title>PostGIS Spatial Indexing With ST_Intersects</title>
-		<link>http://zimmi.cz/posts/posts/2014/postgis-spatial-indexing-with-st-intersects/</link>
+		<link>http://zimmi.cz/posts/2014/postgis-spatial-indexing-with-st-intersects/</link>
 		<pubDate>Sun, 23 Nov 2014 10:05:41 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2014/postgis-spatial-indexing-with-st-intersects/</guid>
+		<guid>http://zimmi.cz/posts/2014/postgis-spatial-indexing-with-st-intersects/</guid>
 		<description>&lt;p&gt;&lt;a href=&quot;http://postgis.net/docs/ST_Intersects.html&quot;&gt;PostGIS docs&lt;/a&gt; clearly states that:&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -400,9 +400,9 @@ Total runtime: 3930.270 ms
 	</item>
 		<item>
 		<title>Bash: Prepend To Filename</title>
-		<link>http://zimmi.cz/posts/posts/2014/bash-prepend-to-filename/</link>
+		<link>http://zimmi.cz/posts/2014/bash-prepend-to-filename/</link>
 		<pubDate>Sat, 01 Nov 2014 13:11:29 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2014/bash-prepend-to-filename/</guid>
+		<guid>http://zimmi.cz/posts/2014/bash-prepend-to-filename/</guid>
 		<description>&lt;pre&gt;&lt;code&gt;for f in *; do mv &quot;$f&quot; &quot;prepend_$f&quot;; done
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -411,9 +411,9 @@ Total runtime: 3930.270 ms
 	</item>
 		<item>
 		<title>Migrating Geoserver And Checking For Missing Data</title>
-		<link>http://zimmi.cz/posts/posts/2014/migrating-geoserver-and-checking-for-missing-data/</link>
+		<link>http://zimmi.cz/posts/2014/migrating-geoserver-and-checking-for-missing-data/</link>
 		<pubDate>Wed, 29 Oct 2014 16:25:11 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2014/migrating-geoserver-and-checking-for-missing-data/</guid>
+		<guid>http://zimmi.cz/posts/2014/migrating-geoserver-and-checking-for-missing-data/</guid>
 		<description>&lt;p&gt;I&amp;#8217;ve upgraded a handful of Geoserver installations and it has never been flawless. If you&amp;#8217;re lucky you end up with just &lt;em&gt;some&lt;/em&gt; layers missing, if you&amp;#8217;re not, you&amp;#8217;ll miss a bunch of them (together with layergroups, some stores, workspaces might screw up etc.).&lt;/p&gt;
 
 &lt;p&gt;But how do you check for missing data before switching to the newer version? Thanks to the &lt;a href=&quot;http://docs.geoserver.org/stable/en/user/rest/api/index.html&quot;&gt;REST API implemented within Geoserver&lt;/a&gt;, it&amp;#8217;s rather easy.&lt;/p&gt;
@@ -447,9 +447,9 @@ with open(&#039;list.txt&#039;, &#039;a&#039;) as f:
 	</item>
 		<item>
 		<title>ogr2ogr UNIX x Windows</title>
-		<link>http://zimmi.cz/posts/posts/2014/ogr2ogr-unix-x-windows/</link>
+		<link>http://zimmi.cz/posts/2014/ogr2ogr-unix-x-windows/</link>
 		<pubDate>Tue, 23 Sep 2014 20:03:03 +0200</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2014/ogr2ogr-unix-x-windows/</guid>
+		<guid>http://zimmi.cz/posts/2014/ogr2ogr-unix-x-windows/</guid>
 		<description>&lt;p&gt;GDAL with its ogr2ogr, ogrinfo and many more is one of the best open source tools to do anything to your spatial data. It is a&amp;nbsp;command line tool, which sort of determines it to be used with UNIX systems, but you might bump into a Windows guy trying to use it as well once in a while.&lt;/p&gt;
 
 &lt;p&gt;Be careful, it behaves differently on different OS. Let&amp;#8217;s say you do something like this on UNIX:&lt;/p&gt;
@@ -464,9 +464,9 @@ with open(&#039;list.txt&#039;, &#039;a&#039;) as f:
 	</item>
 		<item>
 		<title>Notify When Average of 10 Subsequent Numbers Is Bigger Than Given Value</title>
-		<link>http://zimmi.cz/posts/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/</link>
+		<link>http://zimmi.cz/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/</link>
 		<pubDate>Sun, 21 Sep 2014 17:38:29 +0200</pubDate>
-		<guid>http://zimmi.cz/posts/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/</guid>
+		<guid>http://zimmi.cz/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/</guid>
 		<description>&lt;p&gt;I found an &lt;a href=&quot;http://stackoverflow.com/questions/25952380/php-find-a-maximum-average-for-10-subsequent-numbers-in-a-list-of-50-random-numb&quot;&gt;interesting question&lt;/a&gt; at StackOverflow asking for help finding solution to what I have already mentioned in the title, with PHP. I gave it a try before reading answers and came up with the following code:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$avg  = // value we are looking for

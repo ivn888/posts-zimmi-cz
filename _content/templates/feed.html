@@ -9,9 +9,9 @@
 	{% for post in blog.posts.limit(10) %}
 	<item>
 		<title>{{ post.title }}</title>
-		<link>http://zimmi.cz/posts{{ post.url }}</link>
+		<link>http://zimmi.cz{{ post.url }}</link>
 		<pubDate>{{ post.timestamp|date("r") }}</pubDate>
-		<guid>http://zimmi.cz/posts{{post.url}}</guid>
+		<guid>http://zimmi.cz{{post.url}}</guid>
 		<description>{{ post.content }}</description>
 	</item>
 	{% endfor %}
