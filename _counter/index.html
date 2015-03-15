@@ -45,6 +45,117 @@
                                                                         	<section>
 			<article>
 	<header>
+	<h2><a href="/posts/2015/wms-download-for-future-offline-use/">WMS Download For Future Offline Use</a></h2>
+	<small>Written on March 15, 2015
+		and marked as
+		<a href="/posts/tag/ogc/">ogc</a>, 		<a href="/posts/tag/python/">python</a>, 		<a href="/posts/tag/wms/">wms</a>				| <a href="/posts/category/automation/">automation</a>
+		</small>
+	</header>
+	<section>
+	<p>Using WMS in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with WMS layers.</p>
+
+<p><a href="https://geopython.github.io/OWSLib/">OWSLib</a> is a great tool to help you get images from WMS server. Code and some comments follow.</p>
+
+<pre><code>import math
+import os
+import random
+import time
+from owslib.wms import WebMapService
+
+BOTTOM_LEFT = (-679363,-1120688)
+TOP_RIGHT   = (-565171,-1042703)
+SRS_WIDTH   = math.fabs(-639084 - -638825) # tile width in units of crs =&gt; 259 m
+SRS_HEIGHT  = math.fabs(-1070426 - -1070273) # tile height in units of crs =&gt; 153 m
+PX_WIDTH    = 977
+PX_HEIGHT   = 578
+
+FORMAT      = 'image/png'
+LAYERS      = ['KN', 'RST_PK']
+SIZE        = (PX_WIDTH, PX_HEIGHT)
+SRS         = 'EPSG:5514'
+STYLES      = ['default', 'default']
+TRANSPARENT = True
+
+DIRECTORY = 'tiles/'
+SLEEP     = random.randint(0,20) # seconds
+
+dx = math.fabs(BOTTOM_LEFT[0] - TOP_RIGHT[0]) # area width in units of crs
+dy = math.fabs(BOTTOM_LEFT[1] - TOP_RIGHT[1]) # area height in units of crs
+
+cols = int(math.ceil(dx / SRS_WIDTH)) + 1
+rows = int(math.ceil(dy / SRS_HEIGHT)) + 1
+
+counter = 0
+
+with open('world_file.pngw', 'r') as wld_template:
+    tmpl = wld_template.read()
+
+wms = WebMapService('http://services.cuzk.cz/wms/wms.asp', version='1.1.1')
+
+for i in xrange(0, rows):
+    if not os.path.exists(DIRECTORY + str(i)):
+        os.mkdir(DIRECTORY + str(i))
+
+    for j in xrange(0, cols):
+        if os.path.exists(DIRECTORY + str(i) +'/kn_' + str(i) + '_' + str(j) + '.png'):
+            counter += 1
+            continue
+
+        bbox = (
+            i * SRS_WIDTH + BOTTOM_LEFT[0],
+            j * SRS_HEIGHT + BOTTOM_LEFT[1],
+            (i + 1) * SRS_WIDTH + BOTTOM_LEFT[0],
+            (j + 1) * SRS_HEIGHT + BOTTOM_LEFT[1]
+        )
+
+        img = wms.getmap(
+            layers=LAYERS,
+            styles=STYLES,
+            srs=SRS,
+            bbox=bbox,
+            size=SIZE,
+            format=FORMAT,
+            transparent=TRANSPARENT
+        )
+
+        with open(DIRECTORY + str(i) +'/kn_' + str(i) + '_' + str(j) + '.png', 'wb') as png:
+            png.write(img.read())
+
+        with open(DIRECTORY + str(i) + '/kn_' + str(i) + '_' + str(j) + '.pngw', 'w') as wld_file:
+            wld_file.write(tmpl)
+            wld_file.write('\n' + str(i * SRS_WIDTH + BOTTOM_LEFT[0]))
+            wld_file.write('\n' + str((j+1) * SRS_HEIGHT + BOTTOM_LEFT[1]))
+
+        counter += 1
+        print str(counter), ' out of ', str(rows * cols)
+        time.sleep(SLEEP)
+</code></pre>
+
+<p>First, always make sure <strong>you are not violating terms of use</strong> defined by service provider. If you are not, here are the necessary steps:</p>
+
+<ol>
+<li>Define your area of interest with bottom left and top right coordinates.</li>
+<li>Calculate width of single image both in pixels and units of CRS to get the rightsized image. Note that there may be image size restrictions defined by provider (2048 &times; 2048 px is usually the biggest you can get).</li>
+<li>Define template <a href="https://en.wikipedia.org/wiki/World_file">world file</a> for referencing images. OWSLib doesn&#8217;t provide world files to saved images, these have to be created by you. I recommend to use a template file for creating real world files.</li>
+<li>Be nice! Don&#8217;t overload the service. I use <code>time.sleep()</code> for this.</li>
+<li>Profit.</li>
+</ol>
+
+<p>The trouble with WMS is that you can&#8217;t set an arbitrary scale you want to obtain images in (e.g. 1:1 000). It&#8217;s fairly easy to get all values needed to imitate this behavior though.</p>
+
+<p>Using <a href="http://qgis.org">QGIS</a> you can:</p>
+
+<ol>
+<li>Get bounding box of area you&#8217;re interested in.</li>
+<li>Save current view as an image (together with the world file!) and use it as a specimen for your own world files.</li>
+<li>Derive image width (CRS, pixels) from the saved image, thus getting the same zoom level you were using in QGIS.</li>
+</ol>
+
+<p>Code given is not bulletproof, it will fail on any network error. However, if you restart it after such a crash, it checks for existing files and starts with the first missing, so you don&#8217;t have to download all the tiles again.</p>
+
+	</section>
+</article>			<article>
+	<header>
 	<h2><a href="/posts/2015/hosting-website-on-openshift/">Hosting Website On Openshift</a></h2>
 	<small>Written on February 23, 2015
 		and marked as
@@ -533,55 +644,6 @@ with open('list.txt', 'a') as f:
 <p>What you <abbr title="But you might get expected result as well">might get is a big nothing</abbr>. Executed on Windows it gives you the result you&#8217;ve expected. <em>Aargh</em>, what is that supposed to mean?</p>
 
 <p>Well, that&#8217;s the ogr2ogr&#8217;s way to tell you: <em>Hello there, you need to switch single quotes for double quotes and vice versa, you dumb!</em> I don&#8217;t know why and I find it really annoying. Just in case you get stuck with ogr2ogr (or probably any other command line tool), try this.</p>
-
-	</section>
-</article>			<article>
-	<header>
-	<h2><a href="/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/">Notify When Average of 10 Subsequent Numbers Is Bigger Than Given Value</a></h2>
-	<small>Written on September 21, 2014
-		and marked as
-		<a href="/posts/tag/php/">php</a>				| <a href="/posts/category/development/">development</a>
-		</small>
-	</header>
-	<section>
-	<p>I found an <a href="http://stackoverflow.com/questions/25952380/php-find-a-maximum-average-for-10-subsequent-numbers-in-a-list-of-50-random-numb">interesting question</a> at StackOverflow asking for help finding solution to what I have already mentioned in the title, with PHP. I gave it a try before reading answers and came up with the following code:</p>
-
-<pre><code>$avg  = // value we are looking for
-$size = count($numbers);
-
-for ($i = 0; $i &lt; $size; $i += 1) {
-    if ($i + 9 &lt; 51) {
-        $val += $numbers[$i];
-        for ($j = $i + 1; $j &lt; 10 + $i; $j += 1) {
-            $val += $numbers[$j];
-        }
-        if ($val / 10 &gt;= $avg) { // hit
-            // do something
-        }
-        $val = 0;
-    }
-}
-</code></pre>
-
-<p>That was the first that I could think of. And it worked. The answer given by Dave Chen was much more elegant than my solution (although I think it does something a bit different, but that&#8217;s not the point here):</p>
-
-<pre><code>$number = 10; //numbers in a set
-$max = 0;
-$index = 0;
-
-$size = sizeof($numbers) - $number;
-for ($i = 0; $i &lt; $size; $i++) {
-    $tmp = array_sum(array_slice($numbers, $i, $number)) / $number;
-    if ($tmp &gt; $max) {
-        $max = $tmp;
-        $index = $i;
-    }
-}
-</code></pre>
-
-<p>I made a simple benchmark with <a href="http://php.net/manual/en/function.microtime.php"><code>microtime()</code></a> and found out that my solution (ran 100k times) took about ~12.3 seconds while Dave&#8217;s took only ~7.4 seconds to finish. That makes his code almost twice faster than mine.</p>
-
-<p><strong>Lesson learned: do not stop learning!</strong></p>
 
 	</section>
 </article>		</section>

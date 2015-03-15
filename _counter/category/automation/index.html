@@ -7,7 +7,7 @@
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> Michal Zimmermann  &mdash; Tag: ogc </title>
+  <title> Michal Zimmermann  &mdash; Category: automation </title>
   <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
   <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
   <script src="/posts/js/highlight.pack.js" defer></script>
@@ -42,7 +42,7 @@
             <div class="row white">
                 <div id="content">
                     <div class="blog-index">
-                                                                        <h1>Posts tagged with ogc</h1>
+                                                                        <h1>Posts in category automation</h1>
                                                   <section>
 		<article>
 	<header>
@@ -153,130 +153,6 @@ for i in xrange(0, rows):
 </ol>
 
 <p>Code given is not bulletproof, it will fail on any network error. However, if you restart it after such a crash, it checks for existing files and starts with the first missing, so you don&#8217;t have to download all the tiles again.</p>
-
-	</section>
-</article>		<article>
-	<header>
-	<h2><a href="/posts/2014/connecting-to-secured-arcgis-server-layer-with-openlayers-3/">Connecting To Secured ArcGIS Server Layer With OpenLayers 3</a></h2>
-	<small>Written on September 12, 2014
-		and marked as
-		<a href="/posts/tag/javascript/">javascript</a>, 		<a href="/posts/tag/openlayers/">openlayers</a>, 		<a href="/posts/tag/ogc/">ogc</a>				| <a href="/posts/category/web-maps/">web maps</a>
-		</small>
-	</header>
-	<section>
-	<p>I was made to use ArcGIS Server with <a href="http://openlayers.org">Openlayers 3</a> just recently as one of the projects I&#8217;ve been working on demands such different tools to work together. </p>
-
-<p><strong>tl;dr: I hate Esri.</strong></p>
-
-<p>I found myself in need to access secured layers published via WMS on ArcGIS Server using username and password I was given, so here&#8217;s a little how-to for anyone who would have to do the same.</p>
-
-<p>Let&#8217;s start with a simple ol.layer.Image and pretend this is the secured layer we&#8217;re looking for:</p>
-
-<pre><code>var layer = new ol.layer.Image({
-    extent: extent,
-    source: new ol.source.ImageWMS(/** @type {olx.source.ImageWMSOptions} */ ({
-        url: url,
-        params: {
-            'LAYERS': 'layer',
-            'CRS': 'EPSG:3857',
-        }
-    }))
-});
-</code></pre>
-
-<p>We need to retrieve the token, so we define a function:</p>
-
-<pre><code>function retrieveToken(callback) {
-    var req = new XMLHttpRequest;
-
-    req.onload = function() {
-        if (req.status == "200") {
-            var response = JSON.parse(req.responseText);
-            if (response.contents) {
-                callback(response.contents); // response contents is where the token is stored
-        }
-    };
-    req.open("get", "http://server.address/arcgis/tokens/?request=getToken&amp;username=username&amp;password=password&amp;expiration=60", true);
-    req.send()
-}
-</code></pre>
-
-<p>I pass a parameter called <code>callback</code> - that&#8217;s a very important step, otherwise you would not be able to retrieve the token when you actually need it (AJAX stands for asynchronous). Now you just pass the token to the layer params like this:</p>
-
-<pre><code>retrieveToken(function(token) {
-    layer.getSource().updateParams({
-        token: token
-    })
-}
-</code></pre>
-
-<p>When you open Firebug and inspect Network tab, you should find <code>token</code> URL parameter passed along with WMS <code>GetMap</code> request.</p>
-
-<p>Few sidenotes:</p>
-
-<ol>
-<li>Although you might be logged in ArcGIS Server via web interface, you might need to pass the <code>token</code>  URL param when trying to access Capabilities document. Don&#8217;t know why though.</li>
-<li>You should probably take care of calling the <code>retrieveToken()</code> in shorter interval than the token expiration is set to. Otherwise you might end up with invalid token.</li>
-<li>You need to hide the username and password from anonymous users (I guess that&#8217;s only possible with server side implementation of selective JavaScript loading).</li>
-</ol>
-
-	</section>
-</article>		<article>
-	<header>
-	<h2><a href="/posts/2014/wmts-few-things-i-want-to-remember/">WMTS: Few Things I Want To Remember</a></h2>
-	<small>Written on September 10, 2014
-		and marked as
-		<a href="/posts/tag/ogc/">ogc</a>, 		<a href="/posts/tag/wmts/">wmts</a>				| <a href="/posts/category/web-maps/">web maps</a>
-		</small>
-	</header>
-	<section>
-	<ul>
-<li>Used to serve prepared rectangular tiles; this means you are limited by web server speed rather than map server speed</li>
-<li>Several ways to retrieve tiles are defined: KVP and REST are mandatory, SOAP is optional</li>
-<li>Does not allow layer combination; additional tile matrix would have to be created</li>
-<li>GetCapabilities, GetTile and GetFeatureInfo requests are defined</li>
-<li><strong>tile</strong>
-
-<ul>
-<li>rectangular representation of space</li>
-<li>defined by tile and row indices</li>
-</ul></li>
-<li><strong>tile matrix</strong>
-
-<ul>
-<li>set of tiles for a given scale</li>
-<li><em>defined with:</em></li>
-<li>tile size derived from standardized pixel size (0.28 &times; 0.28 mm)</li>
-<li>tile width and tile height (px)</li>
-<li>left upper corner coordinates</li>
-<li>matrix width and height as number of tiles</li>
-</ul></li>
-<li><strong>tile matrix set</strong>
-
-<ul>
-<li>set of tile matrices for different scales</li>
-</ul></li>
-</ul>
-
-<h3>Total count of tile matrices</h3>
-
-<p><em><code>nTileMatrices × nTiledStyles × nTiledFormats (if no dimensions are defined)</code></em></p>
-
-<h3>Total count of tiles in a tile matrix</h3>
-
-<p><em><code>matrixWidth × matrixHeight</code></em></p>
-
-<h3>Other equations</h3>
-
-<ul>
-<li><code>pixelSpan = scaleDenominator × 0.28 10<sup>3</sup> / metersPerUnit(crs);</code></li>
-<li><code>tileSpanX = tileWidth × pixelSpan;</code></li>
-<li><code>tileSpanY = tileHeight × pixelSpan;</code></li>
-<li><code>tileMatrixMaxX = tileMatrixMinX + tileSpanX × matrixWidth;</code></li>
-<li><code>tileMatrixMinY = tileMatrixMaxY - tileSpanY × matrixHeight;</code></li>
-</ul>
-
-<p><img src="/posts/2014/wmts-few-things-i-want-to-remember/wmts.png" title="WMTS tiling schema" class="img-responsive centered"></p>
 
 	</section>
 </article></section>

@@ -3,9 +3,116 @@
 <channel>
 	<title>Michal Zimmermann</title>
 	<link>http://zimmi.cz/posts</link>
-	<lastBuildDate>Mon, 23 Feb 2015 16:03:37 +0100</lastBuildDate>
-	<pubDate>Mon, 23 Feb 2015 16:03:37 +0100</pubDate>
+	<lastBuildDate>Sun, 15 Mar 2015 18:35:28 +0100</lastBuildDate>
+	<pubDate>Sun, 15 Mar 2015 18:35:28 +0100</pubDate>
 	<description>Pieces of knowledge from the world of GIS.</description>
+		<item>
+		<title>WMS Download For Future Offline Use</title>
+		<link>http://zimmi.cz/posts/2015/wms-download-for-future-offline-use/</link>
+		<pubDate>Sun, 15 Mar 2015 18:10:10 +0100</pubDate>
+		<guid>http://zimmi.cz/posts/2015/wms-download-for-future-offline-use/</guid>
+		<description>&lt;p&gt;Using WMS in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with WMS layers.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://geopython.github.io/OWSLib/&quot;&gt;OWSLib&lt;/a&gt; is a great tool to help you get images from WMS server. Code and some comments follow.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import math
+import os
+import random
+import time
+from owslib.wms import WebMapService
+
+BOTTOM_LEFT = (-679363,-1120688)
+TOP_RIGHT   = (-565171,-1042703)
+SRS_WIDTH   = math.fabs(-639084 - -638825) # tile width in units of crs =&amp;gt; 259 m
+SRS_HEIGHT  = math.fabs(-1070426 - -1070273) # tile height in units of crs =&amp;gt; 153 m
+PX_WIDTH    = 977
+PX_HEIGHT   = 578
+
+FORMAT      = &#039;image/png&#039;
+LAYERS      = [&#039;KN&#039;, &#039;RST_PK&#039;]
+SIZE        = (PX_WIDTH, PX_HEIGHT)
+SRS         = &#039;EPSG:5514&#039;
+STYLES      = [&#039;default&#039;, &#039;default&#039;]
+TRANSPARENT = True
+
+DIRECTORY = &#039;tiles/&#039;
+SLEEP     = random.randint(0,20) # seconds
+
+dx = math.fabs(BOTTOM_LEFT[0] - TOP_RIGHT[0]) # area width in units of crs
+dy = math.fabs(BOTTOM_LEFT[1] - TOP_RIGHT[1]) # area height in units of crs
+
+cols = int(math.ceil(dx / SRS_WIDTH)) + 1
+rows = int(math.ceil(dy / SRS_HEIGHT)) + 1
+
+counter = 0
+
+with open(&#039;world_file.pngw&#039;, &#039;r&#039;) as wld_template:
+    tmpl = wld_template.read()
+
+wms = WebMapService(&#039;http://services.cuzk.cz/wms/wms.asp&#039;, version=&#039;1.1.1&#039;)
+
+for i in xrange(0, rows):
+    if not os.path.exists(DIRECTORY + str(i)):
+        os.mkdir(DIRECTORY + str(i))
+
+    for j in xrange(0, cols):
+        if os.path.exists(DIRECTORY + str(i) +&#039;/kn_&#039; + str(i) + &#039;_&#039; + str(j) + &#039;.png&#039;):
+            counter += 1
+            continue
+
+        bbox = (
+            i * SRS_WIDTH + BOTTOM_LEFT[0],
+            j * SRS_HEIGHT + BOTTOM_LEFT[1],
+            (i + 1) * SRS_WIDTH + BOTTOM_LEFT[0],
+            (j + 1) * SRS_HEIGHT + BOTTOM_LEFT[1]
+        )
+
+        img = wms.getmap(
+            layers=LAYERS,
+            styles=STYLES,
+            srs=SRS,
+            bbox=bbox,
+            size=SIZE,
+            format=FORMAT,
+            transparent=TRANSPARENT
+        )
+
+        with open(DIRECTORY + str(i) +&#039;/kn_&#039; + str(i) + &#039;_&#039; + str(j) + &#039;.png&#039;, &#039;wb&#039;) as png:
+            png.write(img.read())
+
+        with open(DIRECTORY + str(i) + &#039;/kn_&#039; + str(i) + &#039;_&#039; + str(j) + &#039;.pngw&#039;, &#039;w&#039;) as wld_file:
+            wld_file.write(tmpl)
+            wld_file.write(&#039;\n&#039; + str(i * SRS_WIDTH + BOTTOM_LEFT[0]))
+            wld_file.write(&#039;\n&#039; + str((j+1) * SRS_HEIGHT + BOTTOM_LEFT[1]))
+
+        counter += 1
+        print str(counter), &#039; out of &#039;, str(rows * cols)
+        time.sleep(SLEEP)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;First, always make sure &lt;strong&gt;you are not violating terms of use&lt;/strong&gt; defined by service provider. If you are not, here are the necessary steps:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Define your area of interest with bottom left and top right coordinates.&lt;/li&gt;
+&lt;li&gt;Calculate width of single image both in pixels and units of CRS to get the rightsized image. Note that there may be image size restrictions defined by provider (2048 &amp;times; 2048 px is usually the biggest you can get).&lt;/li&gt;
+&lt;li&gt;Define template &lt;a href=&quot;https://en.wikipedia.org/wiki/World_file&quot;&gt;world file&lt;/a&gt; for referencing images. OWSLib doesn&amp;#8217;t provide world files to saved images, these have to be created by you. I recommend to use a template file for creating real world files.&lt;/li&gt;
+&lt;li&gt;Be nice! Don&amp;#8217;t overload the service. I use &lt;code&gt;time.sleep()&lt;/code&gt; for this.&lt;/li&gt;
+&lt;li&gt;Profit.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The trouble with WMS is that you can&amp;#8217;t set an arbitrary scale you want to obtain images in (e.g. 1:1 000). It&amp;#8217;s fairly easy to get all values needed to imitate this behavior though.&lt;/p&gt;
+
+&lt;p&gt;Using &lt;a href=&quot;http://qgis.org&quot;&gt;QGIS&lt;/a&gt; you can:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Get bounding box of area you&amp;#8217;re interested in.&lt;/li&gt;
+&lt;li&gt;Save current view as an image (together with the world file!) and use it as a specimen for your own world files.&lt;/li&gt;
+&lt;li&gt;Derive image width (CRS, pixels) from the saved image, thus getting the same zoom level you were using in QGIS.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Code given is not bulletproof, it will fail on any network error. However, if you restart it after such a crash, it checks for existing files and starts with the first missing, so you don&amp;#8217;t have to download all the tiles again.&lt;/p&gt;
+</description>
+	</item>
 		<item>
 		<title>Hosting Website On Openshift</title>
 		<link>http://zimmi.cz/posts/2015/hosting-website-on-openshift/</link>
@@ -460,51 +567,6 @@ with open(&#039;list.txt&#039;, &#039;a&#039;) as f:
 &lt;p&gt;What you &lt;abbr title=&quot;But you might get expected result as well&quot;&gt;might get is a big nothing&lt;/abbr&gt;. Executed on Windows it gives you the result you&amp;#8217;ve expected. &lt;em&gt;Aargh&lt;/em&gt;, what is that supposed to mean?&lt;/p&gt;
 
 &lt;p&gt;Well, that&amp;#8217;s the ogr2ogr&amp;#8217;s way to tell you: &lt;em&gt;Hello there, you need to switch single quotes for double quotes and vice versa, you dumb!&lt;/em&gt; I don&amp;#8217;t know why and I find it really annoying. Just in case you get stuck with ogr2ogr (or probably any other command line tool), try this.&lt;/p&gt;
-</description>
-	</item>
-		<item>
-		<title>Notify When Average of 10 Subsequent Numbers Is Bigger Than Given Value</title>
-		<link>http://zimmi.cz/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/</link>
-		<pubDate>Sun, 21 Sep 2014 17:38:29 +0200</pubDate>
-		<guid>http://zimmi.cz/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/</guid>
-		<description>&lt;p&gt;I found an &lt;a href=&quot;http://stackoverflow.com/questions/25952380/php-find-a-maximum-average-for-10-subsequent-numbers-in-a-list-of-50-random-numb&quot;&gt;interesting question&lt;/a&gt; at StackOverflow asking for help finding solution to what I have already mentioned in the title, with PHP. I gave it a try before reading answers and came up with the following code:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$avg  = // value we are looking for
-$size = count($numbers);
-
-for ($i = 0; $i &amp;lt; $size; $i += 1) {
-    if ($i + 9 &amp;lt; 51) {
-        $val += $numbers[$i];
-        for ($j = $i + 1; $j &amp;lt; 10 + $i; $j += 1) {
-            $val += $numbers[$j];
-        }
-        if ($val / 10 &amp;gt;= $avg) { // hit
-            // do something
-        }
-        $val = 0;
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;That was the first that I could think of. And it worked. The answer given by Dave Chen was much more elegant than my solution (although I think it does something a bit different, but that&amp;#8217;s not the point here):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$number = 10; //numbers in a set
-$max = 0;
-$index = 0;
-
-$size = sizeof($numbers) - $number;
-for ($i = 0; $i &amp;lt; $size; $i++) {
-    $tmp = array_sum(array_slice($numbers, $i, $number)) / $number;
-    if ($tmp &amp;gt; $max) {
-        $max = $tmp;
-        $index = $i;
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I made a simple benchmark with &lt;a href=&quot;http://php.net/manual/en/function.microtime.php&quot;&gt;&lt;code&gt;microtime()&lt;/code&gt;&lt;/a&gt; and found out that my solution (ran 100k times) took about ~12.3 seconds while Dave&amp;#8217;s took only ~7.4 seconds to finish. That makes his code almost twice faster than mine.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Lesson learned: do not stop learning!&lt;/strong&gt;&lt;/p&gt;
 </description>
 	</item>
 	</channel>
