@@ -41,9 +41,7 @@ Using the swiss knife of GIS to import the data:
 
 Recently I stumbled upon a psql `\set` command. Launching several queries on the same table, it might be useful to define it's name with `\set table tablename`:
 
-    \set table 'ilot_2015_054'
-    \set buffer 'buffer_2015_054'
-    \set grid 'grid_2015_054'
+    \set table 'parcels'
     -- prepare separate table for holes (inner rings)
     DROP TABLE IF EXISTS holes;
     CREATE TABLE holes (

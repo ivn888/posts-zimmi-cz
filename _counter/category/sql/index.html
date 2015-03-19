@@ -96,9 +96,7 @@ ogr2ogr -f PostgreSQL PG:"dbname=db user=postgres" grid.shp -lco ENCODING=UTF-8 
 
 <p>Recently I stumbled upon a psql <code>\set</code> command. Launching several queries on the same table, it might be useful to define it&#8217;s name with <code>\set table tablename</code>:</p>
 
-<pre><code>\set table 'ilot_2015_054'
-\set buffer 'buffer_2015_054'
-\set grid 'grid_2015_054'
+<pre><code>\set table 'parcels'
 -- prepare separate table for holes (inner rings)
 DROP TABLE IF EXISTS holes;
 CREATE TABLE holes (

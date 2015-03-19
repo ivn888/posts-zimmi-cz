@@ -3,8 +3,8 @@
 <channel>
 	<title>Michal Zimmermann</title>
 	<link>http://zimmi.cz/posts</link>
-	<lastBuildDate>Thu, 19 Mar 2015 20:36:11 +0100</lastBuildDate>
-	<pubDate>Thu, 19 Mar 2015 20:36:11 +0100</pubDate>
+	<lastBuildDate>Thu, 19 Mar 2015 21:54:11 +0100</lastBuildDate>
+	<pubDate>Thu, 19 Mar 2015 21:54:11 +0100</pubDate>
 	<description>Pieces of knowledge from the world of GIS.</description>
 		<item>
 		<title>PostGIS: Buffers, Intersections, Differences And Collections</title>
@@ -54,9 +54,7 @@ ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; grid.shp -lco ENCOD
 
 &lt;p&gt;Recently I stumbled upon a psql &lt;code&gt;\set&lt;/code&gt; command. Launching several queries on the same table, it might be useful to define it&amp;#8217;s name with &lt;code&gt;\set table tablename&lt;/code&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;\set table &#039;ilot_2015_054&#039;
-\set buffer &#039;buffer_2015_054&#039;
-\set grid &#039;grid_2015_054&#039;
+&lt;pre&gt;&lt;code&gt;\set table &#039;parcels&#039;
 -- prepare separate table for holes (inner rings)
 DROP TABLE IF EXISTS holes;
 CREATE TABLE holes (
