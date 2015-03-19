@@ -150,7 +150,7 @@ Collect the geometries in every cell, simplify them a little, snap them to 3 dec
     WHERE ST_Intersects(a.wkb_geometry, g.wkb_geometry)
     GROUP BY g.ogc_fid;
 
-After running the query it is reasonable to check the results. I'm only interested in polygonal geometries, `ST_GeometryType()` would tell me of any other geometry type. Invalid geometries are not allowd.
+After running the query it is reasonable to check the results. I'm only interested in polygonal geometries, `ST_GeometryType()` would tell me of any other geometry type. Invalid geometries are not allowed.
 
     SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
     SELECT COUNT(1) FROM uni WHERE NOT ST_IsValid(wkb_geometry);
