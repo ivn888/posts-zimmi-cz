@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Michal Zimmermann">
+  <meta name="description" content="Pieces of knowledge from the world of GIS." />
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Michal Zimmermann  &mdash; PostGIS: Buffers, Intersections, Differences And Collections </title>
+  <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
+  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
+  <script src="/posts/js/highlight.pack.js" defer></script>
+  <script>
+    window.onload = function() {
+      var pre = document.getElementsByTagName('pre');
+      for (var i = 0; i < pre.length; i += 1) {
+        hljs.highlightBlock(pre[i].firstChild);
+      }
+    }
+  </script>
+</head>
+<body>
+    <div id="main" class="container">
+        <div class="row">
+            <header role="banner">
+                <hgroup>
+                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <strong>Pieces of knowledge from the world of GIS.</strong>
+                </hgroup>
+            </header>
+            <nav role="navigation">
+                <ul class="nav nav-pills main-navigation">
+                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts/categories/">Categories</a></li>
+                    <li><a href="/posts/tags/">Tags</a></li>
+                    <li><a href="/posts/feed.xml">RSS</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="shadow">
+            <div class="row white">
+                <div id="content">
+                    <div class="blog-index">
+                                                                        <h1>PostGIS: Buffers, Intersections, Differences And Collections</h1>
+                          <small>Written on March 19, 2015                                                     and marked as
+                                                    <a href="/posts/tag/postgis/">postgis</a>,                                                     <a href="/posts/tag/postgresql/">postgresql</a>                                                                                                        | <a href="/posts/category/sql/">SQL</a>
+                                                    </small>
+                                                  <p>Being part of <a href="http://clevermaps.cz">CleverMaps</a> means doing lot of nasty work with PostGIS. Recently, I&#8217;ve been given a following task that needed to be done for a really big project dealing with agricultural parcels:</p>
+
+<ul>
+<li>given a polygonal shapefile of agricultural parcels, create 20m wide buffers around all of them,</li>
+<li>extract holes from these parcels,</li>
+<li>clip buffers so they don&#8217;t overlap with other parcels,</li>
+<li>get rid of overlaps between nearby parcels (e.g. dissolve them),</li>
+<li>create output combined from holes and buffers,</li>
+<li>the output must not contain features having more than ~1,000,000 vertices</li>
+</ul>
+
+<p>This process is going to be run ~20&times; on layers with ~40,000-70,000 polygons.</p>
+
+<h2>Input data</h2>
+
+<ul>
+<li>polygonal layer of agricultural parcels</li>
+<li>rectangular grid (7.5 &times; 7.5 km) for cutting the output</li>
+</ul>
+
+<h2>First try</h2>
+
+<p>My initial effort was to union all the buffers and then clip them with a rectangular grid. Long story short: <strong>Don&#8217;t do that. Never. Ever. I mean it.</strong></p>
+
+<p>It works fine until you end up with one huge multipolygon having like ~2,000,000 vertices. But then you need to split it somehow so you meet the 1,000,000 limit rule (see list above). Spatial index doesn&#8217;t help you much in such cases, so that really huge polygon is being cut by every rectangle it intersects and it takes hours and hours. It&#8217;s just a no go.</p>
+
+<h2>The other way round</h2>
+
+<p>Let&#8217;s put it the other way round. First, split buffers by rectangular grid, doing union on each cell separately.</p>
+
+<h3>Import</h3>
+
+<p>Using the swiss knife of GIS to import the data:</p>
+
+<pre><code>export SHAPE_ENCODING="ISO-8859-1"
+ogr2ogr -f PostgreSQL PG:"dbname=db user=postgres" parcels.shp -lco ENCODING=UTF-8 -t_srs "EPSG:2154"
+ogr2ogr -f PostgreSQL PG:"dbname=db user=postgres" grid.shp -lco ENCODING=UTF-8 -t_srs "EPSG:2154"
+</code></pre>
+
+<h3>PostGIS processing</h3>
+
+<p>Recently I stumbled upon a psql <code>\set</code> command. Launching several queries on the same table, it might be useful to define it&#8217;s name with <code>\set table tablename</code>:</p>
+
+<pre><code>\set table 'ilot_2015_054'
+\set buffer 'buffer_2015_054'
+\set grid 'grid_2015_054'
+-- prepare separate table for holes (inner rings)
+DROP TABLE IF EXISTS holes;
+CREATE TABLE holes (
+id serial,
+ilot_id varchar,
+wkb_geometry geometry('Polygon', 2154),
+path integer);
+</code></pre>
+
+<p>I found the following query an easy way to get all the rings from geometries having more than one ring:</p>
+
+<pre><code>INSERT INTO holes (ilot_id, wkb_geometry, path) (
+SELECT id,
+    (ST_DumpRings(wkb_geometry)).geom::geometry('Polygon', 2154) as wkb_geometry,
+    unnest((ST_DumpRings(wkb_geometry)).path) as path
+FROM :table
+WHERE ST_NRings(wkb_geometry) &gt; 1
+);
+</code></pre>
+
+<p>Here&#8217;s a little trick. Doing some checks I found out that some of the polygons had two rings without having any inner ring, both of them being the same. I guess this comes from some kind of human error. This query thus deletes all rings with <code>path = 0</code> (exterior rings). At the same time, it deals with that <em>invalid</em> polygons by checking their spatial relationship to parcels.</p>
+
+<pre><code>DELETE FROM holes
+    WHERE path = 0
+    OR id IN (
+        SELECT holes.id
+        FROM holes
+        JOIN :table ON
+            ST_Within(
+                ST_Buffer(holes.wkb_geometry,-1),
+                :table.wkb_geometry
+            )
+        AND holes.wkb_geometry &amp;&amp; :table.wkb_geometry
+);
+</code></pre>
+
+<p>To my surprise, it is possible that parcel has a hole with another parcel being in that hole. Argh. Find those and get rid of them.</p>
+
+<pre><code>DROP TABLE IF EXISTS ints;
+CREATE TABLE ints AS
+    SELECT holes.*
+    FROM holes
+    JOIN :table ON ST_Intersects(holes.wkb_geometry, :table.wkb_geometry)
+    AND ST_Relate(holes.wkb_geometry, :table.wkb_geometry, '2********');
+DELETE FROM holes
+WHERE id IN (SELECT id FROM ints);
+</code></pre>
+
+<p>I still need to get the difference between the hole geometry and the parcel that resides inside it - this difference is the actual hole I&#8217;m looking for.</p>
+
+<pre><code>DROP TABLE IF EXISTS diff_ints;
+CREATE TABLE diff_ints AS
+    SELECT
+        ints.id,
+        ST_Difference(
+            ints.wkb_geometry,
+            ST_Collect(:table.wkb_geometry)
+        ) wkb_geometry
+    FROM ints, :table
+    WHERE ST_Within(:table.wkb_geometry, ints.wkb_geometry)
+    GROUP BY ints.wkb_geometry, ints.id;
+</code></pre>
+
+<p>And I&#8217;m done with holes. Get back to buffers.</p>
+
+<pre><code>DROP TABLE IF EXISTS buffer;
+CREATE TABLE buffer AS
+    SELECT id, ST_Buffer(wkb_geometry, 20) wkb_geometry
+    FROM :table;
+CREATE INDEX buffer_gist_idx ON buffer USING gist(wkb_geometry);
+ALTER TABLE buffer ADD PRIMARY KEY(id);
+VACUUM ANALYZE buffer;
+</code></pre>
+
+<p>Combine all the parts together.</p>
+
+<pre><code>DROP TABLE IF EXISTS diff;
+CREATE TABLE diff AS
+    SELECT a.id, ST_Difference(a.wkb_geometry, ST_Union(ST_MakeValid(b.wkb_geometry))) as wkb_geometry
+    FROM buffer a, :table b
+    WHERE ST_Intersects(a.wkb_geometry, b.wkb_geometry)
+    GROUP BY a.id, a.wkb_geometry
+    UNION
+    SELECT id::varchar, wkb_geometry FROM holes
+    UNION
+    SELECT id::varchar, wkb_geometry FROM diff_ints;
+CREATE INDEX diff_gist_idx ON diff USING gist(wkb_geometry);
+VACUUM ANALYZE diff;
+</code></pre>
+
+<p>Collect the geometries in every cell, simplify them a little, snap them to 3 decimal numbers, make them valid and dump them to simple features. This query takes ~300,000 ms which is orders of magnitude faster than my initial attempt.</p>
+
+<pre><code>DROP TABLE IF EXISTS uni;
+CREATE TABLE uni AS
+SELECT
+    g.ogc_fid AS grid_id,
+    (ST_Dump(
+        ST_MakeValid(
+            ST_SnapToGrid(
+                ST_SimplifyPreserveTopology(
+                    ST_CollectionExtract(
+                        ST_Buffer(
+                            ST_Collect(
+                                ST_Intersection(a.wkb_geometry, g.wkb_geometry)
+                            )
+                        , 0)
+                    , 3)
+                , 0.1)
+            , 0.001)
+        )
+    )).geom as wkb_geometry
+FROM diff a, grid g
+WHERE ST_Intersects(a.wkb_geometry, g.wkb_geometry)
+GROUP BY g.ogc_fid;
+</code></pre>
+
+<p>After running the query it is reasonable to check the results. I&#8217;m only interested in polygonal geometries, <code>ST_GeometryType()</code> would tell me of any other geometry type. Invalid geometries are not allowd.</p>
+
+<pre><code>SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
+SELECT COUNT(1) FROM uni WHERE NOT ST_IsValid(wkb_geometry);
+</code></pre>
+
+<p>Add primary key on serial column as a last SQL step.</p>
+
+<pre><code>ALTER TABLE uni ADD COLUMN id serial;
+ALTER TABLE uni ADD PRIMARY KEY(id);
+</code></pre>
+
+<h3>Export</h3>
+
+<p>And spit it out as a shapefile.</p>
+
+<pre><code>ogr2ogr -f "ESRI Shapefile" output.shp PG:"dbname=ign user=postgres" uni -s_srs "EPSG:2154" -t_srs "EPSG:2154" -lco ENCODING=UTF-8
+</code></pre>
+
+<h2>Lesson learned</h2>
+
+<ul>
+<li>More of little seems to be faster than less of bigger.</li>
+<li>Never stop learning and trying different approaches.</li>
+<li>Although using <code>CTE</code> might be tempting, creating separate tables for separate steps of the whole process is much more comfortable for debugging.</li>
+</ul>
+
+                                          </div>
+                </div>
+            </div>
+            <div class="row white">
+                <footer role="contentinfo">
+                          <a class="pagination" href="/posts/2015/wms-download-for-future-offline-use/">&laquo; WMS Download For Future Offline Use</a>
+  
+                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43432739-2', 'auto');
+      ga('send', 'pageview');
+    </script>
+</body>
+</html>
