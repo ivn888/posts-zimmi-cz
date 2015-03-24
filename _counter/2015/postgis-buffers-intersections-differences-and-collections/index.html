@@ -206,7 +206,7 @@ WHERE ST_Intersects(a.wkb_geometry, g.wkb_geometry)
 GROUP BY g.ogc_fid;
 </code></pre>
 
-<p>After running the query it is reasonable to check the results. I&#8217;m only interested in polygonal geometries, <code>ST_GeometryType()</code> would tell me of any other geometry type. Invalid geometries are not allowd.</p>
+<p>After running the query it is reasonable to check the results. I&#8217;m only interested in polygonal geometries, <code>ST_GeometryType()</code> would tell me of any other geometry type. Invalid geometries are not allowed.</p>
 
 <pre><code>SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
 SELECT COUNT(1) FROM uni WHERE NOT ST_IsValid(wkb_geometry);
@@ -240,6 +240,7 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
                 <footer role="contentinfo">
                           <a class="pagination" href="/posts/2015/wms-download-for-future-offline-use/">&laquo; WMS Download For Future Offline Use</a>
   
+      <a class="pagination" href="/posts/2015/postgis-rectangular-grid-creation/">Postgis Rectangular Grid Creation &raquo;</a>
                       <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
                 </footer>
             </div>
