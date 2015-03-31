@@ -25,16 +25,16 @@
         <div class="row">
             <header role="banner">
                 <hgroup>
-                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <h1><a href="/posts//posts/">Michal Zimmermann</a></h1>
                     <strong>Pieces of knowledge from the world of GIS.</strong>
                 </hgroup>
             </header>
             <nav role="navigation">
                 <ul class="nav nav-pills main-navigation">
-                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts//posts/">Home</a></li>
                     <li><a href="/posts/categories/">Categories</a></li>
                     <li><a href="/posts/tags/">Tags</a></li>
-                    <li><a href="/posts/feed.xml">RSS</a></li>
+                    <li><a href="/posts/feed.xml/">RSS</a></li>
                 </ul>
             </nav>
         </div>
@@ -43,13 +43,11 @@
                 <div id="content">
                     <div class="blog-index">
                                                                         <h1>WMS Download For Future Offline Use</h1>
-                          <small>Written on March 15, 2015                                                     and marked as
+                          <small>Written on Mar 15, 2015                                                     and marked as
                                                     <a href="/posts/tag/ogc/">ogc</a>,                                                     <a href="/posts/tag/python/">python</a>,                                                     <a href="/posts/tag/wms/">wms</a>                                                                                                        | <a href="/posts/category/automation/">automation</a>
                                                     </small>
                                                   <p>Using WMS in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with WMS layers.</p>
-
 <p><a href="https://geopython.github.io/OWSLib/">OWSLib</a> is a great tool to help you get images from WMS server. Code and some comments follow.</p>
-
 <pre><code>import math
 import os
 import random
@@ -124,9 +122,7 @@ for i in xrange(0, rows):
         print str(counter), ' out of ', str(rows * cols)
         time.sleep(SLEEP)
 </code></pre>
-
 <p>First, always make sure <strong>you are not violating terms of use</strong> defined by service provider. If you are not, here are the necessary steps:</p>
-
 <ol>
 <li>Define your area of interest with bottom left and top right coordinates.</li>
 <li>Calculate width of single image both in pixels and units of CRS to get the rightsized image. Note that there may be image size restrictions defined by provider (2048 &times; 2048 px is usually the biggest you can get).</li>
@@ -134,19 +130,14 @@ for i in xrange(0, rows):
 <li>Be nice! Don&#8217;t overload the service. I use <code>time.sleep()</code> for this.</li>
 <li>Profit.</li>
 </ol>
-
 <p>The trouble with WMS is that you can&#8217;t set an arbitrary scale you want to obtain images in (e.g. 1:1 000). It&#8217;s fairly easy to get all values needed to imitate this behavior though.</p>
-
 <p>Using <a href="http://qgis.org">QGIS</a> you can:</p>
-
 <ol>
 <li>Get bounding box of area you&#8217;re interested in.</li>
 <li>Save current view as an image (together with the world file!) and use it as a specimen for your own world files.</li>
 <li>Derive image width (CRS, pixels) from the saved image, thus getting the same zoom level you were using in QGIS.</li>
 </ol>
-
 <p>Code given is not bulletproof, it will fail on any network error. However, if you restart it after such a crash, it checks for existing files and starts with the first missing, so you don&#8217;t have to download all the tiles again.</p>
-
                                           </div>
                 </div>
             </div>
@@ -155,7 +146,7 @@ for i in xrange(0, rows):
                           <a class="pagination" href="/posts/2015/hosting-website-on-openshift/">&laquo; Hosting Website On Openshift</a>
   
       <a class="pagination" href="/posts/2015/postgis-buffers-intersections-differences-and-collections/">PostGIS: Buffers, Intersections, Differences And Collections &raquo;</a>
-                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
+                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a5-146-gdfe8882</em>.</p>
                 </footer>
             </div>
         </div>

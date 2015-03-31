@@ -25,16 +25,16 @@
         <div class="row">
             <header role="banner">
                 <hgroup>
-                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <h1><a href="/posts//posts/">Michal Zimmermann</a></h1>
                     <strong>Pieces of knowledge from the world of GIS.</strong>
                 </hgroup>
             </header>
             <nav role="navigation">
                 <ul class="nav nav-pills main-navigation">
-                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts//posts/">Home</a></li>
                     <li><a href="/posts/categories/">Categories</a></li>
                     <li><a href="/posts/tags/">Tags</a></li>
-                    <li><a href="/posts/feed.xml">RSS</a></li>
+                    <li><a href="/posts/feed.xml/">RSS</a></li>
                 </ul>
             </nav>
         </div>
@@ -43,54 +43,37 @@
                 <div id="content">
                     <div class="blog-index">
                                                                         <h1>PostGIS Case Study: VozejkMap Open Data (Part I)</h1>
-                          <small>Written on December 2, 2014                                                     and marked as
-                                                    <a href="/posts/tag/postgresql/">postgresql</a>,                                                     <a href="/posts/tag/postgis/">postgis</a>                                                                                                        | <a href="/posts/category/sql/">SQL</a>
+                          <small>Written on Dec 02, 2014                                                     and marked as
+                                                    <a href="/posts/tag/postgresql/">postgresql</a>,                                                     <a href="/posts/tag/postgis/">postgis</a>                                                                                                        | <a href="/posts/category/SQL/">SQL</a>
                                                     </small>
                                                   <p><a href="http://www.vozejkmap.cz">VozejkMap.cz</a> is a Czech <strong>open data</strong> iniatitive that collects data about wheelchair accessible places, e.g. pubs, toilets, cafes etc. As part of being open, they offer a <a href="http://www.vozejkmap.cz/opendata/">JSON data download</a>. JSON is a great text format, not so great spatial format (leaving GeoJSON aside) though. Anyway, nothing that <a href="http://posts.zimmi.cz/tag/postgis/">PostGIS</a> wouldn&#8217;t be able to take care of.</p>
-
 <h3>Let&#8217;s get some data</h3>
-
 <p>Using curl or wget, let&#8217;s download the JSON file:</p>
-
 <pre><code>wget -O /tmp/locations.json http://www.vozejkmap.cz/opendata/locations.json
 </code></pre>
-
 <p>We need to split them into rows to load each point into one row:</p>
-
 <pre><code>sed -i 's/\},{/\n},{/g' /tmp/locations.json
 </code></pre>
-
 <p>If you peep into the file, you&#8217;ll see lots of unicode characters we don&#8217;t want to have in our pretty little table. Here&#8217;s how we get rid of them:</p>
-
 <pre><code>echo -en "$(cat /tmp/locations.json)"
 </code></pre>
-
 <h3>Let&#8217;s load the data</h3>
-
 <p>Let&#8217;s just be nice and leave the public schema clean.</p>
-
 <pre><code>CREATE SCHEMA vozejkmap;
 SET search_path=vozejkmap, public;
 </code></pre>
-
 <p>Load the data:</p>
-
 <pre><code>CREATE TABLE vozejkmap_raw(id SERIAL PRIMARY KEY, raw text);
 COPY vozejkmap_raw(raw) FROM '/tmp/locations.json' DELIMITERS '#' ESCAPE '\' CSV;
 </code></pre>
-
 <p>A few notes:</p>
-
 <ol>
 <li>I&#8217;m using <code>/tmp</code> folder to avoid any permission-denied issues when opening the file from <code>psql</code>.</li>
 <li>By setting <code>DELIMITERS</code> to <code>#</code> we tell PostgreSQL to load whole data into one column, because it is safe to assume there is no such character in our data.</li>
 <li><code>ESCAPE</code> needs to be set because there is one trailing quote in the dataset.</li>
 </ol>
-
 <h3>Let&#8217;s get dirty with spatial data</h3>
-
 <p>Great, now what? We loaded all the data into one column. That is not very useful, is it? How about splitting them into separate columns with this query? Shall we call it a <code>split_part</code> hell?</p>
-
 <pre><code>CREATE TABLE vozejkmap AS
 SELECT
     id,
@@ -177,9 +160,7 @@ SELECT
 
 FROM vozejkmap_raw;
 </code></pre>
-
 <p>It just splits the JSON data and creates table out of it according to the <a href="http://www.vozejkmap.cz/opendata/">VozejkMap.cz data specification</a>. Before going on we should create a table with location types to join their numeric codes to real names:</p>
-
 <pre><code>CREATE TABLE location_type (
     id integer PRIMARY KEY,
     description varchar(255)
@@ -200,9 +181,7 @@ INSERT INTO location_type VALUES(12, 'Banka, bankomat');
 INSERT INTO location_type VALUES(13, 'Parkoviště');
 INSERT INTO location_type VALUES(14, 'Prodejní a servisní místa Škoda Auto');
 </code></pre>
-
 <p>Let&#8217;s build some geometry column, constraints and indexes. And don&#8217;t forget to get rid of all the mess (the <code>vozejkmap_raw</code> table).</p>
-
 <pre><code>DROP TABLE vozejkmap_raw;
 ALTER TABLE vozejkmap ADD PRIMARY KEY(id);
 -- 4326 geometry is not very useful for measurements, I might get to that next time
@@ -211,11 +190,8 @@ ALTER TABLE vozejkmap ADD CONSTRAINT loctype_fk FOREIGN KEY(location_type); REFE
 
 UPDATE vozejkmap SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326);
 </code></pre>
-
 <p><strong>And here we are, ready to use our spatial data!</strong></p>
-
 <p>Feel free to <a href="https://github.com/zimmicz/vozejkmap-to-postgis">grab the code</a> at GitHub.</p>
-
                                           </div>
                 </div>
             </div>
@@ -224,7 +200,7 @@ UPDATE vozejkmap SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326);
                           <a class="pagination" href="/posts/2014/postgis-spatial-indexing-with-st-intersects/">&laquo; PostGIS Spatial Indexing With ST_Intersects</a>
   
       <a class="pagination" href="/posts/2015/leaflet-with-custom-crs-epsg-5514/">Leaflet With Custom CRS (EPSG:5514) &raquo;</a>
-                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
+                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a5-146-gdfe8882</em>.</p>
                 </footer>
             </div>
         </div>

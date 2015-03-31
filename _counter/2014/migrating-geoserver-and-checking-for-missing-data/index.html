@@ -25,16 +25,16 @@
         <div class="row">
             <header role="banner">
                 <hgroup>
-                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <h1><a href="/posts//posts/">Michal Zimmermann</a></h1>
                     <strong>Pieces of knowledge from the world of GIS.</strong>
                 </hgroup>
             </header>
             <nav role="navigation">
                 <ul class="nav nav-pills main-navigation">
-                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts//posts/">Home</a></li>
                     <li><a href="/posts/categories/">Categories</a></li>
                     <li><a href="/posts/tags/">Tags</a></li>
-                    <li><a href="/posts/feed.xml">RSS</a></li>
+                    <li><a href="/posts/feed.xml/">RSS</a></li>
                 </ul>
             </nav>
         </div>
@@ -43,13 +43,11 @@
                 <div id="content">
                     <div class="blog-index">
                                                                         <h1>Migrating Geoserver And Checking For Missing Data</h1>
-                          <small>Written on October 29, 2014                                                     and marked as
+                          <small>Written on Oct 29, 2014                                                     and marked as
                                                     <a href="/posts/tag/geoserver/">geoserver</a>,                                                     <a href="/posts/tag/python/">python</a>                                                                                                        | <a href="/posts/category/development/">development</a>
                                                     </small>
                                                   <p>I&#8217;ve upgraded a handful of Geoserver installations and it has never been flawless. If you&#8217;re lucky you end up with just <em>some</em> layers missing, if you&#8217;re not, you&#8217;ll miss a bunch of them (together with layergroups, some stores, workspaces might screw up etc.).</p>
-
 <p>But how do you check for missing data before switching to the newer version? Thanks to the <a href="http://docs.geoserver.org/stable/en/user/rest/api/index.html">REST API implemented within Geoserver</a>, it&#8217;s rather easy.</p>
-
 <pre><code>import requests
 from bs4 import BeautifulSoup
 from requests.auth import HTTPBasicAuth
@@ -67,15 +65,10 @@ with open('list.txt', 'a') as f:
         f.write(href)
         f.write('\n')
 </code></pre>
-
 <p>We needed to migrate ~ 17,000 layers last week, and yes, we could have just shut the door and spend couple of nights checking one after another, if we were the dumbest GIS company ever.</p>
-
 <p>As I wanted to make it a bit easier I wrote the simple Python script (see above) that just authenticates against Geoserver and downloads the list of layers. I actually had to do that twice - both old and new instance. A <a href="https://www.diffchecker.com/">simple file comparison</a> followed and I got a list of missing layers in less than two minutes.</p>
-
 <p>If you do the same to workspaces, stores and layergroups, your chances of not losing some data after the switch are pretty high.</p>
-
 <p>I guess it&#8217;s reasonable to check your maps by hand as well, but this gives you the picture of the current state of your data real quick.</p>
-
                                           </div>
                 </div>
             </div>
@@ -84,7 +77,7 @@ with open('list.txt', 'a') as f:
                           <a class="pagination" href="/posts/2014/ogr2ogr-unix-x-windows/">&laquo; ogr2ogr UNIX x Windows</a>
   
       <a class="pagination" href="/posts/2014/bash-prepend-to-filename/">Bash: Prepend To Filename &raquo;</a>
-                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
+                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a5-146-gdfe8882</em>.</p>
                 </footer>
             </div>
         </div>

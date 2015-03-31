@@ -25,16 +25,16 @@
         <div class="row">
             <header role="banner">
                 <hgroup>
-                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <h1><a href="/posts//posts/">Michal Zimmermann</a></h1>
                     <strong>Pieces of knowledge from the world of GIS.</strong>
                 </hgroup>
             </header>
             <nav role="navigation">
                 <ul class="nav nav-pills main-navigation">
-                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts//posts/">Home</a></li>
                     <li><a href="/posts/categories/">Categories</a></li>
                     <li><a href="/posts/tags/">Tags</a></li>
-                    <li><a href="/posts/feed.xml">RSS</a></li>
+                    <li><a href="/posts/feed.xml/">RSS</a></li>
                 </ul>
             </nav>
         </div>
@@ -47,14 +47,13 @@
 		<article>
 	<header>
 	<h2><a href="/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/">Notify When Average of 10 Subsequent Numbers Is Bigger Than Given Value</a></h2>
-	<small>Written on September 21, 2014
+	<small>Written on Sep 21, 2014
 		and marked as
 		<a href="/posts/tag/php/">php</a>				| <a href="/posts/category/development/">development</a>
 		</small>
 	</header>
 	<section>
 	<p>I found an <a href="http://stackoverflow.com/questions/25952380/php-find-a-maximum-average-for-10-subsequent-numbers-in-a-list-of-50-random-numb">interesting question</a> at StackOverflow asking for help finding solution to what I have already mentioned in the title, with PHP. I gave it a try before reading answers and came up with the following code:</p>
-
 <pre><code>$avg  = // value we are looking for
 $size = count($numbers);
 
@@ -71,9 +70,7 @@ for ($i = 0; $i &lt; $size; $i += 1) {
     }
 }
 </code></pre>
-
 <p>That was the first that I could think of. And it worked. The answer given by Dave Chen was much more elegant than my solution (although I think it does something a bit different, but that&#8217;s not the point here):</p>
-
 <pre><code>$number = 10; //numbers in a set
 $max = 0;
 $index = 0;
@@ -87,21 +84,17 @@ for ($i = 0; $i &lt; $size; $i++) {
     }
 }
 </code></pre>
-
 <p>I made a simple benchmark with <a href="http://php.net/manual/en/function.microtime.php"><code>microtime()</code></a> and found out that my solution (ran 100k times) took about ~12.3 seconds while Dave&#8217;s took only ~7.4 seconds to finish. That makes his code almost twice faster than mine.</p>
-
 <p><strong>Lesson learned: do not stop learning!</strong></p>
-
 	</section>
 </article></section>
-
                                           </div>
                 </div>
             </div>
             <div class="row white">
                 <footer role="contentinfo">
                                           
-                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
+                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a5-146-gdfe8882</em>.</p>
                 </footer>
             </div>
         </div>

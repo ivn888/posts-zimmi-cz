@@ -7,7 +7,7 @@
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> {{ site.title }} {% if category %} &mdash; Category: {{ category }} {% elseif tag %} &mdash; Tag: {{ tag }} {% elseif page.title %} &mdash; {{ page.title }} {% else %} &mdash; {{site.description}} {% endif %}</title>
+  <title> {{ site.title }} {% if category %} &mdash; Category: {{ category }} {% elif tag %} &mdash; Tag: {{ tag }} {% elif page.title %} &mdash; {{ page.title }} {% else %} &mdash; {{site.description}} {% endif %}</title>
   <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
   <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
   <script src="/posts/js/highlight.pack.js" defer></script>
@@ -45,9 +45,9 @@
                       {% block main %}
                         {% if category %}
                           <h1>Posts in category {{ category }}</h1>
-                        {% elseif tag %}
+                        {% elif tag %}
                           <h1>Posts tagged with {{ tag }}</h1>
-                        {% elseif page.title %}
+                        {% elif page.title %}
                           <h1>{{page.title}}</h1>
                           <small>{% if page.title != 'Categories' and page.title != 'Tags' %}Written on {{ page.date }} {% endif %}
                           {% if page.tags %}

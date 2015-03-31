@@ -25,16 +25,16 @@
         <div class="row">
             <header role="banner">
                 <hgroup>
-                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <h1><a href="/posts//posts/">Michal Zimmermann</a></h1>
                     <strong>Pieces of knowledge from the world of GIS.</strong>
                 </hgroup>
             </header>
             <nav role="navigation">
                 <ul class="nav nav-pills main-navigation">
-                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts//posts/">Home</a></li>
                     <li><a href="/posts/categories/">Categories</a></li>
                     <li><a href="/posts/tags/">Tags</a></li>
-                    <li><a href="/posts/feed.xml">RSS</a></li>
+                    <li><a href="/posts/feed.xml/">RSS</a></li>
                 </ul>
             </nav>
         </div>
@@ -47,28 +47,23 @@
 		<article>
 	<header>
 	<h2><a href="/posts/2014/blogging-on-docker-piecrust-to-the-rescue/">Blogging On Docker: Piecrust To The Rescue</a></h2>
-	<small>Written on September 11, 2014
+	<small>Written on Sep 11, 2014
 		and marked as
 		<a href="/posts/tag/docker/">docker</a>, 		<a href="/posts/tag/linux/">linux</a>				| <a href="/posts/category/development/">development</a>
 		</small>
 	</header>
 	<section>
 	<p>I love blogging. I hate blogging systems. I hate content management systems. I just want to blog. That&#8217;s what <a href="http://bolt80.com/piecrust/">PieCrust</a> is all about - it lets you blog.</p>
-
 <p>It is powerful static website generator perfect for my needs (and for yours as well?). Blogging with PieCrust is really a piece of cake:</p>
-
 <ol>
 <li>prepare post</li>
 <li>serve site</li>
 <li>bake site</li>
 <li>send it off to the public</li>
 </ol>
-
 <p>I love having clean OS. That&#8217;s what <a href="http://docker.com">Docker</a> is all about - for me. Running PieCrust on Docker is really easy, it does not clutter your PC and it just works.</p>
-
 <p>If you ever want to use PieCrust on Docker, why don&#8217;t you start with this code?
     FROM centos:centos6</p>
-
 <pre><code>RUN rpm -Uvh http://mirror.webtatic.com/yum/el6/latest.rpm
 RUN rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 RUN rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
@@ -82,23 +77,18 @@ RUN mv piecrust.phar /usr/bin/chef
 
 CMD ["/bin/bash"]
 </code></pre>
-
 <p>Running <code>sudo docker build --tag=piecrust .</code> will result in having docker container ready to run. Just run <code>sudo docker run -it -p 8080:8080 -v /host_piecrust_path/:/container_path piecrust /bin/bash</code> in terminal. While in container terminal, run <code>chef serve -n -p 8080 -a 0.0.0.0</code> and visit <a href="http://localhost:8080">http://localhost:8080</a>. You should see your PieCrust site up and running.</p>
-
 <p>The last command tells chef to serve your site on port 8080 (which should be free unless you&#8217;re running Tomcat or something like that) and make it listen on every available network interface. If you used 127.0.0.1 instead, you would never reach your site from outside the container.</p>
-
 <p>See? Easy.</p>
-
 	</section>
 </article></section>
-
                                           </div>
                 </div>
             </div>
             <div class="row white">
                 <footer role="contentinfo">
                                           
-                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 1.2.0</em>.</p>
+                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a5-146-gdfe8882</em>.</p>
                 </footer>
             </div>
         </div>
