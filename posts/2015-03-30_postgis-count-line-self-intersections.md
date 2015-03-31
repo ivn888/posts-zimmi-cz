@@ -52,7 +52,7 @@ The query result on my `test` table:
         <td>1</td>
     </tr>
     <tr>
-        <td>1</td>
+        <td>2</td>
         <td>2</td>
     </tr>
 </table>
