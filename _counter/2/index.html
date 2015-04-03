@@ -25,13 +25,13 @@
         <div class="row">
             <header role="banner">
                 <hgroup>
-                    <h1><a href="/posts//posts/">Michal Zimmermann</a></h1>
+                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
                     <strong>Pieces of knowledge from the world of GIS.</strong>
                 </hgroup>
             </header>
             <nav role="navigation">
                 <ul class="nav nav-pills main-navigation">
-                    <li><a href="/posts//posts/">Home</a></li>
+                    <li><a href="/posts/">Home</a></li>
                     <li><a href="/posts/categories/">Categories</a></li>
                     <li><a href="/posts/tags/">Tags</a></li>
                     <li><a href="/posts/feed.xml/">RSS</a></li>
@@ -44,6 +44,59 @@
                     <div class="blog-index">
                                                                         	<section>
 			<article>
+	<header>
+	<h2><a href="/posts/2014/postgis-spatial-indexing-with-st-intersects/">PostGIS Spatial Indexing With ST_Intersects</a></h2>
+	<small>Written on Nov 23, 2014
+		and marked as
+		<a href="/posts/tag/postgis/">postgis</a>				| <a href="/posts/category/SQL/">SQL</a>
+		</small>
+	</header>
+	<section>
+	<p><a href="http://postgis.net/docs/ST_Intersects.html">PostGIS docs</a> clearly states that:
+    &gt; This function call will automatically include a bounding box comparison that will make use of any indexes that are available on the geometries.</p>
+<p>That means (or at least I think so) that you shouldn&#8217;t bother with using <a href="http://postgis.net/docs/reference.html#Operators">operators</a> before calling this function.</p>
+<p><a href="http://slides.com/michalzimmermann">I was preparing</a> my second lecture on PostGIS and I was experimenting a bit and came up with an interesting thing on this matter:</p>
+<p>Let&#8217;s have two SQL relations, <code>roads</code> and <code>regions</code>. I would like to retrieve every road that intersects a certain region. Spatial indexes were built beforehand on both tables.</p>
+<p>First try:</p>
+<pre><code>EXPLAIN ANALYZE SELECT roads.* FROM roads
+JOIN regions ON ST_Intersects(roads.geom, regions.geom)
+WHERE regions."NAZEV" = 'Jihomoravský';`
+</code></pre>
+<p>And here comes the result:</p>
+<pre><code>Nested Loop  (cost=4.85..324.26 rows=249 width=214) (actual time=45.102..5101.472 rows=74253 loops=1)
+-&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.015..0.018 rows=1 loops=1)
+     Filter: (("NAZEV")::text = 'Jihomoravský'::text)
+     Rows Removed by Filter: 13
+-&gt;  Bitmap Heap Scan on roads  (cost=4.85..311.38 rows=25 width=214) (actual time=45.079..4931.495 rows=74253 loops=1)
+     Recheck Cond: (geom &amp;&amp; regions.geom)
+     Rows Removed by Index Recheck: 154841
+     Filter: _st_intersects(geom, regions.geom)
+     Rows Removed by Filter: 71212
+     -&gt;  Bitmap Index Scan on roads_idx  (cost=0.00..4.85 rows=75 width=0) (actual time=40.142..40.142 rows=145465 loops=1)
+           Index Cond: (geom &amp;&amp; regions.geom)
+Total runtime: 5181.459 ms
+</code></pre>
+<p>I was pretty satisfied with the result, I kept digging deeper though.</p>
+<p>Second try:</p>
+<pre><code>EXPLAIN ANALYZE SELECT roads.* FROM roads
+JOIN regions ON roads.geom &amp;&amp; regions.geom
+WHERE regions."NAZEV" = 'Jihomoravský' AND ST_Intersects(roads.geom, regions.geom);
+</code></pre>
+<p>And the result:</p>
+<pre><code>Nested Loop  (cost=0.29..21.19 rows=1 width=214) (actual time=3.041..3850.302 rows=74253 loops=1)
+-&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.021..0.024 rows=1 loops=1)
+     Filter: (("NAZEV")::text = 'Jihomoravský'::text)
+     Rows Removed by Filter: 13
+-&gt;  Index Scan using roads_idx on roads  (cost=0.29..8.55 rows=1 width=214) (actual time=2.938..3681.432 rows=74253 loops=1)
+     Index Cond: ((geom &amp;&amp; regions.geom) AND (geom &amp;&amp; regions.geom))
+     Filter: _st_intersects(geom, regions.geom)
+     Rows Removed by Filter: 71212
+Total runtime: 3930.270 ms
+</code></pre>
+<p>Now there&#8217;s a significant difference between total runtimes of both queries and - more important - also a difference between their query plans. The latter is like <strong>20 % faster</strong>.</p>
+<p>I&#8217;m puzzled about this behavior and would appreciate any thoughts on this. Reach me at <a href="http://twitter.com/zimmicz">Twitter</a>, <a href="https://www.linkedin.com/pub/michal-zimmermann/29/8/b30">LinkedIn</a> or e-mail (zimmicz[at]gmail.com).</p>
+	</section>
+</article>			<article>
 	<header>
 	<h2><a href="/posts/2014/bash-prepend-to-filename/">Bash: Prepend To Filename</a></h2>
 	<small>Written on Nov 01, 2014
@@ -327,38 +380,6 @@ CMD ["/bin/bash"]
 <li><code>tileMatrixMinY = tileMatrixMaxY - tileSpanY × matrixHeight;</code></li>
 </ul>
 <p><img src="/posts/2014/wmts-few-things-i-want-to-remember/wmts.png" title="WMTS tiling schema" class="img-responsive centered"></p>
-	</section>
-</article>			<article>
-	<header>
-	<h2><a href="/posts/2014/degrees-to-decimal-with-javascript/">Degrees To Decimal With Javascript</a></h2>
-	<small>Written on Sep 09, 2014
-		and marked as
-		<a href="/posts/tag/javascript/">javascript</a>				| <a href="/posts/category/development/">development</a>
-		</small>
-	</header>
-	<section>
-	<p>I have found a nice way to get decimal value from degrees of longitude and latitude recently:</p>
-<pre><code>function format(coords) {
-    var decimal = 0,
-        output  = [],
-        coords  = coords.split('  '); // it might be &lt;br&gt; as well
-
-    for (var i = 0; i &lt; coords.length; i += 1) {
-        var c = coords[i].split(' ');
-
-        for (var j = 0; j &lt; c.length; j += 1) {
-            decimal += c[j].slice(0, -1) / Math.pow(60, j);
-        }
-
-        output.push(parseFloat(decimal).toFixed(5));
-        decimal = 0;
-    }
-
-    prompt('Souřadnice bodu', output.join(', '));
-}
-</code></pre>
-<p>When you call <code>format("DD° MM' SS'  DD° MM' SS'");</code> you&#8217;ll get decimal value in return (or <code>prompt</code> to be accurate). What I like the most about this solution is the usage of Math.pow(). I think it is a neat way to transform the values as you need to divide parts of latitude or longitude by 60<sup>0</sup>, 60<sup>1</sup> and 60<sup>2</sup> respectively.</p>
-<p>There is definitely a googol of different solutions to this task, I just liked the simplicity of this one.</p>
 	</section>
 </article>		</section>
 
