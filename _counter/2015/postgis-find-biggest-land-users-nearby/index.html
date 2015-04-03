@@ -8,9 +8,9 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title> Michal Zimmermann  &mdash; PostGIS: Finding Biggest Land Users Nearby </title>
-  <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
+  <link rel="stylesheet" type="text/css" href="/posts//css/style.min.css" />
   <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
-  <script src="/posts/js/highlight.pack.js" defer></script>
+  <script src="/posts//js/highlight.pack.js" defer></script>
   <script>
     window.onload = function() {
       var pre = document.getElementsByTagName('pre');
@@ -48,7 +48,7 @@
                                                     </small>
                                                   <p>At <a href="http://clevermaps.cz">CleverMaps</a> we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird challenges.</p>
 <h2>Give me the biggest land users nearby</h2>
-<p><em>Find the biggest land users in surrouding cadastral communities for each cadastral community (~ 13K)</em> being the latest task, here&#8217;s the query I tackled it with:</p>
+<p><em>Find the biggest land users in surrounding cadastral communities for each cadastral community (~ 13K)</em> being the latest task, here&#8217;s the query I tackled it with:</p>
 <pre><code>WITH users_ AS (
     SELECT
         cad_code,
@@ -67,7 +67,7 @@
 ints AS (
     SELECT
         ku.cad_code as community,
-        ku2.cad_code as surrouding,
+        ku2.cad_code as surrounding,
         ku2.cad_name
     FROM cadastral_community ku
     JOIN cadastral_community ku2
@@ -75,8 +75,8 @@ ints AS (
     WHERE ku.cad_code &lt;&gt; ku2.cad_code
 )
 SELECT
-    DISTINCT ON (surrouding, cad_name, u.zipcode, u.city, u.street, u.name)
-    surrouding,
+    DISTINCT ON (surrounding, cad_name, u.zipcode, u.city, u.street, u.name)
+    surrounding,
     cad_name,
     u.zipcode,
     u.city,
@@ -93,10 +93,10 @@ JOIN ints
 <ul>
 <li><code>concat_ws()</code> is a great function for joining values that might be <code>NULL</code>. If such a value is found, it is skipped and the function continues with the next one (if any). Thus, you&#8217;ll never get a string ending with a trailing slash (<code>Street name 55/</code>).</li>
 <li>With <code>users_</code> CTE I get a list of owners having more than 10 hectares of land for each cadastral community. This gives me the inverse result of what I want (if I know the biggest owners in the cadastral community, I know these are the ones that should be listed for surrounding c. communities).</li>
-<li>This <em>putting-it-all-together</em> step is done with <code>ints</code> CTE that outputs the list of surrouding c. communities for each of them.</li>
+<li>This <em>putting-it-all-together</em> step is done with <code>ints</code> CTE that outputs the list of surrounding c. communities for each of them.</li>
 <li><code>DISTINCT ON</code> cleans up the list so the same owners don&#8217;t appear more than once for any given c. community.</li>
 </ul>
-<p>Writing this makes me realize the list should be probably sorted by area so only the occurence with the biggest value is kept for each c. community. Simple <code>ORDER BY</code> should deal with this just fine. Or even more sophisticated, using <code>GROUP BY</code> to output the total acreage in all surrouding c. communities.</p>
+<p>Writing this makes me realize the list should be probably sorted by area so only the occurence with the biggest value is kept for each c. community. Simple <code>ORDER BY</code> should deal with this just fine. Or even more sophisticated, using <code>GROUP BY</code> to output the total acreage in all surrounding c. communities.</p>
                                           </div>
                 </div>
             </div>

@@ -3,8 +3,8 @@
 <channel>
 	<title>Michal Zimmermann</title>
 	<link>http://zimmi.cz/posts</link>
-	<lastBuildDate>Fri, 03 Apr 2015 11:18:40 +0200</lastBuildDate>
-	<pubDate>Fri, 03 Apr 2015 11:18:40 +0200</pubDate>
+	<lastBuildDate>Fri, 03 Apr 2015 16:25:09 +0200</lastBuildDate>
+	<pubDate>Fri, 03 Apr 2015 16:25:09 +0200</pubDate>
 	<description>Pieces of knowledge from the world of GIS.</description>
 		<item>
 		<title>PostGIS: Finding Biggest Land Users Nearby</title>
@@ -13,7 +13,7 @@
 		<guid>http://zimmi.cz/posts/2015/postgis-find-biggest-land-users-nearby/</guid>
 		<description>&lt;p&gt;At &lt;a href=&#34;http://clevermaps.cz&#34;&gt;CleverMaps&lt;/a&gt; we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird challenges.&lt;/p&gt;
 &lt;h2&gt;Give me the biggest land users nearby&lt;/h2&gt;
-&lt;p&gt;&lt;em&gt;Find the biggest land users in surrouding cadastral communities for each cadastral community (~ 13K)&lt;/em&gt; being the latest task, here&amp;#8217;s the query I tackled it with:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Find the biggest land users in surrounding cadastral communities for each cadastral community (~ 13K)&lt;/em&gt; being the latest task, here&amp;#8217;s the query I tackled it with:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;WITH users_ AS (
     SELECT
         cad_code,
@@ -32,7 +32,7 @@
 ints AS (
     SELECT
         ku.cad_code as community,
-        ku2.cad_code as surrouding,
+        ku2.cad_code as surrounding,
         ku2.cad_name
     FROM cadastral_community ku
     JOIN cadastral_community ku2
@@ -40,8 +40,8 @@ ints AS (
     WHERE ku.cad_code &amp;lt;&amp;gt; ku2.cad_code
 )
 SELECT
-    DISTINCT ON (surrouding, cad_name, u.zipcode, u.city, u.street, u.name)
-    surrouding,
+    DISTINCT ON (surrounding, cad_name, u.zipcode, u.city, u.street, u.name)
+    surrounding,
     cad_name,
     u.zipcode,
     u.city,
@@ -58,10 +58,10 @@ JOIN ints
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;concat_ws()&lt;/code&gt; is a great function for joining values that might be &lt;code&gt;NULL&lt;/code&gt;. If such a value is found, it is skipped and the function continues with the next one (if any). Thus, you&amp;#8217;ll never get a string ending with a trailing slash (&lt;code&gt;Street name 55/&lt;/code&gt;).&lt;/li&gt;
 &lt;li&gt;With &lt;code&gt;users_&lt;/code&gt; CTE I get a list of owners having more than 10 hectares of land for each cadastral community. This gives me the inverse result of what I want (if I know the biggest owners in the cadastral community, I know these are the ones that should be listed for surrounding c. communities).&lt;/li&gt;
-&lt;li&gt;This &lt;em&gt;putting-it-all-together&lt;/em&gt; step is done with &lt;code&gt;ints&lt;/code&gt; CTE that outputs the list of surrouding c. communities for each of them.&lt;/li&gt;
+&lt;li&gt;This &lt;em&gt;putting-it-all-together&lt;/em&gt; step is done with &lt;code&gt;ints&lt;/code&gt; CTE that outputs the list of surrounding c. communities for each of them.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;DISTINCT ON&lt;/code&gt; cleans up the list so the same owners don&amp;#8217;t appear more than once for any given c. community.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Writing this makes me realize the list should be probably sorted by area so only the occurence with the biggest value is kept for each c. community. Simple &lt;code&gt;ORDER BY&lt;/code&gt; should deal with this just fine. Or even more sophisticated, using &lt;code&gt;GROUP BY&lt;/code&gt; to output the total acreage in all surrouding c. communities.&lt;/p&gt;</description>
+&lt;p&gt;Writing this makes me realize the list should be probably sorted by area so only the occurence with the biggest value is kept for each c. community. Simple &lt;code&gt;ORDER BY&lt;/code&gt; should deal with this just fine. Or even more sophisticated, using &lt;code&gt;GROUP BY&lt;/code&gt; to output the total acreage in all surrounding c. communities.&lt;/p&gt;</description>
 	</item>
 		<item>
 		<title>PostGIS: Count Line Self-Intersections</title>

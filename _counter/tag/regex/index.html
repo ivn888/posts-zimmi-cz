@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Michal Zimmermann">
+  <meta name="description" content="Pieces of knowledge from the world of GIS." />
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Michal Zimmermann  &mdash; Tag: regex </title>
+  <link rel="stylesheet" type="text/css" href="/posts//css/style.min.css" />
+  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
+  <script src="/posts//js/highlight.pack.js" defer></script>
+  <script>
+    window.onload = function() {
+      var pre = document.getElementsByTagName('pre');
+      for (var i = 0; i < pre.length; i += 1) {
+        hljs.highlightBlock(pre[i].firstChild);
+      }
+    }
+  </script>
+</head>
+<body>
+    <div id="main" class="container">
+        <div class="row">
+            <header role="banner">
+                <hgroup>
+                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <strong>Pieces of knowledge from the world of GIS.</strong>
+                </hgroup>
+            </header>
+            <nav role="navigation">
+                <ul class="nav nav-pills main-navigation">
+                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts/categories/">Categories</a></li>
+                    <li><a href="/posts/tags/">Tags</a></li>
+                    <li><a href="/posts/feed.xml/">RSS</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="shadow">
+            <div class="row white">
+                <div id="content">
+                    <div class="blog-index">
+                                                                        <h1>Posts tagged with regex</h1>
+                                                  <section>
+		<article>
+	<header>
+	<h2><a href="/posts/2015/using-postgresql-to-update-outdated-map-links/">Using PostgreSQL To Update Outdated Map Links</a></h2>
+	<small>Written on Feb 16, 2015
+		and marked as
+		<a href="/posts/tag/postgresql/">postgresql</a>, 		<a href="/posts/tag/regex/">regex</a>				| <a href="/posts/category/SQL/">SQL</a>
+		</small>
+	</header>
+	<section>
+	<p><a href="http://www.edpp.cz/pdb_mapa-povodnoveho-planu-mesta/">We&#8217;ve rolled out</a> completely new map GUI at <a href="http://edpp.cz">edpp.cz</a> built on top of <a href="http://ol3js.org">OpenLayers 3</a>. It looks great and has lots of functions both for BFU and power users. The only pitfall that came with moving away from OpenLayers 2 were remarkable differences in zoom levels between the old map and the new one.</p>
+<p>Each of our maps is defined by our admins (center, zoom level, layers) at the map creation. Lots of links calling different views of map are created as well. They take form of <code>http://edpp.cz/some-map?0=0&amp;1=0...zoom=5</code>. That <code>zoom=&lt;Number&gt;</code> started causing troubles immediately after the map switch. No way my workmates would update them one by one as there were ~4,500 of them. Sounds like a task for little bit of regular expressions and some SQL updates.</p>
+<pre><code>UPDATE table
+    SET column = regexp_replace(column, 'zoom=\d', 'zoom=' || subquery.zoom, 'g')
+    FROM (
+        SELECT regexp_replace(
+            substring(column from 'zoom=\d'),
+            'zoom=(\d)',
+            '\1',
+            'g')::integer + 2 AS zoom, guid
+        FROM table) AS subquery
+    WHERE column ~ 'zoom=\d'
+        AND table.guid = subquery.guid
+</code></pre>
+<p>That&#8217;s what I&#8217;ve come up with. It basically extracts the zoom level from the link, adds number two to its value and writes it back to the string.</p>
+	</section>
+</article>		<article>
+	<header>
+	<h2><a href="/posts/2014/switch-latitude-and-longitude-with-regular-expression/">Switch Latitude And Longitude With Regular Expression</a></h2>
+	<small>Written on Sep 14, 2014
+		and marked as
+		<a href="/posts/tag/sublime/">sublime</a>, 		<a href="/posts/tag/regex/">regex</a>				| <a href="/posts/category/development/">development</a>
+		</small>
+	</header>
+	<section>
+	<p>It happens that you receive a file with longitude and latitude just in the opposite order that you would like to have. It&#8217;s fairly easy to switch those without loading it into Excel or Calc and doing <code>Ctrl + C</code> and <code>Ctrl + V</code> on columns.</p>
+<p>If you have a file with tabular data that looks like this:</p>
+<pre><code> 50.52, 60.15
+ 70.96, 80.1
+-55.23, 62.03
+</code></pre>
+<p>You can use Sublime Text to switch the values:</p>
+<ol>
+<li>Press <code>Ctrl + H</code></li>
+<li>Copy <code>(\-?\d+\.?\d+),?[\t ]*(\-?\d+\.?\d+)$</code> to <em>Find What</em> input</li>
+<li>Copy <code>$2,$1</code> to <em>Replace With</em> input</li>
+</ol>
+<p>Hit <em>Replace All</em> button and you&#8217;re done.</p>
+	</section>
+</article></section>
+                                          </div>
+                </div>
+            </div>
+            <div class="row white">
+                <footer role="contentinfo">
+                                          
+                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a6-6-g0fb1eb8</em>.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43432739-2', 'auto');
+      ga('send', 'pageview');
+    </script>
+</body>
+</html>

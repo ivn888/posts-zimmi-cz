@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Michal Zimmermann">
+  <meta name="description" content="Pieces of knowledge from the world of GIS." />
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Michal Zimmermann  &mdash; Tag: python </title>
+  <link rel="stylesheet" type="text/css" href="/posts//css/style.min.css" />
+  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
+  <script src="/posts//js/highlight.pack.js" defer></script>
+  <script>
+    window.onload = function() {
+      var pre = document.getElementsByTagName('pre');
+      for (var i = 0; i < pre.length; i += 1) {
+        hljs.highlightBlock(pre[i].firstChild);
+      }
+    }
+  </script>
+</head>
+<body>
+    <div id="main" class="container">
+        <div class="row">
+            <header role="banner">
+                <hgroup>
+                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
+                    <strong>Pieces of knowledge from the world of GIS.</strong>
+                </hgroup>
+            </header>
+            <nav role="navigation">
+                <ul class="nav nav-pills main-navigation">
+                    <li><a href="/posts/">Home</a></li>
+                    <li><a href="/posts/categories/">Categories</a></li>
+                    <li><a href="/posts/tags/">Tags</a></li>
+                    <li><a href="/posts/feed.xml/">RSS</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="shadow">
+            <div class="row white">
+                <div id="content">
+                    <div class="blog-index">
+                                                                        <h1>Posts tagged with python</h1>
+                                                  <section>
+		<article>
+	<header>
+	<h2><a href="/posts/2015/wms-download-for-future-offline-use/">WMS Download For Future Offline Use</a></h2>
+	<small>Written on Mar 15, 2015
+		and marked as
+		<a href="/posts/tag/ogc/">ogc</a>, 		<a href="/posts/tag/python/">python</a>, 		<a href="/posts/tag/wms/">wms</a>				| <a href="/posts/category/automation/">automation</a>
+		</small>
+	</header>
+	<section>
+	<p>Using WMS in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with WMS layers.</p>
+<p><a href="https://geopython.github.io/OWSLib/">OWSLib</a> is a great tool to help you get images from WMS server. Code and some comments follow.</p>
+<pre><code>import math
+import os
+import random
+import time
+from owslib.wms import WebMapService
+
+BOTTOM_LEFT = (-679363,-1120688)
+TOP_RIGHT   = (-565171,-1042703)
+SRS_WIDTH   = math.fabs(-639084 - -638825) # tile width in units of crs =&gt; 259 m
+SRS_HEIGHT  = math.fabs(-1070426 - -1070273) # tile height in units of crs =&gt; 153 m
+PX_WIDTH    = 977
+PX_HEIGHT   = 578
+
+FORMAT      = 'image/png'
+LAYERS      = ['KN', 'RST_PK']
+SIZE        = (PX_WIDTH, PX_HEIGHT)
+SRS         = 'EPSG:5514'
+STYLES      = ['default', 'default']
+TRANSPARENT = True
+
+DIRECTORY = 'tiles/'
+SLEEP     = random.randint(0,20) # seconds
+
+dx = math.fabs(BOTTOM_LEFT[0] - TOP_RIGHT[0]) # area width in units of crs
+dy = math.fabs(BOTTOM_LEFT[1] - TOP_RIGHT[1]) # area height in units of crs
+
+cols = int(math.ceil(dx / SRS_WIDTH)) + 1
+rows = int(math.ceil(dy / SRS_HEIGHT)) + 1
+
+counter = 0
+
+with open('world_file.pngw', 'r') as wld_template:
+    tmpl = wld_template.read()
+
+wms = WebMapService('http://services.cuzk.cz/wms/wms.asp', version='1.1.1')
+
+for i in xrange(0, rows):
+    if not os.path.exists(DIRECTORY + str(i)):
+        os.mkdir(DIRECTORY + str(i))
+
+    for j in xrange(0, cols):
+        if os.path.exists(DIRECTORY + str(i) +'/kn_' + str(i) + '_' + str(j) + '.png'):
+            counter += 1
+            continue
+
+        bbox = (
+            i * SRS_WIDTH + BOTTOM_LEFT[0],
+            j * SRS_HEIGHT + BOTTOM_LEFT[1],
+            (i + 1) * SRS_WIDTH + BOTTOM_LEFT[0],
+            (j + 1) * SRS_HEIGHT + BOTTOM_LEFT[1]
+        )
+
+        img = wms.getmap(
+            layers=LAYERS,
+            styles=STYLES,
+            srs=SRS,
+            bbox=bbox,
+            size=SIZE,
+            format=FORMAT,
+            transparent=TRANSPARENT
+        )
+
+        with open(DIRECTORY + str(i) +'/kn_' + str(i) + '_' + str(j) + '.png', 'wb') as png:
+            png.write(img.read())
+
+        with open(DIRECTORY + str(i) + '/kn_' + str(i) + '_' + str(j) + '.pngw', 'w') as wld_file:
+            wld_file.write(tmpl)
+            wld_file.write('\n' + str(i * SRS_WIDTH + BOTTOM_LEFT[0]))
+            wld_file.write('\n' + str((j+1) * SRS_HEIGHT + BOTTOM_LEFT[1]))
+
+        counter += 1
+        print str(counter), ' out of ', str(rows * cols)
+        time.sleep(SLEEP)
+</code></pre>
+<p>First, always make sure <strong>you are not violating terms of use</strong> defined by service provider. If you are not, here are the necessary steps:</p>
+<ol>
+<li>Define your area of interest with bottom left and top right coordinates.</li>
+<li>Calculate width of single image both in pixels and units of CRS to get the rightsized image. Note that there may be image size restrictions defined by provider (2048 &times; 2048 px is usually the biggest you can get).</li>
+<li>Define template <a href="https://en.wikipedia.org/wiki/World_file">world file</a> for referencing images. OWSLib doesn&#8217;t provide world files to saved images, these have to be created by you. I recommend to use a template file for creating real world files.</li>
+<li>Be nice! Don&#8217;t overload the service. I use <code>time.sleep()</code> for this.</li>
+<li>Profit.</li>
+</ol>
+<p>The trouble with WMS is that you can&#8217;t set an arbitrary scale you want to obtain images in (e.g. 1:1 000). It&#8217;s fairly easy to get all values needed to imitate this behavior though.</p>
+<p>Using <a href="http://qgis.org">QGIS</a> you can:</p>
+<ol>
+<li>Get bounding box of area you&#8217;re interested in.</li>
+<li>Save current view as an image (together with the world file!) and use it as a specimen for your own world files.</li>
+<li>Derive image width (CRS, pixels) from the saved image, thus getting the same zoom level you were using in QGIS.</li>
+</ol>
+<p>Code given is not bulletproof, it will fail on any network error. However, if you restart it after such a crash, it checks for existing files and starts with the first missing, so you don&#8217;t have to download all the tiles again.</p>
+	</section>
+</article>		<article>
+	<header>
+	<h2><a href="/posts/2014/migrating-geoserver-and-checking-for-missing-data/">Migrating Geoserver And Checking For Missing Data</a></h2>
+	<small>Written on Oct 29, 2014
+		and marked as
+		<a href="/posts/tag/geoserver/">geoserver</a>, 		<a href="/posts/tag/python/">python</a>				| <a href="/posts/category/development/">development</a>
+		</small>
+	</header>
+	<section>
+	<p>I&#8217;ve upgraded a handful of Geoserver installations and it has never been flawless. If you&#8217;re lucky you end up with just <em>some</em> layers missing, if you&#8217;re not, you&#8217;ll miss a bunch of them (together with layergroups, some stores, workspaces might screw up etc.).</p>
+<p>But how do you check for missing data before switching to the newer version? Thanks to the <a href="http://docs.geoserver.org/stable/en/user/rest/api/index.html">REST API implemented within Geoserver</a>, it&#8217;s rather easy.</p>
+<pre><code>import requests
+from bs4 import BeautifulSoup
+from requests.auth import HTTPBasicAuth
+
+req = requests.get('http://example.com/geoserver/rest/layers', auth=HTTPBasicAuth('username', 'password'))
+
+html = BeautifulSoup(req.text)
+i = 0
+for link in html.find_all('a'):
+    i += 1
+    href = link.get_text()
+    print i
+
+with open('list.txt', 'a') as f:
+        f.write(href)
+        f.write('\n')
+</code></pre>
+<p>We needed to migrate ~ 17,000 layers last week, and yes, we could have just shut the door and spend couple of nights checking one after another, if we were the dumbest GIS company ever.</p>
+<p>As I wanted to make it a bit easier I wrote the simple Python script (see above) that just authenticates against Geoserver and downloads the list of layers. I actually had to do that twice - both old and new instance. A <a href="https://www.diffchecker.com/">simple file comparison</a> followed and I got a list of missing layers in less than two minutes.</p>
+<p>If you do the same to workspaces, stores and layergroups, your chances of not losing some data after the switch are pretty high.</p>
+<p>I guess it&#8217;s reasonable to check your maps by hand as well, but this gives you the picture of the current state of your data real quick.</p>
+	</section>
+</article>		<article>
+	<header>
+	<h2><a href="/posts/2014/going-3D-with-space-time-cube/">Going 3D With Space Time Cube</a></h2>
+	<small>Written on Sep 02, 2014
+		and marked as
+		<a href="/posts/tag/python/">python</a>, 		<a href="/posts/tag/twitter/">twitter</a>				| <a href="/posts/category/development/">development</a>
+		</small>
+	</header>
+	<section>
+	<p>Seeing <a href="http://anitagraser.com/2012/08/05/space-time-cubes-exploring-twitter-streams-3/">Anita&#8217;s space-time cube</a> back in 2013 was a moment of <em>woooow</em> for me. I&#8217;ve been interested in unusual ways of displaying data ever since I started studying GIS and this one was just great. <em>How the hell did she make it?!</em>, I thought back then.</p>
+
+<p>And I asked her, we had a little e-mail conversation and that was it. I got busy and had to postpone my attemps to create that viz until I dove into my diploma thesis. So&hellip;here you go.</p>
+
+<h3>Recipe</h3>
+
+<p>What you need is:</p>
+
+<ul>
+<li><strong><a href="https://github.com/jdf/processing.py">processing.py</a></strong> which is a Python port of <a href="http://processing.org/">processing</a> environment.</li>
+<li>A <strong>basemap</strong> that fits the extent you are about to show in the viz. I recommend QGIS for obtaining an image.</li>
+<li>A <strong>JSON file</strong> with tweets you got via <a href="/2014/analyzing-twitter-languages-with-streaming-api/">Twitter REST API</a> (yes, the viz was made to display tweets).</li>
+<li>A <strong>python script</strong> I wrote.</li>
+</ul>
+
+<h3>How to make it delicious</h3>
+
+<p>First things first, you need to add a <code>timestamp</code> property to tweets you want to show (with the following Python code). <code>created_at</code> param is a datetime string like <code>Sat Jun 22 21:30:42 +0000 2013</code> of every tweet in a loop. As a result you get a number of seconds since 1.1.1970. </p>
+
+<pre><code>def string_to_timestamp(created_at):
+    """Return the timestamp from created_at object."""
+    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+    created_at = created_at.split(' ')
+    created_at[1] = str(strptime(created_at[1], '%b').tm_mon)
+    timestamp = strptime(' '.join(created_at[i] for i in [1,2,3,5]), '%m %d %H:%M:%S %Y') # returns Month Day Time Year
+    return mktime(timestamp)
+</code></pre>
+
+<p>As you probably guess, the <code>timestamp</code> property is the one we&#8217;re gonna display on the vertical axis. <strong>You definitely want the tweets to be sorted chronologically in your JSON file!</strong></p>
+
+<pre><code>#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#avconv -i frame-%04d.png -r 25 -b 65536k  video.mp4
+
+from peasy import PeasyCam
+import json
+
+basemap = None
+tweets = []
+angle = 0
+
+def setup():
+    global basemap
+    global tweets
+
+    size(1010, 605, P3D)
+
+    data = loadJSONArray('./tweets.json')
+    count = data.size()
+
+    last = data.getJSONObject(data.size()-1).getFloat('timestamp')
+    first = data.getJSONObject(0).getFloat('timestamp')
+
+    for i in range(0, count):
+        lon = data.getJSONObject(i).getJSONObject('coordinates').getJSONArray('coordinates').getFloat(0)
+        lat = data.getJSONObject(i).getJSONObject('coordinates').getJSONArray('coordinates').getFloat(1)
+        time = data.getJSONObject(i).getFloat('timestamp')
+
+        x = map(lon, -19.68624620368202116, 58.92453879754536672, 0, width)
+        y = map(time, first, last, 0, 500)
+        z = map(lat, 16.59971950210866964, 63.68835804244784526, 0, height)
+
+        tweets.append({'x': x, 'y': y, 'z': z})
+
+    basemap = loadImage('basemap.png')
+
+    cam = PeasyCam(this,53,100,-25,700)
+    cam.setMinimumDistance(1)
+    cam.setMaximumDistance(1500)
+
+def draw():
+    global basemap
+    global tweets
+    global angle
+
+    background(0)
+
+    # Uncomment to rotate the cube
+    """if angle &lt; 360:
+        rotateY(radians(angle))
+        angle += 1
+    else:
+        angle = 360 - angle"""
+
+    # box definition
+    stroke(150,150,150)
+    strokeWeight(.5)
+    noFill()
+    box(1010,500,605)
+
+
+    # basemap definition
+    translate(-505,250,-302.5)
+    rotateX(HALF_PI)
+    image(basemap,0,0)
+
+    for i in range(0, len(tweets)):
+        strokeWeight(.5)
+        stroke(255,255,255)
+        line(tweets[i].get('x'), height-tweets[i].get('z'), tweets[i].get('y'), tweets[i].get('x'), height-tweets[i].get('z'), 0)
+
+        strokeWeight(5)
+        stroke(255,0,0)
+        point(tweets[i].get('x'), height-tweets[i].get('z'), tweets[i].get('y'))
+
+        strokeWeight(2)
+        stroke(255,255,255)
+        point(tweets[i].get('x'), height-tweets[i].get('z'), 0)
+        lrp = map(i, 0, len(tweets), 0, 1)
+        frm = color(255,0,0)
+        to = color(0,0,255)
+        if i &lt; len(tweets)-1:
+            strokeWeight(1)
+            stroke(lerpColor(frm,to,lrp))
+            line(tweets[i].get('x'), height-tweets[i].get('z'), tweets[i].get('y'), tweets[i+1].get('x'), height-tweets[i+1].get('z'), tweets[i+1].get('y'))
+
+    # Uncomment to capture the screens
+    """if frameCount &gt; 360:
+        noLoop()
+    else:
+        saveFrame('screens/frame-####.png')"""
+</code></pre>
+
+<p>You should be most interested in these lines:</p>
+
+<pre><code>x = map(lon, -19.68624620368202116, 58.92453879754536672, 0, width)
+y = map(time, first, last, 0, 500)
+z = map(lat, 16.59971950210866964, 63.68835804244784526, 0, height)
+</code></pre>
+
+<p><img src="http://www.processing.org/tutorials/p3d/imgs/coordinatesystem.png" title="Processing coordinate system" class="img-rounded pull-left">They define how coordinates inside the cube should be computed. As you see, <code>x</code> is the result of mapping longitudinal extent of our area to the width of cube, the same happens to <code>z</code> and latitude, and to <code>y</code> (but here we map time, not coordinates).</p>
+
+<p>The bounding box used in those computations is the bounding box of the basemap. Interesting thing about Processing and its 3D environment is how it defines the beginning of the coordinate system. As you can see on the left, it might be slighty different from what you could expect. That&#8217;s what you need to be careful about.</p>
+
+<h3>How does it look</h3>
+
+<iframe width="420" height="315" src="//www.youtube.com/embed/4jl6-qOiSAE?rel=0" frameborder="0" allowfullscreen></iframe>
+	</section>
+</article></section>
+                                          </div>
+                </div>
+            </div>
+            <div class="row white">
+                <footer role="contentinfo">
+                                          
+                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a6-6-g0fb1eb8</em>.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43432739-2', 'auto');
+      ga('send', 'pageview');
+    </script>
+</body>
+</html>
