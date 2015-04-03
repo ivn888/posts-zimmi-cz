@@ -3,9 +3,66 @@
 <channel>
 	<title>Michal Zimmermann</title>
 	<link>http://zimmi.cz/posts</link>
-	<lastBuildDate>Tue, 31 Mar 2015 13:05:26 +0200</lastBuildDate>
-	<pubDate>Tue, 31 Mar 2015 13:05:26 +0200</pubDate>
+	<lastBuildDate>Fri, 03 Apr 2015 11:09:09 +0200</lastBuildDate>
+	<pubDate>Fri, 03 Apr 2015 11:09:09 +0200</pubDate>
 	<description>Pieces of knowledge from the world of GIS.</description>
+		<item>
+		<title>PostGIS: Finding Biggest Land Users Nearby</title>
+		<link>http://zimmi.cz/posts/2015/postgis-find-biggest-land-users-nearby/</link>
+		<pubDate>Fri, 03 Apr 2015 10:29:19 +0200</pubDate>
+		<guid>http://zimmi.cz/posts/2015/postgis-find-biggest-land-users-nearby/</guid>
+		<description>&lt;p&gt;At &lt;a href=&#34;http://clevermaps.cz&#34;&gt;CleverMaps&lt;/a&gt; we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird challenges.&lt;/p&gt;
+&lt;h2&gt;Give me the biggest land users nearby&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Find the biggest land users in surrouding cadastral communities for each cadastral community (~ 13K)&lt;/em&gt; being the latest task, here&amp;#8217;s the query I tackled it with:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;WITH users_ AS (
+    SELECT
+        cad_code,
+        id,
+        zipcode,
+        city,
+        concat_ws(&#39; &#39;,street, concat_ws(&#39;/&#39;, house_number, street_number)) as street,
+        name,
+        &#39;Users with more than 10 ha&#39;::text note,
+        SUM(acreage) area
+        FROM land_blocks -- being a table with info about all the agricultural land blocks
+        JOIN users u ON id_uz = id
+        GROUP BY cad_code, u.id
+        HAVING SUM(acreage) &amp;gt; 10
+),
+ints AS (
+    SELECT
+        ku.cad_code as community,
+        ku2.cad_code as surrouding,
+        ku2.cad_name
+    FROM cadastral_community ku
+    JOIN cadastral_community ku2
+        ON ST_Intersects(ku.geom, ku2.geom)
+    WHERE ku.cad_code &amp;lt;&amp;gt; ku2.cad_code
+)
+SELECT
+    DISTINCT ON (surrouding, cad_name, u.zipcode, u.city, u.street, u.name)
+    surrouding,
+    cad_name,
+    u.zipcode,
+    u.city,
+    u.street,
+    u.name,
+    u.note,
+    u.area
+FROM
+    users_ u
+JOIN ints
+    ON cad_code = community;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Few things to note:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;concat_ws()&lt;/code&gt; is a great function for joining values that might be &lt;code&gt;NULL&lt;/code&gt;. If such a value is found, it is skipped and the function continues with the next one (if any). Thus, you&amp;#8217;ll never get a string ending with a trailing slash (&lt;code&gt;Street name 55/&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;With &lt;code&gt;users_&lt;/code&gt; CTE I get a list of owners having more than 10 hectares of land for each cadastral community. This gives me the inverse result of what I want (if I know the biggest owners in the cadastral community, I know these are the ones that should be listed for surrounding c. communities).&lt;/li&gt;
+&lt;li&gt;This &lt;em&gt;putting-it-all-together&lt;/em&gt; step is done with &lt;code&gt;ints&lt;/code&gt; CTE that outputs the list of surrouding c. communities for each of them.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;DISTINCT ON&lt;/code&gt; cleans up the list so the same owners don&amp;#8217;t appear more than once for any given c. community.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Writing this makes me realize the list should be probably sorted by area so only the occurence with the biggest value is kept for each c. community. Simple &lt;code&gt;ORDER BY&lt;/code&gt; should deal with this just fine. Or even more sophisticated, using &lt;code&gt;GROUP BY&lt;/code&gt; to output the total acreage in all surrouding c. communities.&lt;/p&gt;</description>
+	</item>
 		<item>
 		<title>PostGIS: Count Line Self-Intersections</title>
 		<link>http://zimmi.cz/posts/2015/postgis-count-line-self-intersections/</link>
@@ -22,7 +79,7 @@ COPY test2 (id, wkb_geometry) FROM stdin;
 2   01020000208A1500000600000050212BF9E63EC03F1FA046FD69F1EA3F504D44212915EA3F74A99EDF44E3F33F2CE2805DFAB1F33F805D24B1B189DC3F9834DE5938C1F53FB56F1FBF8AAFEC3F24D0C85B4666EA3FF311B0D8D75BE93F306EAA073894D23FA841B27E3404F33F
 \.
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/postsposts/2015/postgis-count-line-self-intersections/lines.png&#34; title=&#34;Self-intersecting lines&#34; class=&#34;img-responsive centered&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/2015/postgis-count-line-self-intersections/lines.png&#34; title=&#34;Self-intersecting lines&#34; class=&#34;img-responsive centered&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Note that those geometries are valid while not being simple, thus, &lt;code&gt;ST_IsValidReason()&lt;/code&gt; wouldn&amp;#8217;t help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those two.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;WITH noded AS (
 SELECT id, COUNT(id)
@@ -480,7 +537,7 @@ FROM vozejkmap AS lg ) AS f
 &lt;h2&gt;Leaflet map&lt;/h2&gt;
 &lt;p&gt;Map JavaScript is rather simple with ~30 lines of code (not taking styles into account). Thanks to the great plugins it is easy to show ~7,600 points on the map real quick.&lt;/p&gt;
 &lt;p&gt;I didn&amp;#8217;t do much customization apart from styling markers and binding popups.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/postsposts/2015/postgis-case-study-vozejkmap-open-data-part-ii/map.png&#34; title=&#34;vozejkmap.cz data map&#34; class=&#34;img-responsive centered&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/map.png&#34; title=&#34;vozejkmap.cz data map&#34; class=&#34;img-responsive centered&#34;&gt;&lt;/p&gt;
 &lt;h2&gt;What&amp;#8217;s next&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://turfjs.org&#34;&gt;Turf&lt;/a&gt; which means I need to think of what could be fun to do with this data&lt;/li&gt;
@@ -668,55 +725,6 @@ UPDATE vozejkmap SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326);
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;And here we are, ready to use our spatial data!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Feel free to &lt;a href=&#34;https://github.com/zimmicz/vozejkmap-to-postgis&#34;&gt;grab the code&lt;/a&gt; at GitHub.&lt;/p&gt;</description>
-	</item>
-		<item>
-		<title>PostGIS Spatial Indexing With ST_Intersects</title>
-		<link>http://zimmi.cz/posts/2014/postgis-spatial-indexing-with-st-intersects/</link>
-		<pubDate>Sun, 23 Nov 2014 10:05:41 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/2014/postgis-spatial-indexing-with-st-intersects/</guid>
-		<description>&lt;p&gt;&lt;a href=&#34;http://postgis.net/docs/ST_Intersects.html&#34;&gt;PostGIS docs&lt;/a&gt; clearly states that:
-    &amp;gt; This function call will automatically include a bounding box comparison that will make use of any indexes that are available on the geometries.&lt;/p&gt;
-&lt;p&gt;That means (or at least I think so) that you shouldn&amp;#8217;t bother with using &lt;a href=&#34;http://postgis.net/docs/reference.html#Operators&#34;&gt;operators&lt;/a&gt; before calling this function.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;http://slides.com/michalzimmermann&#34;&gt;I was preparing&lt;/a&gt; my second lecture on PostGIS and I was experimenting a bit and came up with an interesting thing on this matter:&lt;/p&gt;
-&lt;p&gt;Let&amp;#8217;s have two SQL relations, &lt;code&gt;roads&lt;/code&gt; and &lt;code&gt;regions&lt;/code&gt;. I would like to retrieve every road that intersects a certain region. Spatial indexes were built beforehand on both tables.&lt;/p&gt;
-&lt;p&gt;First try:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;EXPLAIN ANALYZE SELECT roads.* FROM roads
-JOIN regions ON ST_Intersects(roads.geom, regions.geom)
-WHERE regions.&#34;NAZEV&#34; = &#39;Jihomoravský&#39;;`
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And here comes the result:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Nested Loop  (cost=4.85..324.26 rows=249 width=214) (actual time=45.102..5101.472 rows=74253 loops=1)
--&amp;gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.015..0.018 rows=1 loops=1)
-     Filter: ((&#34;NAZEV&#34;)::text = &#39;Jihomoravský&#39;::text)
-     Rows Removed by Filter: 13
--&amp;gt;  Bitmap Heap Scan on roads  (cost=4.85..311.38 rows=25 width=214) (actual time=45.079..4931.495 rows=74253 loops=1)
-     Recheck Cond: (geom &amp;amp;&amp;amp; regions.geom)
-     Rows Removed by Index Recheck: 154841
-     Filter: _st_intersects(geom, regions.geom)
-     Rows Removed by Filter: 71212
-     -&amp;gt;  Bitmap Index Scan on roads_idx  (cost=0.00..4.85 rows=75 width=0) (actual time=40.142..40.142 rows=145465 loops=1)
-           Index Cond: (geom &amp;amp;&amp;amp; regions.geom)
-Total runtime: 5181.459 ms
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I was pretty satisfied with the result, I kept digging deeper though.&lt;/p&gt;
-&lt;p&gt;Second try:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;EXPLAIN ANALYZE SELECT roads.* FROM roads
-JOIN regions ON roads.geom &amp;amp;&amp;amp; regions.geom
-WHERE regions.&#34;NAZEV&#34; = &#39;Jihomoravský&#39; AND ST_Intersects(roads.geom, regions.geom);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And the result:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Nested Loop  (cost=0.29..21.19 rows=1 width=214) (actual time=3.041..3850.302 rows=74253 loops=1)
--&amp;gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.021..0.024 rows=1 loops=1)
-     Filter: ((&#34;NAZEV&#34;)::text = &#39;Jihomoravský&#39;::text)
-     Rows Removed by Filter: 13
--&amp;gt;  Index Scan using roads_idx on roads  (cost=0.29..8.55 rows=1 width=214) (actual time=2.938..3681.432 rows=74253 loops=1)
-     Index Cond: ((geom &amp;amp;&amp;amp; regions.geom) AND (geom &amp;amp;&amp;amp; regions.geom))
-     Filter: _st_intersects(geom, regions.geom)
-     Rows Removed by Filter: 71212
-Total runtime: 3930.270 ms
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now there&amp;#8217;s a significant difference between total runtimes of both queries and - more important - also a difference between their query plans. The latter is like &lt;strong&gt;20 % faster&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;I&amp;#8217;m puzzled about this behavior and would appreciate any thoughts on this. Reach me at &lt;a href=&#34;http://twitter.com/zimmicz&#34;&gt;Twitter&lt;/a&gt;, &lt;a href=&#34;https://www.linkedin.com/pub/michal-zimmermann/29/8/b30&#34;&gt;LinkedIn&lt;/a&gt; or e-mail (zimmicz[at]gmail.com).&lt;/p&gt;</description>
 	</item>
 	</channel>
 </rss>

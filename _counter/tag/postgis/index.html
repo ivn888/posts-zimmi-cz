@@ -46,6 +46,67 @@
                                                   <section>
 		<article>
 	<header>
+	<h2><a href="/posts/2015/postgis-find-biggest-land-users-nearby/">PostGIS: Finding Biggest Land Users Nearby</a></h2>
+	<small>Written on Apr 03, 2015
+		and marked as
+		<a href="/posts/tag/postgresql/">postgresql</a>, 		<a href="/posts/tag/postgis/">postgis</a>				| <a href="/posts/category/SQL/">SQL</a>
+		</small>
+	</header>
+	<section>
+	<p>At <a href="http://clevermaps.cz">CleverMaps</a> we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird challenges.</p>
+<h2>Give me the biggest land users nearby</h2>
+<p><em>Find the biggest land users in surrouding cadastral communities for each cadastral community (~ 13K)</em> being the latest task, here&#8217;s the query I tackled it with:</p>
+<pre><code>WITH users_ AS (
+    SELECT
+        cad_code,
+        id,
+        zipcode,
+        city,
+        concat_ws(' ',street, concat_ws('/', house_number, street_number)) as street,
+        name,
+        'Users with more than 10 ha'::text note,
+        SUM(acreage) area
+        FROM land_blocks -- being a table with info about all the agricultural land blocks
+        JOIN users u ON id_uz = id
+        GROUP BY cad_code, u.id
+        HAVING SUM(acreage) &gt; 10
+),
+ints AS (
+    SELECT
+        ku.cad_code as community,
+        ku2.cad_code as surrouding,
+        ku2.cad_name
+    FROM cadastral_community ku
+    JOIN cadastral_community ku2
+        ON ST_Intersects(ku.geom, ku2.geom)
+    WHERE ku.cad_code &lt;&gt; ku2.cad_code
+)
+SELECT
+    DISTINCT ON (surrouding, cad_name, u.zipcode, u.city, u.street, u.name)
+    surrouding,
+    cad_name,
+    u.zipcode,
+    u.city,
+    u.street,
+    u.name,
+    u.note,
+    u.area
+FROM
+    users_ u
+JOIN ints
+    ON cad_code = community;
+</code></pre>
+<p>Few things to note:</p>
+<ul>
+<li><code>concat_ws()</code> is a great function for joining values that might be <code>NULL</code>. If such a value is found, it is skipped and the function continues with the next one (if any). Thus, you&#8217;ll never get a string ending with a trailing slash (<code>Street name 55/</code>).</li>
+<li>With <code>users_</code> CTE I get a list of owners having more than 10 hectares of land for each cadastral community. This gives me the inverse result of what I want (if I know the biggest owners in the cadastral community, I know these are the ones that should be listed for surrounding c. communities).</li>
+<li>This <em>putting-it-all-together</em> step is done with <code>ints</code> CTE that outputs the list of surrouding c. communities for each of them.</li>
+<li><code>DISTINCT ON</code> cleans up the list so the same owners don&#8217;t appear more than once for any given c. community.</li>
+</ul>
+<p>Writing this makes me realize the list should be probably sorted by area so only the occurence with the biggest value is kept for each c. community. Simple <code>ORDER BY</code> should deal with this just fine. Or even more sophisticated, using <code>GROUP BY</code> to output the total acreage in all surrouding c. communities.</p>
+	</section>
+</article>		<article>
+	<header>
 	<h2><a href="/posts/2015/postgis-count-line-self-intersections/">PostGIS: Count Line Self-Intersections</a></h2>
 	<small>Written on Mar 30, 2015
 		and marked as
@@ -64,7 +125,7 @@ COPY test2 (id, wkb_geometry) FROM stdin;
 2   01020000208A1500000600000050212BF9E63EC03F1FA046FD69F1EA3F504D44212915EA3F74A99EDF44E3F33F2CE2805DFAB1F33F805D24B1B189DC3F9834DE5938C1F53FB56F1FBF8AAFEC3F24D0C85B4666EA3FF311B0D8D75BE93F306EAA073894D23FA841B27E3404F33F
 \.
 </code></pre>
-<p><img src="/postsposts/2015/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
+<p><img src="/posts/2015/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
 <p>Note that those geometries are valid while not being simple, thus, <code>ST_IsValidReason()</code> wouldn&#8217;t help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those two.</p>
 <pre><code>WITH noded AS (
 SELECT id, COUNT(id)
@@ -415,7 +476,7 @@ FROM vozejkmap AS lg ) AS f
 <h2>Leaflet map</h2>
 <p>Map JavaScript is rather simple with ~30 lines of code (not taking styles into account). Thanks to the great plugins it is easy to show ~7,600 points on the map real quick.</p>
 <p>I didn&#8217;t do much customization apart from styling markers and binding popups.</p>
-<p><img src="/postsposts/2015/postgis-case-study-vozejkmap-open-data-part-ii/map.png" title="vozejkmap.cz data map" class="img-responsive centered"></p>
+<p><img src="/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/map.png" title="vozejkmap.cz data map" class="img-responsive centered"></p>
 <h2>What&#8217;s next</h2>
 <ol>
 <li><a href="http://turfjs.org">Turf</a> which means I need to think of what could be fun to do with this data</li>
@@ -640,7 +701,7 @@ Total runtime: 3930.270 ms
             <div class="row white">
                 <footer role="contentinfo">
                                           
-                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a6-1-gd5f1747</em>.</p>
+                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a6-6-g0fb1eb8</em>.</p>
                 </footer>
             </div>
         </div>
