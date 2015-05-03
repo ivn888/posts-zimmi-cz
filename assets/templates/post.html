@@ -1,0 +1,10 @@
+{% extends "default.html" %}
+{% block footer %}
+  {% if pagination.prev_post %}
+    <a class="pagination" href="{{pagination.prev_post.url}}">&laquo; {{pagination.prev_post.title}}</a>
+  {% endif %}
+
+  {% if pagination.next_post %}
+    <a class="pagination" href="{{pagination.next_post.url}}">{{pagination.next_post.title}} &raquo;</a>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,11 @@
+---
+title: Tags
+description: Tags
+layout: page
+format: none
+---
+<ul>
+	{% for t in blog.tags %}
+		<li><a href="{{pctagurl(t.name)}}">{{t.name}}</a></li>
+	{% endfor %}
+</ul>

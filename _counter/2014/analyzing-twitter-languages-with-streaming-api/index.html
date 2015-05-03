@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <head>
   <meta charset="utf-8">
   <meta name="author" content="Michal Zimmermann">
@@ -8,9 +7,9 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title> Michal Zimmermann  &mdash; Analyzing Twitter Languages With Streaming API </title>
-  <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
+  <link rel="stylesheet" type="text/css" href="/posts//css/style.min.css" />
   <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
-  <script src="/posts/js/highlight.pack.js" defer></script>
+  <script src="/posts//js/highlight.pack.js" defer></script>
   <script>
     window.onload = function() {
       var pre = document.getElementsByTagName('pre');
@@ -25,7 +24,7 @@
         <div class="row">
             <header role="banner">
                 <hgroup>
-                    <h1><a href="/posts//posts/">Michal Zimmermann</a></h1>
+                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
                     <strong>Pieces of knowledge from the world of GIS.</strong>
                 </hgroup>
             </header>
@@ -94,7 +93,7 @@
 
 <p>I decided to throw away the tweets with the empty <code>coordinates</code> field, because the accuracy of the value specified in the place field can be generally considered very low and insufficient for my purposes. You still need to account for position inaccuracies of users&#8217; devices though, however that is not something that we can deal with. <em>Let us just assume that geotagged tweets are accurate.</em></p>
 
-<div class="text-center"><img src="/posts2014/analyzing-twitter-languages-with-streaming-api/cr.png" width="50%" height="50%" title="Geotagged tweets" class="img-rounded"><p><strong>Figure:</strong> Twitter seems not to be very accurate when matching tweets against bounding box.</p></div>
+<div class="text-center"><img src="/posts/2014/analyzing-twitter-languages-with-streaming-api/cr.png" width="50%" height="50%" title="Geotagged tweets" class="img-rounded"><p><strong>Figure:</strong> Twitter seems not to be very accurate when matching tweets against bounding box.</p></div>
 
 <p>Although, as you can see in the picture, they are not. Or they are, but Twitter is not good at telling so. Besides that, none of the countries in the world is shaped like a rectangle and we would need to clip the data anyway. That is where SQLite comes in, because I have been saving incoming tweets right into the database.</p>
 
@@ -118,7 +117,7 @@
 
 <p>I am definitely willing to share the <abbr title="Do not expect much, it was my first time with node.js">code</abbr> and the final viz. Meanwhile, you can have a look at the screenshot on picture [*]. I have already implemented nationality switch (legend items are clickable) and I would like to add a day/night switch to see whether there are any differences between the peoples&#8217; behaviour. </p>
 
-<div class="text-center"><img width="60%" height="60%" src="/posts2014/analyzing-twitter-languages-with-streaming-api/screenshot.png" title="Final geoviz using Leaflet" class="img-rounded"><p><strong>Figure:</strong> Final map screenshot. A legend is used to turn nationalities on and off. You are looking at Prague by the way.</p></div>
+<div class="text-center"><img width="60%" height="60%" src="/posts/2014/analyzing-twitter-languages-with-streaming-api/screenshot.png" title="Final geoviz using Leaflet" class="img-rounded"><p><strong>Figure:</strong> Final map screenshot. A legend is used to turn nationalities on and off. You are looking at Prague by the way.</p></div>
 
 <p>Obviously the most tweets were sent from the most populated places, e.g. Prague, Brno, Ostrava. </p>
                                           </div>
@@ -129,7 +128,7 @@
                           <a class="pagination" href="/posts/2014/going-3D-with-space-time-cube/">&laquo; Going 3D With Space Time Cube</a>
   
       <a class="pagination" href="/posts/2014/geoserver-printing-with-mapfish/">Geoserver Printing With Mapfish &raquo;</a>
-                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a6-1-gd5f1747</em>.</p>
+                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> unknown</em>.</p>
                 </footer>
             </div>
         </div>

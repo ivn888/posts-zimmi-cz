@@ -1,0 +1,17 @@
+site:
+    title: 'Michal Zimmermann'
+    description: 'Pieces of knowledge from the world of GIS.'
+    author: Michal Zimmermann
+    category_url: 'category/%category%'
+    hide_quickstart: true
+    pretty_urls: true
+    posts_per_page: 10
+    post_url: '%year%/%slug%'
+    root: /posts
+    enable_gzip: true
+    tag_url: 'tag/%tag%'
+    trailing_slash: true
+smartypants:
+    enable: true
+baker:
+    processors: [imageoptimizer, cssmin, copy]

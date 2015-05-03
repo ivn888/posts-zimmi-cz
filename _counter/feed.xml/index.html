@@ -3,9 +3,193 @@
 <channel>
 	<title>Michal Zimmermann</title>
 	<link>http://zimmi.cz/posts</link>
-	<lastBuildDate>Tue, 31 Mar 2015 13:05:26 +0200</lastBuildDate>
-	<pubDate>Tue, 31 Mar 2015 13:05:26 +0200</pubDate>
+	<lastBuildDate>Sun, 03 May 2015 10:09:23 +0200</lastBuildDate>
+	<pubDate>Sun, 03 May 2015 10:09:23 +0200</pubDate>
 	<description>Pieces of knowledge from the world of GIS.</description>
+		<item>
+		<title>Animating SVG Maps With SMIL</title>
+		<link>http://zimmi.cz/posts/2015/animating-svg-maps-with-smil/</link>
+		<pubDate>Wed, 29 Apr 2015 18:24:24 +0200</pubDate>
+		<guid>http://zimmi.cz/posts/2015/animating-svg-maps-with-smil/</guid>
+		<description>&lt;p&gt;Using SVG to build web maps have both pros and cons and to be honest I don&amp;#8217;t know any &lt;em&gt;serious&lt;/em&gt; map/GIS project built on top of SVG. However, as a part of my job at university, I was forced to use both SVG and SMIL to produce animated web map (see the small version below or the big one at &lt;a href=&#34;https://zimmicz.github.io/svg-smil-airplanes/map.svg&#34;&gt;GitHub&lt;/a&gt;) and I&amp;#8217;d like to share my findings.&lt;/p&gt;
+&lt;p&gt;&lt;object width=&#34;400&#34; data=&#34;https://zimmicz.github.io/svg-smil-airplanes/map.svg&#34; type=&#34;image/svg+xml&#34;&gt;&lt;/object&gt;&lt;/p&gt;
+&lt;h2&gt;Data preprocessing&lt;/h2&gt;
+&lt;p&gt;I chose &lt;a href=&#34;http://www.naturalearthdata.com/&#34;&gt;Natural Earth dataset&lt;/a&gt; both for basemap and thematic layer:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;countries polygon layer for basemap&lt;/li&gt;
+&lt;li&gt;airports point layer for thematic layer&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I decided that animation should go like this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Load basemap and Vaclav Havel airport (PRG).&lt;/li&gt;
+&lt;li&gt;Animate destinations one by one. They are revealed in order of their distance from PRG.&lt;/li&gt;
+&lt;li&gt;Animate airways.&lt;/li&gt;
+&lt;li&gt;Once airways are animated, animate airplanes along their path from PRG to their destination in order of their time of departure.&lt;/li&gt;
+&lt;li&gt;Profit.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;My goal was to create an animation of all departures from Vaclav Havel airport during one day. These data can be obtained at &lt;a href=&#34;http://www.flightstats.com/&#34;&gt;FlightStats&lt;/a&gt;, I didn&amp;#8217;t find a way make this process automatic though. &lt;a href=&#34;http://openflights.org/&#34;&gt;OpenFlights&lt;/a&gt; might be better source then.&lt;/p&gt;
+&lt;h2&gt;SVG creation&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;http://kartograph.org/&#34;&gt;Kartograph&lt;/a&gt; is a great tool both for SVG generation and scripting. What a pity it&amp;#8217;s probably a dead project according to the last commit date. After installing Python part of library used to create SVG files out of vector geometries, it can be run with something like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kartograph --output map.svg --pretty-print --style style.css config.json
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Pretty self-explanatory, let&amp;#8217;s have a look at config file:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &#34;layers&#34;: {
+        &#34;countries&#34;: {
+            &#34;src&#34;: &#34;ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp&#34;,
+            &#34;attributes&#34;: [&#34;name&#34;]
+        },
+        &#34;airports&#34;: {
+            &#34;src&#34;: &#34;ne_10m_airports/ne_10m_airports_prg.shp&#34;,
+            &#34;attributes&#34;: [&#34;name&#34;, &#34;abbrev&#34;]
+        },
+        &#34;travels&#34;: {
+            &#34;src&#34;: &#34;ne_10m_airports/travels.shp&#34;,
+            &#34;attributes&#34;: [&#34;time&#34;, &#34;distance&#34;]
+        },
+        &#34;grid&#34;: {
+            &#34;special&#34;: &#34;graticule&#34;,
+            &#34;latitudes&#34;: 10,
+            &#34;longitudes&#34;: 10
+        }
+    },
+    &#34;proj&#34;: {
+        &#34;id&#34;: &#34;satellite&#34;,
+        &#34;lon0&#34;: 0.0,
+        &#34;lat0&#34;: 48.0,
+        &#34;dist&#34;: 45,
+        &#34;up&#34;: 15
+    },
+    &#34;bounds&#34;: {
+        &#34;mode&#34;: &#34;bbox&#34;,
+        &#34;data&#34;: [-180, -90, 180, 90],
+        &#34;padding&#34;: 1
+    },
+    &#34;export&#34;: {
+        &#34;round&#34;: 1,
+        &#34;width&#34;: 1000,
+        &#34;ratio&#34;: 1
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It is possible to adjust map settings in many different ways. The most important/interesting:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Choose what attributes you want to have exported from source file with &lt;code&gt;attributes&lt;/code&gt; key for every layer. They&amp;#8217;ll be available as &lt;code&gt;data-&lt;/code&gt; attribute of SVG elements.&lt;/li&gt;
+&lt;li&gt;It comes with Grid generation packed in! Really great. Sea generation works for some projections only.&lt;/li&gt;
+&lt;li&gt;Set the projections you want to use with additional settings.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bounds&lt;/code&gt; settings should - according to the docs - use layer extent as well, I couldn&amp;#8217;t make it work though. Use &lt;code&gt;[-180, -90, 180, 90]&lt;/code&gt; as a workaround to get the whole world. Don&amp;#8217;t forget to set &lt;code&gt;padding&lt;/code&gt;, so your map doesn&amp;#8217;t get clipped on edges.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;export&lt;/code&gt;ing coordinates rounded to one decimal place makes your SVG a lot smaller.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can change SVG look with simple CSS, just be sure to use layer names as CSS ids:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#airports {
+    fill: #CC0000;
+    fill-opacity: 0;
+    stroke: #660000;
+    stroke-opacity: 0;
+}
+
+#countries {
+    fill: #e6deb4;
+    stroke: #a59f81;
+}
+
+#grid {
+    stroke: #d0d0d0;
+    stroke-width: .3px;
+}
+
+#travels {
+    stroke: #1f78b4;
+    stroke-opacity: 0;
+    stroke-dasharray: 5,5;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Data adjustment &amp;amp; animation&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;SMIL&lt;/strong&gt; is a XML based language for multimedia representation. It comes ready for timing, animation, visual transitions etc. I guess it might be considered easier to read for a web development beginner. Once you start using it, you immediately realize it suffers from the same disease like XML does: it is so wordy!&lt;/p&gt;
+&lt;p&gt;Let&amp;#8217;s get back to my example. To animate airports one by one, let&amp;#8217;s give them unique ids, so they look something like:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;circle id=&#34;brs&#34; stroke-opacity=&#34;0&#34; fill-opacity=&#34;0&#34; cx=&#34;476.597304864&#34; cy=&#34;539.487783171&#34; data-abbrev=&#34;BRS&#34; data-name=&#34;Bristol Int&#39;l&#34; r=&#34;3&#34;/&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That&amp;#8217;s something you do by hand as kartograph doesn&amp;#8217;t give ids to SVG elements. Once you&amp;#8217;re done with that, you can run SMIL animation. If you look closer at the final map, you&amp;#8217;ll notice there are three properties animated for each airport: fill opacity, stroke opacity and radius. Each property needs to use separate SMIL &lt;code&gt;&amp;lt;animate /&amp;gt;&lt;/code&gt;, which might look like the one below:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;animate attributeName=&#34;fill-opacity&#34;
+    id=&#34;kos_ani_fo&#34;
+    from=&#34;0&#34;
+    to=&#34;1&#34;
+    begin=&#34;osr_ani.end&#34;
+    dur=&#34;0.25s&#34;
+    fill=&#34;freeze&#34;
+    xlink:href=&#34;#kos&#34;
+/&amp;gt;
+&amp;lt;animate attributeName=&#34;stroke-opacity&#34;
+    id=&#34;kos_ani_so&#34;
+    from=&#34;0&#34;
+    to=&#34;1&#34;
+    begin=&#34;osr_ani.end&#34;
+    dur=&#34;0.25s&#34;
+    fill=&#34;freeze&#34;
+    xlink:href=&#34;#kos&#34;
+/&amp;gt;
+&amp;lt;animate attributeName=&#34;r&#34;
+    id=&#34;kos_ani_r&#34;
+    from=&#34;10px&#34;
+    to=&#34;3px&#34;
+    begin=&#34;osr_ani.end&#34;
+    dur=&#34;0.25s&#34;
+    xlink:href=&#34;#kos&#34;
+/&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I guess you get the idea how long this would take for more airports. Make sure to notice that SMIL can start animation based on another animation&amp;#8217;s end (&lt;code&gt;osr_ani.end&lt;/code&gt;) - that&amp;#8217;s pretty neat.&lt;/p&gt;
+&lt;p&gt;Airways animation works almost the same. First, add unique id to each airway:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;path d=&#34;M550.9,562.9L568.0,495.0 &#34; id=&#34;travel-arn&#34;/&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Second, start animation after all the airports are visible on the map. Notice the initial definition of &lt;code&gt;d&lt;/code&gt; attribute - it&amp;#8217;s a line with zero length.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;animate attributeName=&#34;d&#34;
+    id=&#34;path_ani&#34;
+    from=&#34;M550.9,562.9L550.9,562.9&#34;
+    to=&#34;M550.9,562.9L568.0,495.0&#34;
+    begin=&#34;icn_ani_r.end&#34;
+    dur=&#34;3s&#34;
+    xlink:href=&#34;#travel-arn&#34;
+/&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript function:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/**
+ * @param  number coef  scale radius by number of flights to the given destination
+ * @param  string flight_id
+ */
+var circle = function(coef, flight_id, timeshift) {
+    var svgns = &#34;http://www.w3.org/2000/svg&#34;;
+    var svgDocument =document;
+    var motion = svgDocument.createElementNS(svgns,&#34;animateMotion&#34;);
+    var animation = svgDocument.createElementNS(svgns,&#34;animate&#34;);
+    var shape  = svgDocument.createElementNS(svgns, &#34;circle&#34;);
+    var time = 15 + timeshift;
+    var dur = document.getElementById(flight_id).getAttributeNS(null, &#34;data-dist&#34;)/100;
+    motion.setAttribute(&#34;begin&#34;, time + &#34;s&#34;);
+    motion.setAttribute(&#34;dur&#34;, dur + &#34;s&#34;);
+    motion.setAttribute(&#34;path&#34;, document.getElementById(flight_id).getAttributeNS(null, &#34;d&#34;));
+    motion.setAttribute(&#34;xlink:href&#34;, &#34;#&#34; + flight_id);
+    motion.setAttribute(&#34;id&#34;, flight_id + &#34;_motion&#34;);
+
+    animation.setAttribute(&#34;attributeName&#34;, &#34;opacity&#34;);
+    animation.setAttribute(&#34;from&#34;, &#34;1&#34;);
+    animation.setAttribute(&#34;to&#34;, &#34;0&#34;);
+    animation.setAttribute(&#34;begin&#34;, time + dur + &#34;s&#34;);
+    animation.setAttribute(&#34;dur&#34;, &#34;0.1s&#34;);
+    animation.setAttribute(&#34;fill&#34;, &#34;freeze&#34;);
+
+
+    shape.setAttributeNS(null, &#34;r&#34;,  1*coef);
+    shape.setAttributeNS(null, &#34;fill&#34;, &#34;1f78b4&#34;);
+    shape.setAttributeNS(null, &#34;stroke&#34;, &#34;1f78b4&#34;);
+    shape.setAttribute(&#34;id&#34;, &#34;airplane-&#34; + flight_id);
+    shape.appendChild(motion);
+    shape.appendChild(animation);
+
+    document.getElementById(&#34;airplanes&#34;).appendChild(shape);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;SMIL with SVG seems to be interesting option for web map animation, a bit lengthy though. Syncing animations can easily become pain in the ass (&lt;a href=&#34;https://stackoverflow.com/questions/29897355/svg-smil-animatemotion-only-triggers-once/&#34;&gt;see StackOverflow thread&lt;/a&gt;). Never call your function &lt;code&gt;animate&lt;/code&gt; - there is namesake function defined in &lt;a href=&#34;https://w3c.github.io/web-animations/&#34;&gt;Web Animations API&lt;/a&gt; that makes animation crash in Chrome. &lt;code&gt;&amp;lt;animateMotion /&amp;gt;&lt;/code&gt; is a great tool to animate elements along path.&lt;/p&gt;</description>
+	</item>
 		<item>
 		<title>PostGIS: Count Line Self-Intersections</title>
 		<link>http://zimmi.cz/posts/2015/postgis-count-line-self-intersections/</link>
@@ -22,7 +206,7 @@ COPY test2 (id, wkb_geometry) FROM stdin;
 2   01020000208A1500000600000050212BF9E63EC03F1FA046FD69F1EA3F504D44212915EA3F74A99EDF44E3F33F2CE2805DFAB1F33F805D24B1B189DC3F9834DE5938C1F53FB56F1FBF8AAFEC3F24D0C85B4666EA3FF311B0D8D75BE93F306EAA073894D23FA841B27E3404F33F
 \.
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/postsposts/2015/postgis-count-line-self-intersections/lines.png&#34; title=&#34;Self-intersecting lines&#34; class=&#34;img-responsive centered&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/2015/postgis-count-line-self-intersections/lines.png&#34; title=&#34;Self-intersecting lines&#34; class=&#34;img-responsive centered&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Note that those geometries are valid while not being simple, thus, &lt;code&gt;ST_IsValidReason()&lt;/code&gt; wouldn&amp;#8217;t help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those two.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;WITH noded AS (
 SELECT id, COUNT(id)
@@ -480,7 +664,7 @@ FROM vozejkmap AS lg ) AS f
 &lt;h2&gt;Leaflet map&lt;/h2&gt;
 &lt;p&gt;Map JavaScript is rather simple with ~30 lines of code (not taking styles into account). Thanks to the great plugins it is easy to show ~7,600 points on the map real quick.&lt;/p&gt;
 &lt;p&gt;I didn&amp;#8217;t do much customization apart from styling markers and binding popups.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/postsposts/2015/postgis-case-study-vozejkmap-open-data-part-ii/map.png&#34; title=&#34;vozejkmap.cz data map&#34; class=&#34;img-responsive centered&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/map.png&#34; title=&#34;vozejkmap.cz data map&#34; class=&#34;img-responsive centered&#34;&gt;&lt;/p&gt;
 &lt;h2&gt;What&amp;#8217;s next&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://turfjs.org&#34;&gt;Turf&lt;/a&gt; which means I need to think of what could be fun to do with this data&lt;/li&gt;
@@ -668,55 +852,6 @@ UPDATE vozejkmap SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326);
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;And here we are, ready to use our spatial data!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Feel free to &lt;a href=&#34;https://github.com/zimmicz/vozejkmap-to-postgis&#34;&gt;grab the code&lt;/a&gt; at GitHub.&lt;/p&gt;</description>
-	</item>
-		<item>
-		<title>PostGIS Spatial Indexing With ST_Intersects</title>
-		<link>http://zimmi.cz/posts/2014/postgis-spatial-indexing-with-st-intersects/</link>
-		<pubDate>Sun, 23 Nov 2014 10:05:41 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/2014/postgis-spatial-indexing-with-st-intersects/</guid>
-		<description>&lt;p&gt;&lt;a href=&#34;http://postgis.net/docs/ST_Intersects.html&#34;&gt;PostGIS docs&lt;/a&gt; clearly states that:
-    &amp;gt; This function call will automatically include a bounding box comparison that will make use of any indexes that are available on the geometries.&lt;/p&gt;
-&lt;p&gt;That means (or at least I think so) that you shouldn&amp;#8217;t bother with using &lt;a href=&#34;http://postgis.net/docs/reference.html#Operators&#34;&gt;operators&lt;/a&gt; before calling this function.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;http://slides.com/michalzimmermann&#34;&gt;I was preparing&lt;/a&gt; my second lecture on PostGIS and I was experimenting a bit and came up with an interesting thing on this matter:&lt;/p&gt;
-&lt;p&gt;Let&amp;#8217;s have two SQL relations, &lt;code&gt;roads&lt;/code&gt; and &lt;code&gt;regions&lt;/code&gt;. I would like to retrieve every road that intersects a certain region. Spatial indexes were built beforehand on both tables.&lt;/p&gt;
-&lt;p&gt;First try:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;EXPLAIN ANALYZE SELECT roads.* FROM roads
-JOIN regions ON ST_Intersects(roads.geom, regions.geom)
-WHERE regions.&#34;NAZEV&#34; = &#39;Jihomoravský&#39;;`
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And here comes the result:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Nested Loop  (cost=4.85..324.26 rows=249 width=214) (actual time=45.102..5101.472 rows=74253 loops=1)
--&amp;gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.015..0.018 rows=1 loops=1)
-     Filter: ((&#34;NAZEV&#34;)::text = &#39;Jihomoravský&#39;::text)
-     Rows Removed by Filter: 13
--&amp;gt;  Bitmap Heap Scan on roads  (cost=4.85..311.38 rows=25 width=214) (actual time=45.079..4931.495 rows=74253 loops=1)
-     Recheck Cond: (geom &amp;amp;&amp;amp; regions.geom)
-     Rows Removed by Index Recheck: 154841
-     Filter: _st_intersects(geom, regions.geom)
-     Rows Removed by Filter: 71212
-     -&amp;gt;  Bitmap Index Scan on roads_idx  (cost=0.00..4.85 rows=75 width=0) (actual time=40.142..40.142 rows=145465 loops=1)
-           Index Cond: (geom &amp;amp;&amp;amp; regions.geom)
-Total runtime: 5181.459 ms
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I was pretty satisfied with the result, I kept digging deeper though.&lt;/p&gt;
-&lt;p&gt;Second try:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;EXPLAIN ANALYZE SELECT roads.* FROM roads
-JOIN regions ON roads.geom &amp;amp;&amp;amp; regions.geom
-WHERE regions.&#34;NAZEV&#34; = &#39;Jihomoravský&#39; AND ST_Intersects(roads.geom, regions.geom);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And the result:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Nested Loop  (cost=0.29..21.19 rows=1 width=214) (actual time=3.041..3850.302 rows=74253 loops=1)
--&amp;gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.021..0.024 rows=1 loops=1)
-     Filter: ((&#34;NAZEV&#34;)::text = &#39;Jihomoravský&#39;::text)
-     Rows Removed by Filter: 13
--&amp;gt;  Index Scan using roads_idx on roads  (cost=0.29..8.55 rows=1 width=214) (actual time=2.938..3681.432 rows=74253 loops=1)
-     Index Cond: ((geom &amp;amp;&amp;amp; regions.geom) AND (geom &amp;amp;&amp;amp; regions.geom))
-     Filter: _st_intersects(geom, regions.geom)
-     Rows Removed by Filter: 71212
-Total runtime: 3930.270 ms
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now there&amp;#8217;s a significant difference between total runtimes of both queries and - more important - also a difference between their query plans. The latter is like &lt;strong&gt;20 % faster&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;I&amp;#8217;m puzzled about this behavior and would appreciate any thoughts on this. Reach me at &lt;a href=&#34;http://twitter.com/zimmicz&#34;&gt;Twitter&lt;/a&gt;, &lt;a href=&#34;https://www.linkedin.com/pub/michal-zimmermann/29/8/b30&#34;&gt;LinkedIn&lt;/a&gt; or e-mail (zimmicz[at]gmail.com).&lt;/p&gt;</description>
 	</item>
 	</channel>
 </rss>

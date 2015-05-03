@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <head>
   <meta charset="utf-8">
   <meta name="author" content="Michal Zimmermann">
@@ -8,9 +7,9 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title> Michal Zimmermann  &mdash; Category: SQL </title>
-  <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
+  <link rel="stylesheet" type="text/css" href="/posts//css/style.min.css" />
   <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
-  <script src="/posts/js/highlight.pack.js" defer></script>
+  <script src="/posts//js/highlight.pack.js" defer></script>
   <script>
     window.onload = function() {
       var pre = document.getElementsByTagName('pre');
@@ -25,7 +24,7 @@
         <div class="row">
             <header role="banner">
                 <hgroup>
-                    <h1><a href="/posts//posts/">Michal Zimmermann</a></h1>
+                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
                     <strong>Pieces of knowledge from the world of GIS.</strong>
                 </hgroup>
             </header>
@@ -64,7 +63,7 @@ COPY test2 (id, wkb_geometry) FROM stdin;
 2   01020000208A1500000600000050212BF9E63EC03F1FA046FD69F1EA3F504D44212915EA3F74A99EDF44E3F33F2CE2805DFAB1F33F805D24B1B189DC3F9834DE5938C1F53FB56F1FBF8AAFEC3F24D0C85B4666EA3FF311B0D8D75BE93F306EAA073894D23FA841B27E3404F33F
 \.
 </code></pre>
-<p><img src="/postsposts/2015/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
+<p><img src="/posts/2015/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
 <p>Note that those geometries are valid while not being simple, thus, <code>ST_IsValidReason()</code> wouldn&#8217;t help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those two.</p>
 <pre><code>WITH noded AS (
 SELECT id, COUNT(id)
@@ -415,7 +414,7 @@ FROM vozejkmap AS lg ) AS f
 <h2>Leaflet map</h2>
 <p>Map JavaScript is rather simple with ~30 lines of code (not taking styles into account). Thanks to the great plugins it is easy to show ~7,600 points on the map real quick.</p>
 <p>I didn&#8217;t do much customization apart from styling markers and binding popups.</p>
-<p><img src="/postsposts/2015/postgis-case-study-vozejkmap-open-data-part-ii/map.png" title="vozejkmap.cz data map" class="img-responsive centered"></p>
+<p><img src="/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/map.png" title="vozejkmap.cz data map" class="img-responsive centered"></p>
 <h2>What&#8217;s next</h2>
 <ol>
 <li><a href="http://turfjs.org">Turf</a> which means I need to think of what could be fun to do with this data</li>
@@ -665,7 +664,7 @@ Total runtime: 3930.270 ms
             <div class="row white">
                 <footer role="contentinfo">
                                           
-                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a6-1-gd5f1747</em>.</p>
+                                                              <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> unknown</em>.</p>
                 </footer>
             </div>
         </div>

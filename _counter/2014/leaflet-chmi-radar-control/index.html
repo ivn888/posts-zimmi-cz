@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <head>
   <meta charset="utf-8">
   <meta name="author" content="Michal Zimmermann">
@@ -8,9 +7,9 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title> Michal Zimmermann  &mdash; Leaflet CHMI Radar Control </title>
-  <link rel="stylesheet" type="text/css" href="/posts/css/style.min.css" />
+  <link rel="stylesheet" type="text/css" href="/posts//css/style.min.css" />
   <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
-  <script src="/posts/js/highlight.pack.js" defer></script>
+  <script src="/posts//js/highlight.pack.js" defer></script>
   <script>
     window.onload = function() {
       var pre = document.getElementsByTagName('pre');
@@ -25,7 +24,7 @@
         <div class="row">
             <header role="banner">
                 <hgroup>
-                    <h1><a href="/posts//posts/">Michal Zimmermann</a></h1>
+                    <h1><a href="/posts/">Michal Zimmermann</a></h1>
                     <strong>Pieces of knowledge from the world of GIS.</strong>
                 </hgroup>
             </header>
@@ -51,13 +50,13 @@
 
 <h3>My first control</h3>
 
-<p><img src="/posts2014/leaflet-chmi-radar-control/google_maps.png" title="Google maps layer control" class="img-rounded pull-left">Modularity is one of the things I like the most about Leaflet. I was struggling with creating checkboxes used to toggle layers in Google Maps app, it comes ready with Leaflet. Adding a control to the map is easy as piece of cake, you do <a href="http://leafletjs.com/reference.html#icontrol"><code>L.Control.extend({)}</code></a> and that&#8217;s it (almost). Since the map displays animated radar images showing the precipitation that occurred during last three hours or so I thought it would be great implementing this as a control: a button used to toggle the animation on/off and displaying the time currently shown image was created at.</p>
+<p><img src="/posts/2014/leaflet-chmi-radar-control/google_maps.png" title="Google maps layer control" class="img-rounded pull-left">Modularity is one of the things I like the most about Leaflet. I was struggling with creating checkboxes used to toggle layers in Google Maps app, it comes ready with Leaflet. Adding a control to the map is easy as piece of cake, you do <a href="http://leafletjs.com/reference.html#icontrol"><code>L.Control.extend({)}</code></a> and that&#8217;s it (almost). Since the map displays animated radar images showing the precipitation that occurred during last three hours or so I thought it would be great implementing this as a control: a button used to toggle the animation on/off and displaying the time currently shown image was created at.</p>
 
 <p>The image on the left side displays the old solution using Google Maps. It was using a lot of DOM manipulation, was quite hard to maintain and definitely not eye-candy. When the animation was turned on, another control popped up in the map&#8217;s top left corner displaying the time the image was taken at. The animation toggle (<em>srážkový radar</em>) was incorporated into the layer control. I decided to take it out and make it a separate feature of the map.</p>
 
-<p><img src="/posts2014/leaflet-chmi-radar-control/control.png" title="Leaflet radar control" class="img-rounded pull-right">You can see the result in the image below. The control is a simple button with the radar icon displaying the time when active. It is only useful for the Czech Republic and is highly dependent on the image provider (<abbr title="Czech Hydrometeorogical Institute">CHMI</abbr>), which means that if the URL of the images was to be changed, the whole control would break.</p>
+<p><img src="/posts/2014/leaflet-chmi-radar-control/control.png" title="Leaflet radar control" class="img-rounded pull-right">You can see the result in the image below. The control is a simple button with the radar icon displaying the time when active. It is only useful for the Czech Republic and is highly dependent on the image provider (<abbr title="Czech Hydrometeorogical Institute">CHMI</abbr>), which means that if the URL of the images was to be changed, the whole control would break.</p>
 
-<p>You can<a href="/posts2014/leaflet-chmi-radar-control/radarcontrol.zip"> grab the code if you like</a>. You add the control to the map as any other control:</p>
+<p>You can<a href="/posts/2014/leaflet-chmi-radar-control/radarcontrol.zip"> grab the code if you like</a>. You add the control to the map as any other control:</p>
 
 <pre><code>var radar = new L.Control.Radar();
 radar.addTo(map);
@@ -71,7 +70,7 @@ radar.addTo(map);
                 <footer role="contentinfo">
                       
       <a class="pagination" href="/posts/2014/leaflet-coordinates-control/">Leaflet Coordinates Control &raquo;</a>
-                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> 2.0.0a6-1-gd5f1747</em>.</p>
+                      <p>Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>. Baked with <em><a href="http://bolt80.com/piecrust/">PieCrust</a> unknown</em>.</p>
                 </footer>
             </div>
         </div>
