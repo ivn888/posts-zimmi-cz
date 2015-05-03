@@ -82,12 +82,12 @@ header h1 {
 	font-size: 4.5em;
 }
 
-h2,
-.blog-index h1 {
+.blog-index h1,
+header h2 {
 	font-size: 2.5em;
 	margin-bottom: 5px;
 	margin-top: 20px;
-	text-align: left
+	text-align: left;
 }
 
 hgroup strong {
