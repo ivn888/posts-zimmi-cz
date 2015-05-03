@@ -3,9 +3,193 @@
 <channel>
 	<title>Michal Zimmermann</title>
 	<link>http://zimmi.cz/posts</link>
-	<lastBuildDate>Mon, 20 Apr 2015 21:53:05 +0200</lastBuildDate>
-	<pubDate>Mon, 20 Apr 2015 21:53:05 +0200</pubDate>
+	<lastBuildDate>Sun, 03 May 2015 10:18:48 +0200</lastBuildDate>
+	<pubDate>Sun, 03 May 2015 10:18:48 +0200</pubDate>
 	<description>Pieces of knowledge from the world of GIS.</description>
+		<item>
+		<title>Animating SVG Maps With SMIL</title>
+		<link>http://zimmi.cz/posts/2015/animating-svg-maps-with-smil/</link>
+		<pubDate>Wed, 29 Apr 2015 18:24:24 +0200</pubDate>
+		<guid>http://zimmi.cz/posts/2015/animating-svg-maps-with-smil/</guid>
+		<description>&lt;p&gt;Using SVG to build web maps have both pros and cons and to be honest I don&amp;#8217;t know any &lt;em&gt;serious&lt;/em&gt; map/GIS project built on top of SVG. However, as a part of my job at university, I was forced to use both SVG and SMIL to produce animated web map (see the small version below or the big one at &lt;a href=&#34;https://zimmicz.github.io/svg-smil-airplanes/map.svg&#34;&gt;GitHub&lt;/a&gt;) and I&amp;#8217;d like to share my findings.&lt;/p&gt;
+&lt;p&gt;&lt;object width=&#34;400&#34; data=&#34;https://zimmicz.github.io/svg-smil-airplanes/map.svg&#34; type=&#34;image/svg+xml&#34;&gt;&lt;/object&gt;&lt;/p&gt;
+&lt;h2&gt;Data preprocessing&lt;/h2&gt;
+&lt;p&gt;I chose &lt;a href=&#34;http://www.naturalearthdata.com/&#34;&gt;Natural Earth dataset&lt;/a&gt; both for basemap and thematic layer:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;countries polygon layer for basemap&lt;/li&gt;
+&lt;li&gt;airports point layer for thematic layer&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I decided that animation should go like this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Load basemap and Vaclav Havel airport (PRG).&lt;/li&gt;
+&lt;li&gt;Animate destinations one by one. They are revealed in order of their distance from PRG.&lt;/li&gt;
+&lt;li&gt;Animate airways.&lt;/li&gt;
+&lt;li&gt;Once airways are animated, animate airplanes along their path from PRG to their destination in order of their time of departure.&lt;/li&gt;
+&lt;li&gt;Profit.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;My goal was to create an animation of all departures from Vaclav Havel airport during one day. These data can be obtained at &lt;a href=&#34;http://www.flightstats.com/&#34;&gt;FlightStats&lt;/a&gt;, I didn&amp;#8217;t find a way make this process automatic though. &lt;a href=&#34;http://openflights.org/&#34;&gt;OpenFlights&lt;/a&gt; might be better source then.&lt;/p&gt;
+&lt;h2&gt;SVG creation&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;http://kartograph.org/&#34;&gt;Kartograph&lt;/a&gt; is a great tool both for SVG generation and scripting. What a pity it&amp;#8217;s probably a dead project according to the last commit date. After installing Python part of library used to create SVG files out of vector geometries, it can be run with something like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kartograph --output map.svg --pretty-print --style style.css config.json
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Pretty self-explanatory, let&amp;#8217;s have a look at config file:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &#34;layers&#34;: {
+        &#34;countries&#34;: {
+            &#34;src&#34;: &#34;ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp&#34;,
+            &#34;attributes&#34;: [&#34;name&#34;]
+        },
+        &#34;airports&#34;: {
+            &#34;src&#34;: &#34;ne_10m_airports/ne_10m_airports_prg.shp&#34;,
+            &#34;attributes&#34;: [&#34;name&#34;, &#34;abbrev&#34;]
+        },
+        &#34;travels&#34;: {
+            &#34;src&#34;: &#34;ne_10m_airports/travels.shp&#34;,
+            &#34;attributes&#34;: [&#34;time&#34;, &#34;distance&#34;]
+        },
+        &#34;grid&#34;: {
+            &#34;special&#34;: &#34;graticule&#34;,
+            &#34;latitudes&#34;: 10,
+            &#34;longitudes&#34;: 10
+        }
+    },
+    &#34;proj&#34;: {
+        &#34;id&#34;: &#34;satellite&#34;,
+        &#34;lon0&#34;: 0.0,
+        &#34;lat0&#34;: 48.0,
+        &#34;dist&#34;: 45,
+        &#34;up&#34;: 15
+    },
+    &#34;bounds&#34;: {
+        &#34;mode&#34;: &#34;bbox&#34;,
+        &#34;data&#34;: [-180, -90, 180, 90],
+        &#34;padding&#34;: 1
+    },
+    &#34;export&#34;: {
+        &#34;round&#34;: 1,
+        &#34;width&#34;: 1000,
+        &#34;ratio&#34;: 1
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It is possible to adjust map settings in many different ways. The most important/interesting:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Choose what attributes you want to have exported from source file with &lt;code&gt;attributes&lt;/code&gt; key for every layer. They&amp;#8217;ll be available as &lt;code&gt;data-&lt;/code&gt; attribute of SVG elements.&lt;/li&gt;
+&lt;li&gt;It comes with Grid generation packed in! Really great. Sea generation works for some projections only.&lt;/li&gt;
+&lt;li&gt;Set the projections you want to use with additional settings.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bounds&lt;/code&gt; settings should - according to the docs - use layer extent as well, I couldn&amp;#8217;t make it work though. Use &lt;code&gt;[-180, -90, 180, 90]&lt;/code&gt; as a workaround to get the whole world. Don&amp;#8217;t forget to set &lt;code&gt;padding&lt;/code&gt;, so your map doesn&amp;#8217;t get clipped on edges.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;export&lt;/code&gt;ing coordinates rounded to one decimal place makes your SVG a lot smaller.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can change SVG look with simple CSS, just be sure to use layer names as CSS ids:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#airports {
+    fill: #CC0000;
+    fill-opacity: 0;
+    stroke: #660000;
+    stroke-opacity: 0;
+}
+
+#countries {
+    fill: #e6deb4;
+    stroke: #a59f81;
+}
+
+#grid {
+    stroke: #d0d0d0;
+    stroke-width: .3px;
+}
+
+#travels {
+    stroke: #1f78b4;
+    stroke-opacity: 0;
+    stroke-dasharray: 5,5;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Data adjustment &amp;amp; animation&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;SMIL&lt;/strong&gt; is a XML based language for multimedia representation. It comes ready for timing, animation, visual transitions etc. I guess it might be considered easier to read for a web development beginner. Once you start using it, you immediately realize it suffers from the same disease like XML does: it is so wordy!&lt;/p&gt;
+&lt;p&gt;Let&amp;#8217;s get back to my example. To animate airports one by one, let&amp;#8217;s give them unique ids, so they look something like:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;circle id=&#34;brs&#34; stroke-opacity=&#34;0&#34; fill-opacity=&#34;0&#34; cx=&#34;476.597304864&#34; cy=&#34;539.487783171&#34; data-abbrev=&#34;BRS&#34; data-name=&#34;Bristol Int&#39;l&#34; r=&#34;3&#34;/&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That&amp;#8217;s something you do by hand as kartograph doesn&amp;#8217;t give ids to SVG elements. Once you&amp;#8217;re done with that, you can run SMIL animation. If you look closer at the final map, you&amp;#8217;ll notice there are three properties animated for each airport: fill opacity, stroke opacity and radius. Each property needs to use separate SMIL &lt;code&gt;&amp;lt;animate /&amp;gt;&lt;/code&gt;, which might look like the one below:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;animate attributeName=&#34;fill-opacity&#34;
+    id=&#34;kos_ani_fo&#34;
+    from=&#34;0&#34;
+    to=&#34;1&#34;
+    begin=&#34;osr_ani.end&#34;
+    dur=&#34;0.25s&#34;
+    fill=&#34;freeze&#34;
+    xlink:href=&#34;#kos&#34;
+/&amp;gt;
+&amp;lt;animate attributeName=&#34;stroke-opacity&#34;
+    id=&#34;kos_ani_so&#34;
+    from=&#34;0&#34;
+    to=&#34;1&#34;
+    begin=&#34;osr_ani.end&#34;
+    dur=&#34;0.25s&#34;
+    fill=&#34;freeze&#34;
+    xlink:href=&#34;#kos&#34;
+/&amp;gt;
+&amp;lt;animate attributeName=&#34;r&#34;
+    id=&#34;kos_ani_r&#34;
+    from=&#34;10px&#34;
+    to=&#34;3px&#34;
+    begin=&#34;osr_ani.end&#34;
+    dur=&#34;0.25s&#34;
+    xlink:href=&#34;#kos&#34;
+/&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I guess you get the idea how long this would take for more airports. Make sure to notice that SMIL can start animation based on another animation&amp;#8217;s end (&lt;code&gt;osr_ani.end&lt;/code&gt;) - that&amp;#8217;s pretty neat.&lt;/p&gt;
+&lt;p&gt;Airways animation works almost the same. First, add unique id to each airway:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;path d=&#34;M550.9,562.9L568.0,495.0 &#34; id=&#34;travel-arn&#34;/&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Second, start animation after all the airports are visible on the map. Notice the initial definition of &lt;code&gt;d&lt;/code&gt; attribute - it&amp;#8217;s a line with zero length.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;animate attributeName=&#34;d&#34;
+    id=&#34;path_ani&#34;
+    from=&#34;M550.9,562.9L550.9,562.9&#34;
+    to=&#34;M550.9,562.9L568.0,495.0&#34;
+    begin=&#34;icn_ani_r.end&#34;
+    dur=&#34;3s&#34;
+    xlink:href=&#34;#travel-arn&#34;
+/&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript function:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/**
+ * @param  number coef  scale radius by number of flights to the given destination
+ * @param  string flight_id
+ */
+var circle = function(coef, flight_id, timeshift) {
+    var svgns = &#34;http://www.w3.org/2000/svg&#34;;
+    var svgDocument =document;
+    var motion = svgDocument.createElementNS(svgns,&#34;animateMotion&#34;);
+    var animation = svgDocument.createElementNS(svgns,&#34;animate&#34;);
+    var shape  = svgDocument.createElementNS(svgns, &#34;circle&#34;);
+    var time = 15 + timeshift;
+    var dur = document.getElementById(flight_id).getAttributeNS(null, &#34;data-dist&#34;)/100;
+    motion.setAttribute(&#34;begin&#34;, time + &#34;s&#34;);
+    motion.setAttribute(&#34;dur&#34;, dur + &#34;s&#34;);
+    motion.setAttribute(&#34;path&#34;, document.getElementById(flight_id).getAttributeNS(null, &#34;d&#34;));
+    motion.setAttribute(&#34;xlink:href&#34;, &#34;#&#34; + flight_id);
+    motion.setAttribute(&#34;id&#34;, flight_id + &#34;_motion&#34;);
+
+    animation.setAttribute(&#34;attributeName&#34;, &#34;opacity&#34;);
+    animation.setAttribute(&#34;from&#34;, &#34;1&#34;);
+    animation.setAttribute(&#34;to&#34;, &#34;0&#34;);
+    animation.setAttribute(&#34;begin&#34;, time + dur + &#34;s&#34;);
+    animation.setAttribute(&#34;dur&#34;, &#34;0.1s&#34;);
+    animation.setAttribute(&#34;fill&#34;, &#34;freeze&#34;);
+
+
+    shape.setAttributeNS(null, &#34;r&#34;,  1*coef);
+    shape.setAttributeNS(null, &#34;fill&#34;, &#34;1f78b4&#34;);
+    shape.setAttributeNS(null, &#34;stroke&#34;, &#34;1f78b4&#34;);
+    shape.setAttribute(&#34;id&#34;, &#34;airplane-&#34; + flight_id);
+    shape.appendChild(motion);
+    shape.appendChild(animation);
+
+    document.getElementById(&#34;airplanes&#34;).appendChild(shape);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;SMIL with SVG seems to be interesting option for web map animation, a bit lengthy though. Syncing animations can easily become pain in the ass (&lt;a href=&#34;https://stackoverflow.com/questions/29897355/svg-smil-animatemotion-only-triggers-once/&#34;&gt;see StackOverflow thread&lt;/a&gt;). Never call your function &lt;code&gt;animate&lt;/code&gt; - there is namesake function defined in &lt;a href=&#34;https://w3c.github.io/web-animations/&#34;&gt;Web Animations API&lt;/a&gt; that makes animation crash in Chrome. &lt;code&gt;&amp;lt;animateMotion /&amp;gt;&lt;/code&gt; is a great tool to animate elements along path.&lt;/p&gt;</description>
+	</item>
 		<item>
 		<title>GRASS: Big Buffers Made Easy</title>
 		<link>http://zimmi.cz/posts/2015/grass-big-buffers-made-easy/</link>
@@ -634,13 +818,6 @@ FROM vozejkmap AS lg ) AS f
         AND table.guid = subquery.guid
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;That&amp;#8217;s what I&amp;#8217;ve come up with. It basically extracts the zoom level from the link, adds number two to its value and writes it back to the string.&lt;/p&gt;</description>
-	</item>
-		<item>
-		<title>Leaflet With Custom CRS (EPSG:5514)</title>
-		<link>http://zimmi.cz/posts/2015/leaflet-with-custom-crs-epsg-5514/</link>
-		<pubDate>Thu, 15 Jan 2015 19:46:22 +0100</pubDate>
-		<guid>http://zimmi.cz/posts/2015/leaflet-with-custom-crs-epsg-5514/</guid>
-		<description>&lt;p&gt;If you ever find yourself in need to use custom projection with Leaflet, feel free to start with this example of &lt;a href=&#34;https://github.com/zimmicz/leaflet-custom-crs-jtsk&#34;&gt;Czech national coordinate system&lt;/a&gt;. All you need is &lt;a href=&#34;http://leafletjs.com&#34;&gt;Leaflet&lt;/a&gt;, &lt;a href=&#34;http://proj4js.org/&#34;&gt;proj4.js&lt;/a&gt; and &lt;a href=&#34;https://github.com/kartena/Proj4Leaflet&#34;&gt;proj4 for Leaflet plugin&lt;/a&gt;. I&amp;#8217;m still not sure how &lt;code&gt;origin&lt;/code&gt; coordinates work though.&lt;/p&gt;</description>
 	</item>
 	</channel>
 </rss>
