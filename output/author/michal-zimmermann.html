@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Michal Zimmermann - Articles by Michal Zimmermann</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/foundation.min.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/screen.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/pygment.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/railscasts.min.css">
+</head>
+
+<body id="index" class="home">
+    <div class="fixed">
+        <nav class="top-bar">
+            <section class="top-bar-section">
+                <ul class="left">
+                    <li class="divider"></li>
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS</a></li>
+                </ul>
+            </section>
+        </nav>
+    </div>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+<h2>Articles by Michal Zimmermann</h2>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check">SSH GRASS Processing Status Check</a></h2>
+            <small>Written on May 23, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p>I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.</p>
+<p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
+<span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
+
+<span class="k">while</span> <span class="nb">true</span><span class="p">;</span> <span class="k">do</span>
+    <span class="nb">echo</span> <span class="s2">&quot;############ </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2"> ############&quot;</span>
+    <span class="nv">x</span><span class="o">=</span><span class="k">$(</span>ssh user@remote.server <span class="s2">&quot;tail -n 30 path/to/my/log_</span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="k">)</span>
+
+    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
+        <span class="k">then</span>
+            notify-send -u critical <span class="s2">&quot;Finally </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">&quot;</span>
+            mpg123 -n <span class="m">250</span> ~/Music/queen-we_are_the_champions.mp3
+            <span class="nb">exit</span>
+<span class="nb">        </span><span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
+    <span class="k">fi</span>
+    sleep 60
+<span class="k">done</span>
+</pre></div>
+
+
+<p>What seemed to be really frustrating makes me happy right now. Unless Freddie starts singing in the middle of the night.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/animating-svg-maps-with-smil/" rel="bookmark" title="Permalink to Animating SVG Maps With SMIL">Animating SVG Maps With SMIL</a></h2>
+            <small>Written on Apr 29, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/smil.html">smil</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
+        </small>
+        <section>
+            <p>Using SVG to build web maps have both pros and cons and to be honest I don't know any <em>serious</em> map/GIS project built on top of SVG. However, as a part of my job at university, I was forced to use both SVG and SMIL to produce animated web map (see the small version below or the big one at <a href="https://zimmicz.github.io/svg-smil-airplanes/map.svg">GitHub</a>) and I'd like to share my findings.</p>
+<p><object width="400" data="https://zimmicz.github.io/svg-smil-airplanes/map.svg" type="image/svg+xml"></object></p>
+<h2>Data preprocessing</h2>
+<p>I chose <a href="http://www.naturalearthdata.com/">Natural Earth dataset</a> both for basemap and thematic layer:</p>
+<ul>
+<li>countries polygon layer for basemap</li>
+<li>airports point layer for thematic layer</li>
+</ul>
+<p>I decided that animation should go like this:</p>
+<ol>
+<li>Load basemap and Vaclav Havel airport (PRG).</li>
+<li>Animate destinations one by one. They are revealed in order of their distance from PRG.</li>
+<li>Animate airways.</li>
+<li>Once airways are animated, animate airplanes along their path from PRG to their destination in order of their time of departure.</li>
+<li>Profit.</li>
+</ol>
+<p>My goal was to create an animation of all departures from Vaclav Havel airport during one day. These data can be obtained at <a href="http://www.flightstats.com/">FlightStats</a>, I didn't find a way make this process automatic though. <a href="http://openflights.org/">OpenFlights</a> might be better source then.</p>
+<h2>SVG creation</h2>
+<p><a href="http://kartograph.org/">Kartograph</a> is a great tool both for SVG generation and scripting. What a pity it's probably a dead project according to the last commit date. After installing Python part of library used to create SVG files out of vector geometries, it can be run with something like this:</p>
+<div class="highlight"><pre>kartograph --output map.svg --pretty-print --style style.css config.json
+</pre></div>
+
+
+<p>Pretty self-explanatory, let's have a look at config file:</p>
+<div class="highlight"><pre><span class="p">{</span>
+    <span class="s2">&quot;layers&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;countries&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;src&quot;</span><span class="o">:</span> <span class="s2">&quot;ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attributes&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;airports&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;src&quot;</span><span class="o">:</span> <span class="s2">&quot;ne_10m_airports/ne_10m_airports_prg.shp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attributes&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;abbrev&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;travels&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;src&quot;</span><span class="o">:</span> <span class="s2">&quot;ne_10m_airports/travels.shp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attributes&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;distance&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;grid&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;special&quot;</span><span class="o">:</span> <span class="s2">&quot;graticule&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;latitudes&quot;</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;longitudes&quot;</span><span class="o">:</span> <span class="mi">10</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;proj&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;satellite&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lon0&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;lat0&quot;</span><span class="o">:</span> <span class="mf">48.0</span><span class="p">,</span>
+        <span class="s2">&quot;dist&quot;</span><span class="o">:</span> <span class="mi">45</span><span class="p">,</span>
+        <span class="s2">&quot;up&quot;</span><span class="o">:</span> <span class="mi">15</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;bounds&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mode&quot;</span><span class="o">:</span> <span class="s2">&quot;bbox&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="o">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span>
+        <span class="s2">&quot;padding&quot;</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;export&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;round&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;width&quot;</span><span class="o">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;ratio&quot;</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>It is possible to adjust map settings in many different ways. The most important/interesting:</p>
+<ul>
+<li>Choose what attributes you want to have exported from source file with <code>attributes</code> key for every layer. They'll be available as <code>data-</code> attribute of SVG elements.</li>
+<li>It comes with Grid generation packed in! Really great. Sea generation works for some projections only.</li>
+<li>Set the projections you want to use with additional settings.</li>
+<li><code>bounds</code> settings should - according to the docs - use layer extent as well, I couldn't make it work though. Use <code>[-180, -90, 180, 90]</code> as a workaround to get the whole world. Don't forget to set <code>padding</code>, so your map doesn't get clipped on edges.</li>
+<li><code>export</code>ing coordinates rounded to one decimal place makes your SVG a lot smaller.</li>
+</ul>
+<p>You can change SVG look with simple CSS, just be sure to use layer names as CSS ids:</p>
+<div class="highlight"><pre><span class="nf">#airports</span> <span class="p">{</span>
+    <span class="n">fill</span><span class="o">:</span> <span class="m">#CC0000</span><span class="p">;</span>
+    <span class="n">fill</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">:</span> <span class="m">#660000</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#countries</span> <span class="p">{</span>
+    <span class="n">fill</span><span class="o">:</span> <span class="m">#e6deb4</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">:</span> <span class="m">#a59f81</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#grid</span> <span class="p">{</span>
+    <span class="n">stroke</span><span class="o">:</span> <span class="m">#d0d0d0</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="k">width</span><span class="o">:</span> <span class="m">.3px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#travels</span> <span class="p">{</span>
+    <span class="n">stroke</span><span class="o">:</span> <span class="m">#1f78b4</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="n">dasharray</span><span class="o">:</span> <span class="m">5</span><span class="o">,</span><span class="m">5</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2>Data adjustment &amp; animation</h2>
+<p><strong>SMIL</strong> is a XML based language for multimedia representation. It comes ready for timing, animation, visual transitions etc. I guess it might be considered easier to read for a web development beginner. Once you start using it, you immediately realize it suffers from the same disease like XML does: it is so wordy!</p>
+<p>Let's get back to my example. To animate airports one by one, let's give them unique ids, so they look something like:</p>
+<div class="highlight"><pre><span class="nt">&lt;circle</span> <span class="na">id=</span><span class="s">&quot;brs&quot;</span> <span class="na">stroke-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">fill-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">cx=</span><span class="s">&quot;476.597304864&quot;</span> <span class="na">cy=</span><span class="s">&quot;539.487783171&quot;</span> <span class="na">data-abbrev=</span><span class="s">&quot;BRS&quot;</span> <span class="na">data-name=</span><span class="s">&quot;Bristol Int&#39;l&quot;</span> <span class="na">r=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p>That's something you do by hand as kartograph doesn't give ids to SVG elements. Once you're done with that, you can run SMIL animation. If you look closer at the final map, you'll notice there are three properties animated for each airport: fill opacity, stroke opacity and radius. Each property needs to use separate SMIL <code>&lt;animate /&gt;</code>, which might look like the one below:</p>
+<div class="highlight"><pre><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;fill-opacity&quot;</span>
+    <span class="na">id=</span><span class="s">&quot;kos_ani_fo&quot;</span>
+    <span class="na">from=</span><span class="s">&quot;0&quot;</span>
+    <span class="na">to=</span><span class="s">&quot;1&quot;</span>
+    <span class="na">begin=</span><span class="s">&quot;osr_ani.end&quot;</span>
+    <span class="na">dur=</span><span class="s">&quot;0.25s&quot;</span>
+    <span class="na">fill=</span><span class="s">&quot;freeze&quot;</span>
+    <span class="na">xlink:href=</span><span class="s">&quot;#kos&quot;</span>
+<span class="nt">/&gt;</span>
+<span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;stroke-opacity&quot;</span>
+    <span class="na">id=</span><span class="s">&quot;kos_ani_so&quot;</span>
+    <span class="na">from=</span><span class="s">&quot;0&quot;</span>
+    <span class="na">to=</span><span class="s">&quot;1&quot;</span>
+    <span class="na">begin=</span><span class="s">&quot;osr_ani.end&quot;</span>
+    <span class="na">dur=</span><span class="s">&quot;0.25s&quot;</span>
+    <span class="na">fill=</span><span class="s">&quot;freeze&quot;</span>
+    <span class="na">xlink:href=</span><span class="s">&quot;#kos&quot;</span>
+<span class="nt">/&gt;</span>
+<span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;r&quot;</span>
+    <span class="na">id=</span><span class="s">&quot;kos_ani_r&quot;</span>
+    <span class="na">from=</span><span class="s">&quot;10px&quot;</span>
+    <span class="na">to=</span><span class="s">&quot;3px&quot;</span>
+    <span class="na">begin=</span><span class="s">&quot;osr_ani.end&quot;</span>
+    <span class="na">dur=</span><span class="s">&quot;0.25s&quot;</span>
+    <span class="na">xlink:href=</span><span class="s">&quot;#kos&quot;</span>
+<span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p>I guess you get the idea how long this would take for more airports. Make sure to notice that SMIL can start animation based on another animation's end (<code>osr_ani.end</code>) - that's pretty neat.</p>
+<p>Airways animation works almost the same. First, add unique id to each airway:</p>
+<div class="highlight"><pre><span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">&quot;M550.9,562.9L568.0,495.0 &quot;</span> <span class="na">id=</span><span class="s">&quot;travel-arn&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p>Second, start animation after all the airports are visible on the map. Notice the initial definition of <code>d</code> attribute - it's a line with zero length.</p>
+<div class="highlight"><pre><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;d&quot;</span>
+    <span class="na">id=</span><span class="s">&quot;path_ani&quot;</span>
+    <span class="na">from=</span><span class="s">&quot;M550.9,562.9L550.9,562.9&quot;</span>
+    <span class="na">to=</span><span class="s">&quot;M550.9,562.9L568.0,495.0&quot;</span>
+    <span class="na">begin=</span><span class="s">&quot;icn_ani_r.end&quot;</span>
+    <span class="na">dur=</span><span class="s">&quot;3s&quot;</span>
+    <span class="na">xlink:href=</span><span class="s">&quot;#travel-arn&quot;</span>
+<span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p>Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript function:</p>
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * @param  number coef  scale radius by number of flights to the given destination</span>
+<span class="cm"> * @param  string flight_id</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">coef</span><span class="p">,</span> <span class="nx">flight_id</span><span class="p">,</span> <span class="nx">timeshift</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">svgns</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/2000/svg&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">svgDocument</span> <span class="o">=</span><span class="nb">document</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">motion</span> <span class="o">=</span> <span class="nx">svgDocument</span><span class="p">.</span><span class="nx">createElementNS</span><span class="p">(</span><span class="nx">svgns</span><span class="p">,</span><span class="s2">&quot;animateMotion&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">animation</span> <span class="o">=</span> <span class="nx">svgDocument</span><span class="p">.</span><span class="nx">createElementNS</span><span class="p">(</span><span class="nx">svgns</span><span class="p">,</span><span class="s2">&quot;animate&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">shape</span>  <span class="o">=</span> <span class="nx">svgDocument</span><span class="p">.</span><span class="nx">createElementNS</span><span class="p">(</span><span class="nx">svgns</span><span class="p">,</span> <span class="s2">&quot;circle&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">+</span> <span class="nx">timeshift</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">dur</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">flight_id</span><span class="p">).</span><span class="nx">getAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;data-dist&quot;</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="p">;</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="p">,</span> <span class="nx">time</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="p">,</span> <span class="nx">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">flight_id</span><span class="p">).</span><span class="nx">getAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">));</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;xlink:href&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">flight_id</span><span class="p">);</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nx">flight_id</span> <span class="o">+</span> <span class="s2">&quot;_motion&quot;</span><span class="p">);</span>
+
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;attributeName&quot;</span><span class="p">,</span> <span class="s2">&quot;opacity&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;from&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="p">,</span> <span class="nx">time</span> <span class="o">+</span> <span class="nx">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="p">,</span> <span class="s2">&quot;0.1s&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">,</span> <span class="s2">&quot;freeze&quot;</span><span class="p">);</span>
+
+
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>  <span class="mi">1</span><span class="o">*</span><span class="nx">coef</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;fill&quot;</span><span class="p">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;stroke&quot;</span><span class="p">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;airplane-&quot;</span> <span class="o">+</span> <span class="nx">flight_id</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">motion</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">animation</span><span class="p">);</span>
+
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;airplanes&quot;</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">shape</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>SMIL with SVG seems to be interesting option for web map animation, a bit lengthy though. Syncing animations can easily become pain in the ass (<a href="https://stackoverflow.com/questions/29897355/svg-smil-animatemotion-only-triggers-once/">see StackOverflow thread</a>). Never call your function <code>animate</code> - there is namesake function defined in <a href="https://w3c.github.io/web-animations/">Web Animations API</a> that makes animation crash in Chrome. <code>&lt;animateMotion /&gt;</code> is a great tool to animate elements along path.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/grass-big-buffers-made-easy/" rel="bookmark" title="Permalink to GRASS: Big Buffers Made Easy">GRASS: Big Buffers Made Easy</a></h2>
+            <small>Written on Apr 20, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/grass.html">grass</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        </small>
+        <section>
+            <p>Recently I've written about <a href="/2015/postgis-buffers-intersections-differences-and-collections/">struggling with fairly complex geometries in PostGIS</a>. Lesson learned from the last time was to use more smaller geometries instead of several really huge. You can obtain the small ones from the big by <a href="/2015/postgis-rectangular-grid-creation/">cutting it with a grid</a>.</p>
+<p>A supervisor of a project I've been working on came up with a task that totally buried the previous process in a blink of an eye: <strong>Give me the buffer (diffed with original geometries) that is smoothed on the outer bounds so there are no edges shorter than 10 cm.</strong> I sighed. Then, I cursed. Then, I gave it a try with PostGIS. Achieving this goal involves these steps:</p>
+<ul>
+<li>Dissolve intersecting buffers</li>
+<li>Run some kind of generalization algorithm that is not defined in PostGIS</li>
+<li>Diff original geometries</li>
+<li>Cut buffer with grid so it works <del>faster</del> not so slow for the next steps</li>
+</ul>
+<p>Two of those four are rather problematic with PostGIS: line smoothing and diffing the original geometries (I didn't get to the last one, so it might be 3 of 4 as well).</p>
+<h2>Hello, I'm GRASS</h2>
+<p>I haven't used GRASS for ages and even back then I didn't get to know it much, but it saved the day for me this time.</p>
+<div class="highlight"><pre><span class="x">grass -text path/to/mapset -c</span>
+
+<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot; output=ilot_050 layer=ilot_2015_050 snap=-1 --overwrite</span>
+<span class="err">#</span><span class="x"> turn the snapping off, I don&#39;t want the input changed in any way, even though it is not topologically valid</span>
+<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot; output=lollipops_050 layer=lollipops.lollipops_2015_050_tmp snap=-1 --overwrite</span>
+<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot; output=holes_050 layer=phase_3.holes_050 snap=-1 --overwrite</span>
+<span class="x">v.db.addcolumn map=ilot_050 columns=&quot;id_0 int&quot;</span>
+<span class="x">v.db.update map=ilot_050 column=id_0 value=1</span>
+
+<span class="err">#</span><span class="x"> dissolve didn&#39;t work without a column specified, dunno why</span>
+<span class="x">v.dissolve input=ilot_050 column=id_0 output=ilot_050_dissolve --overwrite</span>
+<span class="x">v.buffer input=ilot_050_dissolve output=ilot_050_buffer distance=20 --overwrite</span>
+
+<span class="err">#</span><span class="x"> v.out and v.in routine used just because I didn&#39;t get the way attributes work in GRASS, would do it differently next time</span>
+<span class="x">v.out.ogr input=ilot_050_buffer output=ilot_050_buffer format=ESRI_Shapefile --overwrite</span>
+<span class="x">v.in.ogr input=ilot_050_buffer output=ilot_050_buffer snap=-1 --overwrite</span>
+<span class="x">v.overlay ainput=ilot_050_buffer binput=holes_050 operator=or output=combined_050_01 snap=-1 --overwrite</span>
+
+<span class="err">#</span><span class="x"> tried v.patch to combine the three layers, it gave some strange results in the final overlay</span>
+<span class="x">v.overlay ainput=combined_050_01 binput=lollipops_050 operator=or output=combined_050_02 snap=-1 --overwrite</span>
+<span class="x">v.out.ogr input=combined_050_02 output=combined_050 format=ESRI_Shapefile --overwrite</span>
+<span class="x">v.in.ogr input=combined_050 output=combined_050_in snap=-1 --overwrite</span>
+<span class="x">v.db.addcolumn map=combined_050_in columns=&quot;id_1 int&quot;</span>
+<span class="x">v.db.update map=combined_050_in column=id_1 value=1</span>
+<span class="x">v.dissolve input=combined_050_in column=id_1 output=combined_050_dissolve --overwrite</span>
+
+<span class="err">#</span><span class="x"> get rid of &lt; 10cm edges</span>
+<span class="x">v.generalize input=combined_050_dissolve output=combined_050_gen method=reduction threshold=0.1 --overwrite</span>
+<span class="x">v.out.ogr input=combined_050_gen output=combined_050_gen format=ESRI_Shapefile --overwrite</span>
+<span class="x">v.in.ogr input=combined_050_gen output=combined_050_gen snap=-1 --overwrite</span>
+<span class="x">v.overlay ainput=combined_050_gen binput=ilot_050 operator=not snap=1e-05 --overwrite output=ilot_050_diff</span>
+<span class="x">v.out.postgis input=ilot_050_diff output=&quot;PG:dbname=db user=postgres password=postgres&quot; output_layer=onf3.buffer_050_diff options=&quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&quot; --overwrite</span>
+<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=ign user=postgres password=postgres&quot; output=buffer_050 layer=onf3.buffer_050_diff snap=-1 --overwrite</span>
+<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=ign user=postgres password=postgres&quot; output=grid layer=grid snap=-1 --overwrite</span>
+<span class="x">v.db.connect -d map=buffer_050</span>
+
+<span class="err">#</span><span class="x"> instead of v.out and v.in routine</span>
+<span class="x">db.connect driver=sqlite database=&#39;</span><span class="p">$</span><span class="nv">GISDBASE</span><span class="x">/</span><span class="p">$</span><span class="nv">LOCATION_NAME</span><span class="x">/</span><span class="p">$</span><span class="nv">MAPSET</span><span class="x">/sqlite.db&#39;</span>
+<span class="x">v.db.addtable map=buffer_050</span>
+<span class="x">v.overlay ainput=buffer_050 binput=grid operator=and output=buffer_050_grid snap=-1 --overwrite</span>
+<span class="x">v.out.postgis input=buffer_050_grid output=&quot;PG:dbname=ign user=postgres password=postgres&quot; output_layer=onf3.buffer_050_diff_grid options=&quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&quot; --overwrite</span>
+</pre></div>
+
+
+<p><strong>It is damn fast</strong> compared to PostGIS. It can be automated. It can be parametrized. It is robust. It is great!</p>
+<h2>Lesson learned</h2>
+<ul>
+<li>You cannot smooth lines by deleting edges shorter than <code>n</code> in PostGIS. At least I haven't found the way to do so without defining your own procedure. You can with GRASS.</li>
+<li>GRASS reduction algorithm always keep first and last node untouched. Thus, if they're closer than <code>n</code>, they'll stay even if you'd like to have them deleted.</li>
+<li>Getting to grips with GRASS attribute data is rather hard after using shapefiles all your GIS life.</li>
+<li>It is great to exploit synergy of different GIS tools used for what they're best at.</li>
+</ul>
+<p>The more I work with big data, the more I get used to not seeing them. That's kind of a twist after crafting maps at university.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-finding-biggest-land-users-nearby/" rel="bookmark" title="Permalink to PostGIS: Finding Biggest Land Users Nearby">PostGIS: Finding Biggest Land Users Nearby</a></h2>
+            <small>Written on Apr 3, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        </small>
+        <section>
+            <p>At <a href="http://clevermaps.cz">CleverMaps</a> we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird challenges.</p>
+<h2>Give me the biggest land users nearby</h2>
+<p><em>Find the biggest land users in surrounding cadastral communities for each cadastral community (~ 13K)</em> being the latest task, here's the query I tackled it with:</p>
+<div class="highlight"><pre>WITH users_ AS (
+    SELECT
+        cad_code,
+        id,
+        zipcode,
+        city,
+        concat_ws(&#39; &#39;,street, concat_ws(&#39;/&#39;, house_number, street_number)) as street,
+        name,
+        &#39;Users with more than 10 ha&#39;::text note,
+        SUM(acreage) area
+        FROM land_blocks -- being a table with info about all the agricultural land blocks
+        JOIN users u ON id_uz = id
+        GROUP BY cad_code, u.id
+        HAVING SUM(acreage) &gt; 10
+),
+ints AS (
+    SELECT
+        ku.cad_code as community,
+        ku2.cad_code as surrounding,
+        ku2.cad_name
+    FROM cadastral_community ku
+    JOIN cadastral_community ku2
+        ON ST_Intersects(ku.geom, ku2.geom)
+    WHERE ku.cad_code &lt;&gt; ku2.cad_code
+)
+SELECT
+    DISTINCT ON (surrounding, cad_name, u.zipcode, u.city, u.street, u.name)
+    surrounding,
+    cad_name,
+    u.zipcode,
+    u.city,
+    u.street,
+    u.name,
+    u.note,
+    u.area
+FROM
+    users_ u
+JOIN ints
+    ON cad_code = community;
+</pre></div>
+
+
+<p>Few things to note:</p>
+<ul>
+<li><code>concat_ws()</code> is a great function for joining values that might be <code>NULL</code>. If such a value is found, it is skipped and the function continues with the next one (if any). Thus, you'll never get a string ending with a trailing slash (<code>Street name 55/</code>).</li>
+<li>With <code>users_</code> CTE I get a list of owners having more than 10 hectares of land for each cadastral community. This gives me the inverse result of what I want (if I know the biggest owners in the cadastral community, I know these are the ones that should be listed for surrounding c. communities).</li>
+<li>This <em>putting-it-all-together</em> step is done with <code>ints</code> CTE that outputs the list of surrounding c. communities for each of them.</li>
+<li><code>DISTINCT ON</code> cleans up the list so the same owners don't appear more than once for any given c. community.</li>
+</ul>
+<p>Writing this makes me realize the list should be probably sorted by area so only the occurence with the biggest value is kept for each c. community. Simple <code>ORDER BY</code> should deal with this just fine. Or even more sophisticated, using <code>GROUP BY</code> to output the total acreage in all surrounding c. communities.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-count-line-self-intersections/" rel="bookmark" title="Permalink to PostGIS: Count Line Self-Intersections">PostGIS: Count Line Self-Intersections</a></h2>
+            <small>Written on Mar 30, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        </small>
+        <section>
+            <p><a href="https://gis.stackexchange.com/questions/107927/counting-self-intersections-of-linestring-using-postgis/140674#140674">Is there a way of using PostgreSQL + PostGIS for finding the number of self intersections in a linestring?</a> was a question that made me think of this problem. I came up with a solution that takes just a few lines of code.</p>
+<p>Assume the following geometries:</p>
+<div class="highlight"><pre>CREATE TABLE test2 (
+    id integer NOT NULL,
+    wkb_geometry geometry(LineString,5514)
+);
+COPY test2 (id, wkb_geometry) FROM stdin;
+1   01020000208A15000004000000CCDC7845E339EEBFF2003B4A8A08E1BFE4154DAB7C31DCBF24C2042773E3E53F2287BA2CC591E43F604749BFE3B2E2BF2AE9770A11B8F0BF9C91435D56C0C63F
+2   01020000208A1500000600000050212BF9E63EC03F1FA046FD69F1EA3F504D44212915EA3F74A99EDF44E3F33F2CE2805DFAB1F33F805D24B1B189DC3F9834DE5938C1F53FB56F1FBF8AAFEC3F24D0C85B4666EA3FF311B0D8D75BE93F306EAA073894D23FA841B27E3404F33F
+\.
+</pre></div>
+
+
+<p><img src="http://www.zimmi.cz/posts/assets/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
+<p>Note that those geometries are valid while not being simple, thus, <code>ST_IsValidReason()</code> wouldn't help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those two.</p>
+<div class="highlight"><pre>WITH noded AS (
+SELECT id, COUNT(id)
+FROM (
+    SELECT DISTINCT (ST_DumpPoints(ST_Node(wkb_geometry))).geom, id
+    FROM test
+) tmp  group by id
+),
+test AS (
+    SELECT id, COUNT(id)
+        FROM (
+            SELECT DISTINCT (ST_DumpPoints(wkb_geometry)).geom, id
+            FROM test
+        ) tmp  group by id
+)
+
+SELECT noded.id, noded.count - test.count cnt FROM noded JOIN test USING (id);
+</pre></div>
+
+
+<p>This query gives you geometry id and the difference in number of vertices between the original and simple geometry. Note the <code>DISTINCT</code> in the <code>noded</code> CTE - with <code>ST_Node()</code> you get <code>one vertex x number of intersecting lines</code> for each intersection. <code>DISTINCT</code> gives you just one of them.</p>
+<p>The query result on my <code>test</code> table:
+<table>
+    <tr>
+        <th>id</th>
+        <th>cnt</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>2</td>
+    </tr>
+</table></p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-rectangular-grid-creation/" rel="bookmark" title="Permalink to PostGIS: Rectangular Grid Creation">PostGIS: Rectangular Grid Creation</a></h2>
+            <small>Written on Mar 24, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        </small>
+        <section>
+            <p>Creating a rectangular grid to cover a given extent with same sized cells is one of the basic GIS tasks I've had to solve several times so far. I used QGIS or some Python to give me a bunch of <code>INSERT</code> statements to run in PostGIS database, now I've come with a final solution at last.</p>
+<div class="highlight"><pre>CREATE OR REPLACE FUNCTION cm_grid(
+    blx float8, -- bottom left x coordinate
+    bly float8, -- bottom left y coordinate
+    trx float8, -- top right x coordinate
+    try float8, -- top right y coordinate
+    xsize float8, -- cell width
+    ysize float8, -- cell height
+    srid integer DEFAULT 5514,
+    OUT col varchar,
+    OUT &quot;row&quot; varchar,
+    OUT geom geometry
+) RETURNS SETOF record AS
+$$
+DECLARE
+    width float8; -- total area width
+    height float8; -- total area height
+    cols integer;
+    rows integer;
+BEGIN
+    width  := @($1 - $3); -- absolute value
+    height := @($2 - $4); -- absolute value
+    cols   := ceil(width / xsize);
+    rows   := ceil(height / ysize);
+    RETURN QUERY
+        SELECT
+            cast(
+                lpad((i)::varchar,
+                CASE WHEN
+                    char_length(rows::varchar) &gt; char_length(cols::varchar)
+                        THEN  char_length(rows::varchar)
+                        ELSE char_length(cols::varchar)
+                END,
+                &#39;0&#39;)
+                AS varchar
+            ) AS row,
+            cast(
+                lpad((j)::varchar,
+                CASE WHEN
+                    char_length(rows::varchar) &gt; char_length(cols::varchar)
+                        THEN  char_length(rows::varchar)
+                        ELSE char_length(cols::varchar)
+                END,
+                &#39;0&#39;) AS varchar
+            ) AS col,
+            ST_SetSRID(
+                ST_GeomFromText(
+                    &#39;POLYGON((&#39; ||
+                        array_to_string(
+                            ARRAY[i * xsize + blx, j * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;,&#39; ||
+                        array_to_string(
+                            ARRAY[i * xsize + blx, (j+1) * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;,&#39; ||
+                        array_to_string(
+                            ARRAY[(i+1) * xsize + blx, (j+1) * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;,&#39; ||
+                        array_to_string(
+                            ARRAY[(i+1) * xsize + blx, j * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;,&#39; ||
+                        array_to_string(
+                            ARRAY[i * xsize + blx, j * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;
+                    ))&#39;
+                )
+            , srid) AS geom
+        FROM
+            generate_series(0, cols) AS i,
+            generate_series(0, rows) AS j;
+END;
+$$
+LANGUAGE plpgsql;
+</pre></div>
+
+
+<p>And you call it like this:</p>
+<div class="highlight"><pre>CREATE TABLE grid AS
+SELECT *
+FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
+</pre></div>
+
+
+<p>Few notes:</p>
+<ul>
+<li>it takes bounding box coordinates (bottom left, top right) for an extent,</li>
+<li>followed by cell width and height,</li>
+<li>and optional SRID (defaults to 5514 which is Czech national grid),</li>
+<li>each cell is indexed with <code>row</code> and <code>col</code> number</li>
+</ul>
+<p>The messy <code>CASE</code> statement makes sure both <code>row</code> and <code>col</code> are of the same length. I used <code>array_to_string</code> for better readability. It might not be the fastest way, didn't do any benchmarks.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-buffers-intersections-differences-and-collections/" rel="bookmark" title="Permalink to PostGIS: Buffers, Intersections, Differences And Collections">PostGIS: Buffers, Intersections, Differences And Collections</a></h2>
+            <small>Written on Mar 19, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        </small>
+        <section>
+            <p>Being part of <a href="http://clevermaps.cz">CleverMaps</a> means doing lot of nasty work with PostGIS. Recently, I've been given a following task that needed to be done for a really big project dealing with agricultural parcels:</p>
+<ul>
+<li>given a polygonal shapefile of agricultural parcels, create 20m wide buffers around all of them,</li>
+<li>extract holes from these parcels,</li>
+<li>clip buffers so they don't overlap with other parcels,</li>
+<li>get rid of overlaps between nearby parcels (e.g. dissolve them),</li>
+<li>create output combined from holes and buffers,</li>
+<li>the output must not contain features having more than ~1,000,000 vertices</li>
+</ul>
+<p>This process is going to be run ~20&times; on layers with ~40,000-70,000 polygons.</p>
+<h2>Input data</h2>
+<ul>
+<li>polygonal layer of agricultural parcels</li>
+<li>rectangular grid (7.5 &times; 7.5 km) for cutting the output</li>
+</ul>
+<h2>First try</h2>
+<p>My initial effort was to union all the buffers and then clip them with a rectangular grid. Long story short: <strong>Don't do that. Never. Ever. I mean it.</strong></p>
+<p>It works fine until you end up with one huge multipolygon having like ~2,000,000 vertices. But then you need to split it somehow so you meet the 1,000,000 limit rule (see list above). Spatial index doesn't help you much in such cases, so that really huge polygon is being cut by every rectangle it intersects and it takes hours and hours. It's just a no go.</p>
+<h2>The other way round</h2>
+<p>Let's put it the other way round. First, split buffers by rectangular grid, doing union on each cell separately.</p>
+<h3>Import</h3>
+<p>Using the swiss knife of GIS to import the data:</p>
+<div class="highlight"><pre>export SHAPE_ENCODING=&quot;ISO-8859-1&quot;
+ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; parcels.shp -lco ENCODING=UTF-8 -t_srs &quot;EPSG:2154&quot;
+ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; grid.shp -lco ENCODING=UTF-8 -t_srs &quot;EPSG:2154&quot;
+</pre></div>
+
+
+<h3>PostGIS processing</h3>
+<p>Recently I stumbled upon a psql <code>\set</code> command. Launching several queries on the same table, it might be useful to define it's name with <code>\set table tablename</code>:</p>
+<div class="highlight"><pre>\set table &#39;parcels&#39;
+-- prepare separate table for holes (inner rings)
+DROP TABLE IF EXISTS holes;
+CREATE TABLE holes (
+id serial,
+ilot_id varchar,
+wkb_geometry geometry(&#39;Polygon&#39;, 2154),
+path integer);
+</pre></div>
+
+
+<p>I found the following query an easy way to get all the rings from geometries having more than one ring:</p>
+<div class="highlight"><pre>INSERT INTO holes (ilot_id, wkb_geometry, path) (
+SELECT id,
+    (ST_DumpRings(wkb_geometry)).geom::geometry(&#39;Polygon&#39;, 2154) as wkb_geometry,
+    unnest((ST_DumpRings(wkb_geometry)).path) as path
+FROM :table
+WHERE ST_NRings(wkb_geometry) &gt; 1
+);
+</pre></div>
+
+
+<p>Here's a little trick. Doing some checks I found out that some of the polygons had two rings without having any inner ring, both of them being the same. I guess this comes from some kind of human error. This query thus deletes all rings with <code>path = 0</code> (exterior rings). At the same time, it deals with that <em>invalid</em> polygons by checking their spatial relationship to parcels.</p>
+<div class="highlight"><pre>DELETE FROM holes
+    WHERE path = 0
+    OR id IN (
+        SELECT holes.id
+        FROM holes
+        JOIN :table ON
+            ST_Within(
+                ST_Buffer(holes.wkb_geometry,-1),
+                :table.wkb_geometry
+            )
+        AND holes.wkb_geometry &amp;&amp; :table.wkb_geometry
+);
+</pre></div>
+
+
+<p>To my surprise, it is possible that parcel has a hole with another parcel being in that hole. Argh. Find those and get rid of them.</p>
+<div class="highlight"><pre>DROP TABLE IF EXISTS ints;
+CREATE TABLE ints AS
+    SELECT holes.*
+    FROM holes
+    JOIN :table ON ST_Intersects(holes.wkb_geometry, :table.wkb_geometry)
+    AND ST_Relate(holes.wkb_geometry, :table.wkb_geometry, &#39;2********&#39;);
+DELETE FROM holes
+WHERE id IN (SELECT id FROM ints);
+</pre></div>
+
+
+<p>I still need to get the difference between the hole geometry and the parcel that resides inside it - this difference is the actual hole I'm looking for.</p>
+<div class="highlight"><pre>DROP TABLE IF EXISTS diff_ints;
+CREATE TABLE diff_ints AS
+    SELECT
+        ints.id,
+        ST_Difference(
+            ints.wkb_geometry,
+            ST_Collect(:table.wkb_geometry)
+        ) wkb_geometry
+    FROM ints, :table
+    WHERE ST_Within(:table.wkb_geometry, ints.wkb_geometry)
+    GROUP BY ints.wkb_geometry, ints.id;
+</pre></div>
+
+
+<p>And I'm done with holes. Get back to buffers.</p>
+<div class="highlight"><pre>DROP TABLE IF EXISTS buffer;
+CREATE TABLE buffer AS
+    SELECT id, ST_Buffer(wkb_geometry, 20) wkb_geometry
+    FROM :table;
+CREATE INDEX buffer_gist_idx ON buffer USING gist(wkb_geometry);
+ALTER TABLE buffer ADD PRIMARY KEY(id);
+VACUUM ANALYZE buffer;
+</pre></div>
+
+
+<p>Combine all the parts together.</p>
+<div class="highlight"><pre><span class="nt">DROP</span> <span class="nt">TABLE</span> <span class="nt">IF</span> <span class="nt">EXISTS</span> <span class="nt">diff</span><span class="o">;</span>
+<span class="nt">CREATE</span> <span class="nt">TABLE</span> <span class="nt">diff</span> <span class="nt">AS</span>
+    <span class="nt">SELECT</span> <span class="nt">a</span><span class="nc">.id</span><span class="o">,</span> <span class="nt">ST_Difference</span><span class="o">(</span><span class="nt">a</span><span class="nc">.wkb_geometry</span><span class="o">,</span> <span class="nt">ST_Union</span><span class="o">(</span><span class="nt">ST_MakeValid</span><span class="o">(</span><span class="nt">b</span><span class="nc">.wkb_geometry</span><span class="o">)))</span> <span class="nt">as</span> <span class="nt">wkb_geometry</span>
+    <span class="nt">FROM</span> <span class="nt">buffer</span> <span class="nt">a</span><span class="o">,</span> <span class="nd">:table</span> <span class="nt">b</span>
+    <span class="nt">WHERE</span> <span class="nt">ST_Intersects</span><span class="o">(</span><span class="nt">a</span><span class="nc">.wkb_geometry</span><span class="o">,</span> <span class="nt">b</span><span class="nc">.wkb_geometry</span><span class="o">)</span>
+    <span class="nt">GROUP</span> <span class="nt">BY</span> <span class="nt">a</span><span class="nc">.id</span><span class="o">,</span> <span class="nt">a</span><span class="nc">.wkb_geometry</span>
+    <span class="nt">UNION</span>
+    <span class="nt">SELECT</span> <span class="nt">id</span><span class="o">:</span><span class="nd">:varchar</span><span class="o">,</span> <span class="nt">wkb_geometry</span> <span class="nt">FROM</span> <span class="nt">holes</span>
+    <span class="nt">UNION</span>
+    <span class="nt">SELECT</span> <span class="nt">id</span><span class="o">:</span><span class="nd">:varchar</span><span class="o">,</span> <span class="nt">wkb_geometry</span> <span class="nt">FROM</span> <span class="nt">diff_ints</span><span class="o">;</span>
+<span class="nt">CREATE</span> <span class="nt">INDEX</span> <span class="nt">diff_gist_idx</span> <span class="nt">ON</span> <span class="nt">diff</span> <span class="nt">USING</span> <span class="nt">gist</span><span class="o">(</span><span class="nt">wkb_geometry</span><span class="o">);</span>
+<span class="nt">VACUUM</span> <span class="nt">ANALYZE</span> <span class="nt">diff</span><span class="o">;</span>
+</pre></div>
+
+
+<p>Collect the geometries in every cell, simplify them a little, snap them to 3 decimal numbers, make them valid and dump them to simple features. This query takes ~300,000 ms which is orders of magnitude faster than my initial attempt.</p>
+<div class="highlight"><pre>DROP TABLE IF EXISTS uni;
+CREATE TABLE uni AS
+SELECT
+    g.ogc_fid AS grid_id,
+    (ST_Dump(
+        ST_MakeValid(
+            ST_SnapToGrid(
+                ST_SimplifyPreserveTopology(
+                    ST_CollectionExtract(
+                        ST_Buffer(
+                            ST_Collect(
+                                ST_Intersection(a.wkb_geometry, g.wkb_geometry)
+                            )
+                        , 0)
+                    , 3)
+                , 0.1)
+            , 0.001)
+        )
+    )).geom as wkb_geometry
+FROM diff a, grid g
+WHERE ST_Intersects(a.wkb_geometry, g.wkb_geometry)
+GROUP BY g.ogc_fid;
+</pre></div>
+
+
+<p>After running the query it is reasonable to check the results. I'm only interested in polygonal geometries, <code>ST_GeometryType()</code> would tell me of any other geometry type. Invalid geometries are not allowed.</p>
+<div class="highlight"><pre>SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
+SELECT COUNT(1) FROM uni WHERE NOT ST_IsValid(wkb_geometry);
+</pre></div>
+
+
+<p>Add primary key on serial column as a last SQL step.</p>
+<div class="highlight"><pre>ALTER TABLE uni ADD COLUMN id serial;
+ALTER TABLE uni ADD PRIMARY KEY(id);
+</pre></div>
+
+
+<h3>Export</h3>
+<p>And spit it out as a shapefile.</p>
+<div class="highlight"><pre>ogr2ogr -f &quot;ESRI Shapefile&quot; output.shp PG:&quot;dbname=ign user=postgres&quot; uni -s_srs &quot;EPSG:2154&quot; -t_srs &quot;EPSG:2154&quot; -lco ENCODING=UTF-8
+</pre></div>
+
+
+<h2>Lesson learned</h2>
+<ul>
+<li>More of little seems to be faster than less of bigger.</li>
+<li>Never stop learning and trying different approaches.</li>
+<li>Although using <code>CTE</code> might be tempting, creating separate tables for separate steps of the whole process is much more comfortable for debugging.</li>
+</ul>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/wms-download-for-future-offline-use/" rel="bookmark" title="Permalink to WMS Download For Future Offline Use">WMS Download For Future Offline Use</a></h2>
+            <small>Written on Mar 15, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/wms.html">wms</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        </small>
+        <section>
+            <p>Using WMS in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with WMS layers.</p>
+<p><a href="https://geopython.github.io/OWSLib/">OWSLib</a> is a great tool to help you get images from WMS server. Code and some comments follow.</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">owslib.wms</span> <span class="kn">import</span> <span class="n">WebMapService</span>
+
+<span class="n">BOTTOM_LEFT</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">679363</span><span class="p">,</span><span class="o">-</span><span class="mi">1120688</span><span class="p">)</span>
+<span class="n">TOP_RIGHT</span>   <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">565171</span><span class="p">,</span><span class="o">-</span><span class="mi">1042703</span><span class="p">)</span>
+<span class="n">SRS_WIDTH</span>   <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">639084</span> <span class="o">-</span> <span class="o">-</span><span class="mi">638825</span><span class="p">)</span> <span class="c"># tile width in units of crs =&gt; 259 m</span>
+<span class="n">SRS_HEIGHT</span>  <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">1070426</span> <span class="o">-</span> <span class="o">-</span><span class="mi">1070273</span><span class="p">)</span> <span class="c"># tile height in units of crs =&gt; 153 m</span>
+<span class="n">PX_WIDTH</span>    <span class="o">=</span> <span class="mi">977</span>
+<span class="n">PX_HEIGHT</span>   <span class="o">=</span> <span class="mi">578</span>
+
+<span class="n">FORMAT</span>      <span class="o">=</span> <span class="s">&#39;image/png&#39;</span>
+<span class="n">LAYERS</span>      <span class="o">=</span> <span class="p">[</span><span class="s">&#39;KN&#39;</span><span class="p">,</span> <span class="s">&#39;RST_PK&#39;</span><span class="p">]</span>
+<span class="n">SIZE</span>        <span class="o">=</span> <span class="p">(</span><span class="n">PX_WIDTH</span><span class="p">,</span> <span class="n">PX_HEIGHT</span><span class="p">)</span>
+<span class="n">SRS</span>         <span class="o">=</span> <span class="s">&#39;EPSG:5514&#39;</span>
+<span class="n">STYLES</span>      <span class="o">=</span> <span class="p">[</span><span class="s">&#39;default&#39;</span><span class="p">,</span> <span class="s">&#39;default&#39;</span><span class="p">]</span>
+<span class="n">TRANSPARENT</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="n">DIRECTORY</span> <span class="o">=</span> <span class="s">&#39;tiles/&#39;</span>
+<span class="n">SLEEP</span>     <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span> <span class="c"># seconds</span>
+
+<span class="n">dx</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c"># area width in units of crs</span>
+<span class="n">dy</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c"># area height in units of crs</span>
+
+<span class="n">cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dx</span> <span class="o">/</span> <span class="n">SRS_WIDTH</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dy</span> <span class="o">/</span> <span class="n">SRS_HEIGHT</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;world_file.pngw&#39;</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_template</span><span class="p">:</span>
+    <span class="n">tmpl</span> <span class="o">=</span> <span class="n">wld_template</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">wms</span> <span class="o">=</span> <span class="n">WebMapService</span><span class="p">(</span><span class="s">&#39;http://services.cuzk.cz/wms/wms.asp&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.1.1&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.png&#39;</span><span class="p">):</span>
+            <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">continue</span>
+
+        <span class="n">bbox</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">i</span> <span class="o">*</span> <span class="n">SRS_WIDTH</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">j</span> <span class="o">*</span> <span class="n">SRS_HEIGHT</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SRS_WIDTH</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SRS_HEIGHT</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">img</span> <span class="o">=</span> <span class="n">wms</span><span class="o">.</span><span class="n">getmap</span><span class="p">(</span>
+            <span class="n">layers</span><span class="o">=</span><span class="n">LAYERS</span><span class="p">,</span>
+            <span class="n">styles</span><span class="o">=</span><span class="n">STYLES</span><span class="p">,</span>
+            <span class="n">srs</span><span class="o">=</span><span class="n">SRS</span><span class="p">,</span>
+            <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">SIZE</span><span class="p">,</span>
+            <span class="n">format</span><span class="o">=</span><span class="n">FORMAT</span><span class="p">,</span>
+            <span class="n">transparent</span><span class="o">=</span><span class="n">TRANSPARENT</span>
+        <span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.png&#39;</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">png</span><span class="p">:</span>
+            <span class="n">png</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.pngw&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_file</span><span class="p">:</span>
+            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tmpl</span><span class="p">)</span>
+            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">SRS_WIDTH</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">((</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SRS_HEIGHT</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span> <span class="s">&#39; out of &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rows</span> <span class="o">*</span> <span class="n">cols</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">SLEEP</span><span class="p">)</span>
+</pre></div>
+
+
+<p>First, always make sure <strong>you are not violating terms of use</strong> defined by service provider. If you are not, here are the necessary steps:</p>
+<ol>
+<li>Define your area of interest with bottom left and top right coordinates.</li>
+<li>Calculate width of single image both in pixels and units of CRS to get the rightsized image. Note that there may be image size restrictions defined by provider (2048 &times; 2048 px is usually the biggest you can get).</li>
+<li>Define template <a href="https://en.wikipedia.org/wiki/World_file">world file</a> for referencing images. OWSLib doesn't provide world files to saved images, these have to be created by you. I recommend to use a template file for creating real world files.</li>
+<li>Be nice! Don't overload the service. I use <code>time.sleep()</code> for this.</li>
+<li>Profit.</li>
+</ol>
+<p>The trouble with WMS is that you can't set an arbitrary scale you want to obtain images in (e.g. 1:1 000). It's fairly easy to get all values needed to imitate this behavior though.</p>
+<p>Using <a href="http://qgis.org">QGIS</a> you can:</p>
+<ol>
+<li>Get bounding box of area you're interested in.</li>
+<li>Save current view as an image (together with the world file!) and use it as a specimen for your own world files.</li>
+<li>Derive image width (CRS, pixels) from the saved image, thus getting the same zoom level you were using in QGIS.</li>
+</ol>
+<p>Code given is not bulletproof, it will fail on any network error. However, if you restart it after such a crash, it checks for existing files and starts with the first missing, so you don't have to download all the tiles again.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/hosting-website-on-openshift/" rel="bookmark" title="Permalink to Hosting Website On Openshift">Hosting Website On Openshift</a></h2>
+            <small>Written on Feb 23, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/openshift.html">openshift</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got it working eventually.</p>
+<h2>Things to know before taking the leap</h2>
+<p>Some domain providers don't support CNAME changes for root domains (zimmi.cz in my case). This means you can't simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do so:</p>
+<div class="highlight"><pre>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
+</pre></div>
+
+
+<p>Which is great until you realize you've just created two different websites. That's where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
+<div class="highlight"><pre>zimmi.cz A 174.129.25.170
+</pre></div>
+
+
+<p>Now everything works fine and you have your <code>www.domain.tld</code> up and running.</p>
+<h2>OpenShift subdomains</h2>
+<p>I wasn't successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing DNS to it:</p>
+<div class="highlight"><pre>posts.zimmi.cz A 174.179.25.170
+www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
+</pre></div>
+
+
+<p>Just don't forget to handle both naked and <code>www</code> version. When Google reindexes new URLs (http://www.zimmi.cz/posts instead of http://posts.zimmi.cz) subdomain application might be deleted.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/" rel="bookmark" title="Permalink to PostGIS Case Study: Vozejkmap Open Data (Part II)">PostGIS Case Study: Vozejkmap Open Data (Part II)</a></h2>
+            <small>Written on Feb 21, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        </small>
+        <section>
+            <p><a href="{{ pcposturl(2014, 12, 02, 'postgis-case-study-vozejkmap-open-data-part-i') }}">In the first part of my little case study</a> I downloaded <a href="http://vozejkmap.cz">vozejkmap.cz</a> dataset and imported it into the PostGIS database. Having spatial data safely stored the time comes to get it onto the map. Libraries used are:</p>
+<ul>
+<li><a href="http://leafletjs.com">Leaflet</a></li>
+<li><a href="https://github.com/lvoogdt/Leaflet.awesome-markers">Leaflet.awesome-markers</a></li>
+<li><a href="https://github.com/Leaflet/Leaflet.markercluster">Leaflet.markercluster</a></li>
+</ul>
+<p>I teach cartography visualization classes this semester and this map should serve well as an example of what can be done with online maps.</p>
+<h2>Retrieving data from the PostGIS database</h2>
+<p>Our goal is to build the whole map as a static HTML page without any backend logic. Thus, data needs to be extracted from the database into the format readable with Leaflet - <a href="http://geojson.org/">GeoJSON</a>.</p>
+<p>That's fairly easy with the <a href="http://www.postgresonline.com/journal/archives/267-Creating-GeoJSON-Feature-Collections-with-JSON-and-PostGIS-functions.html">postgresonline.com tutorial</a>. It took me quite a time to find out what the following query does. Splitting it into smaller chunks helped a lot.</p>
+<div class="highlight"><pre>SELECT row_to_json(fc)
+FROM (
+SELECT &#39;FeatureCollection&#39; AS type,
+    array_to_json(array_agg(f)) AS features
+    FROM (SELECT &#39;Feature&#39; AS type,
+        ST_AsGeoJSON(lg.geom)::json As geometry,
+        row_to_json((SELECT l FROM (SELECT id, title, location_type, description, author_name, attr1, attr2, attr3) AS l
+  )) AS properties
+FROM vozejkmap AS lg ) AS f )  AS fc \g /path/to/file.json;
+</pre></div>
+
+
+<p>To get all rows with <code>type</code>, <code>geometry</code> and <code>properties</code> columns (these are the ones defined in GeoJSON specification, see the link above), run this:</p>
+<div class="highlight"><pre>SELECT &#39;Feature&#39; AS type,
+            ST_AsGeoJSON(lg.geom)::json As geometry,
+            row_to_json((SELECT l FROM (SELECT id, title, location_type, description, author_name, attr1, attr2, attr3) AS l
+      )) AS properties
+    FROM vozejkmap AS lg
+</pre></div>
+
+
+<p><code>array_agg()</code> squashes all the rows into an array while <code>array_to_json()</code> returns the array as JSON.</p>
+<div class="highlight"><pre>SELECT &#39;FeatureCollection&#39; AS type,
+    array_to_json(array_agg(f)) AS features
+    FROM (SELECT &#39;Feature&#39; AS type,
+        ST_AsGeoJSON(lg.geom)::json As geometry,
+        row_to_json((SELECT l FROM (SELECT id, title, location_type, description, author_name, attr1, attr2, attr3) AS l
+  )) AS properties
+FROM vozejkmap AS lg ) AS f
+</pre></div>
+
+
+<p>In the last step (the whole code as shown above) <code>row_to_json</code> returns the result as JSON.</p>
+<h3>Caveats</h3>
+<p>If you run this code from the psql console, be sure you</p>
+<ul>
+<li>set <em>show only row</em> to true with <code>\t</code></li>
+<li>set <em>expanded output</em> to false with <code>\x off</code></li>
+</ul>
+<p>If you don't, you'll have lots of hyphens and column names saved to the json file.</p>
+<h2>Leaflet map</h2>
+<p>Map JavaScript is rather simple with ~30 lines of code (not taking styles into account). Thanks to the great plugins it is easy to show ~7,600 points on the map real quick.</p>
+<p>I didn't do much customization apart from styling markers and binding popups.</p>
+<p><img src="http://www.zimmi.cz/posts/assets/postgis-case-study-vozejkmap-open-data-part-ii/map.png" title="vozejkmap.cz data map" class="img-responsive centered"></p>
+<h2>What's next</h2>
+<ol>
+<li><a href="http://turfjs.org">Turf</a> which means I need to think of what could be fun to do with this data</li>
+<li>Layers switching</li>
+<li>Map key (by extending L.Control)</li>
+</ol>
+<p>The code is still <a href="https://github.com/zimmicz/vozejkmap-to-postgis">available at my GitHub</a>.</p>
+        </section>
+        </div>
+    </div>
+
+<div class="pagination">
+    <p class="paginator">
+            <a href="http://www.zimmi.cz/posts/author/michal-zimmermann2.html" class="button">Next page &raquo;</a>
+    </p>
+</div>            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+
+</body>
+</html>

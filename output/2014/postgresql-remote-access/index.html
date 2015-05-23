@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Michal Zimmermann | Pieces of knowledge from the world of GIS.</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+
+
+
+    <meta name="tags" contents="postgresql" />
+    <meta name="tags" contents="linux" />
+
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/foundation.min.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/screen.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/pygment.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/railscasts.min.css">
+</head>
+
+<body id="index" class="home">
+    <div class="fixed">
+        <nav class="top-bar">
+            <section class="top-bar-section">
+                <ul class="left">
+                    <li class="divider"></li>
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS</a></li>
+                </ul>
+            </section>
+        </nav>
+    </div>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+<div class="panel">
+    <div class="post-name">
+        <h2><a href="http://www.zimmi.cz/posts/2014/postgresql-remote-access/" rel="bookmark" title="Permalink to PostgreSQL Remote Access">PostgreSQL Remote Access</a></h2>
+        <small>Written on Sep 17, 2014
+    and marked as
+    <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,     <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>    | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+    </small>
+    <section>
+        <p>PostgreSQL is set to listen only to connections coming from localhost by default. I guess that's fine as far as you don't need access to the database from anywhere else (like your work network). If you do, you need to log via SSH or use some online database management tool (go for <a href="http://adminer.org">Adminer</a> and forget about anything called php[pg|my]admin). Or you can set it up to access connections from other locations.</p>
+<p>You need to:</p>
+<ol>
+<li>set <code>listen_addresses</code> to <code>*</code> in your postgres.conf. That does not mean anyone can connect to your database, that means that the server will listen to connections coming from any available IP interface.</li>
+<li>insert new entry into pg_hba.conf looking like this: <code>host database user xxx.xxx.xxx.xxx md5</code>. Now we're saying we only want connections coming from IP <code>xxx.xxx.xxx.xxx</code> accepted.</li>
+<li>
+<p>Add rule allowing the database server access to iptables. Number 5 says it will be the fifth rule in the order. It must come before the final REJECT ALL rule if present.</p>
+<p><code>iptables -I INPUT 5 -p tcp --dport 5432 -s xxx.xxx.xxx.xxx -j ACCEPT</code>
+4. Just to be sure noone else is able to connect, reject all on port 5432.</p>
+<p><code>iptables -I INPUT 6 -p tcp --dport 5432 -j REJECT</code></p>
+</li>
+</ol>
+<p>You're set to remotely connect to your database server.</p>
+    </section>
+    </div>
+</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+
+</body>
+</html>

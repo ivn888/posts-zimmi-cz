@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Michal Zimmermann | tag: openshift</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/foundation.min.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/screen.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/pygment.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/railscasts.min.css">
+</head>
+
+<body id="index" class="home">
+    <div class="fixed">
+        <nav class="top-bar">
+            <section class="top-bar-section">
+                <ul class="left">
+                    <li class="divider"></li>
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS</a></li>
+                </ul>
+            </section>
+        </nav>
+    </div>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+<h2 class="text-center">Articles tagged with openshift tag</h2>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/hosting-website-on-openshift/" rel="bookmark" title="Permalink to Hosting Website On Openshift">Hosting Website On Openshift</a></h2>
+            <small>Written on Feb 23, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/openshift.html">openshift</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got it working eventually.</p>
+<h2>Things to know before taking the leap</h2>
+<p>Some domain providers don't support CNAME changes for root domains (zimmi.cz in my case). This means you can't simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do so:</p>
+<div class="highlight"><pre>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
+</pre></div>
+
+
+<p>Which is great until you realize you've just created two different websites. That's where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
+<div class="highlight"><pre>zimmi.cz A 174.129.25.170
+</pre></div>
+
+
+<p>Now everything works fine and you have your <code>www.domain.tld</code> up and running.</p>
+<h2>OpenShift subdomains</h2>
+<p>I wasn't successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing DNS to it:</p>
+<div class="highlight"><pre>posts.zimmi.cz A 174.179.25.170
+www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
+</pre></div>
+
+
+<p>Just don't forget to handle both naked and <code>www</code> version. When Google reindexes new URLs (http://www.zimmi.cz/posts instead of http://posts.zimmi.cz) subdomain application might be deleted.</p>
+        </section>
+        </div>
+    </div>
+
+<div class="pagination">
+    <p class="paginator">
+    </p>
+</div>            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+
+</body>
+</html>
