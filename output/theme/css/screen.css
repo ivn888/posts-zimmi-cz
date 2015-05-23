@@ -36,6 +36,7 @@ img.right {
         border-top: 1px solid #d8d8d8;
         color: #333333;
         display: inline;
+        padding-top: .5rem;
         text-transform: none;
     }
 
