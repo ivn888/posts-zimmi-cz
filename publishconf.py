@@ -22,8 +22,9 @@ DELETE_OUTPUT_DIRECTORY = True
 
 # Following items are often useful when publishing
 
-#DISQUS_SITENAME = ""
-#GOOGLE_ANALYTICS = ""
-
 ARTICLE_URL = '{date:%Y}/{slug}/'
 ARTICLE_SAVE_AS = '{date:%Y}/{slug}/index.html'
+GOOGLE_ANALYTICS = 'UA-43432739-2'
+
+PLUGIN_PATHS = ['content/plugins']
+PLUGINS = ['neighbors']

@@ -8,7 +8,7 @@ SITESUBTITLE = u'Pieces of knowledge from the world of GIS.'
 SITEURL = ''
 
 PATH = 'content'
-THEME = 'theme/simple'
+THEME = 'content/theme/simple'
 TIMEZONE = 'Europe/Prague'
 
 DEFAULT_LANG = u'en'
@@ -43,3 +43,6 @@ CSS_FILE = 'screen.css'
 LOCALE = 'en_US.UTF-8'
 CATEGORIES_SAVE_AS = 'categories/index.html'
 TAGS_SAVE_AS = 'tags/index.html'
+
+PLUGIN_PATHS = ['content/plugins']
+PLUGINS = ['neighbors']
