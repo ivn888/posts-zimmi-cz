@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>Michal Zimmermann | tag: bash</title>
+          <title>Michal Zimmermann | Pieces of knowledge from the world of GIS.</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
         <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+
+
+
+    <meta name="tags" contents="bash" />
+    <meta name="tags" contents="linux" />
+
         <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/foundation.min.css" />
         <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/screen.css" />
         <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/pygment.css" />
@@ -36,17 +42,15 @@
         </div>
         <div class="row">
             <div class="large-12 columns">
-<h2 class="text-center">Articles tagged with bash tag</h2>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check">SSH GRASS Processing Status Check</a></h2>
-            <small>Written on May 23, 2015
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.</p>
+<div class="panel">
+    <div class="post-name">
+        <h2><a href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check">SSH GRASS Processing Status Check</a></h2>
+        <small>Written on May 23, 2015
+    and marked as
+    <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>,     <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>    | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+    </small>
+    <section>
+        <p>I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.</p>
 <p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
 <div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
 <span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
@@ -68,31 +72,10 @@
 
 
 <p>What seemed to be really frustrating makes me happy right now. Unless Freddie starts singing in the middle of the night.</p>
-        </section>
-        </div>
+    </section>
     </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/bash-prepend-to-filename/" rel="bookmark" title="Permalink to Bash: Prepend To Filename">Bash: Prepend To Filename</a></h2>
-            <small>Written on Nov 1, 2014
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <div class="highlight"><pre><span class="x">for f in *; do mv &quot;</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot; &quot;prepend_</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot;; done</span>
-</pre></div>
-
-
-<p>Whenever you need to prepend anything to your files.</p>
-        </section>
-        </div>
-    </div>
-
-<div class="pagination">
-    <p class="paginator">
-    </p>
-</div>            </div>
+</div>
+            </div>
         </div>
         <div class="row">
             <div class="large-12 columns footer">

@@ -40,6 +40,40 @@
 
     <div class="panel">
         <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check">SSH GRASS Processing Status Check</a></h2>
+            <small>Written on May 23, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p>I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.</p>
+<p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
+<span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
+
+<span class="k">while</span> <span class="nb">true</span><span class="p">;</span> <span class="k">do</span>
+    <span class="nb">echo</span> <span class="s2">&quot;############ </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2"> ############&quot;</span>
+    <span class="nv">x</span><span class="o">=</span><span class="k">$(</span>ssh user@remote.server <span class="s2">&quot;tail -n 30 path/to/my/log_</span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="k">)</span>
+
+    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
+        <span class="k">then</span>
+            notify-send -u critical <span class="s2">&quot;Finally </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">&quot;</span>
+            mpg123 -n <span class="m">250</span> ~/Music/queen-we_are_the_champions.mp3
+            <span class="nb">exit</span>
+<span class="nb">        </span><span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
+    <span class="k">fi</span>
+    sleep 60
+<span class="k">done</span>
+</pre></div>
+
+
+<p>What seemed to be really frustrating makes me happy right now. Unless Freddie starts singing in the middle of the night.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
             <h2><a href="http://www.zimmi.cz/posts/2015/hosting-website-on-openshift/" rel="bookmark" title="Permalink to Hosting Website On Openshift">Hosting Website On Openshift</a></h2>
             <small>Written on Feb 23, 2015
         and marked as
@@ -296,42 +330,6 @@ www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
 <p>Running <code>sudo docker build --tag=piecrust .</code> will result in having docker container ready to run. Just run <code>sudo docker run -it -p 8080:8080 -v /host_piecrust_path/:/container_path piecrust /bin/bash</code> in terminal. While in container terminal, run <code>chef serve -n -p 8080 -a 0.0.0.0</code> and visit <a href="http://localhost:8080">http://localhost:8080</a>. You should see your PieCrust site up and running.</p>
 <p>The last command tells chef to serve your site on port 8080 (which should be free unless you're running Tomcat or something like that) and make it listen on every available network interface. If you used 127.0.0.1 instead, you would never reach your site from outside the container.</p>
 <p>See? Easy.</p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/degrees-to-decimal-with-javascript/" rel="bookmark" title="Permalink to Degrees To Decimal With Javascript">Degrees To Decimal With Javascript</a></h2>
-            <small>Written on Sep 9, 2014
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>I have found a nice way to get decimal value from degrees of longitude and latitude recently:</p>
-<div class="highlight"><pre><span class="kd">function</span> <span class="nx">format</span><span class="p">(</span><span class="nx">coords</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">decimal</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="nx">output</span>  <span class="o">=</span> <span class="cp">[]</span><span class="p">,</span>
-        <span class="nx">coords</span>  <span class="o">=</span> <span class="nx">coords</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;  &#39;</span><span class="p">);</span> <span class="c1">// it might be &lt;br&gt; as well</span>
-
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">coords</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">coords</span><span class="cp">[</span><span class="nx">i</span><span class="cp">]</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
-
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">decimal</span> <span class="o">+=</span> <span class="nx">c</span><span class="cp">[</span><span class="nx">j</span><span class="cp">]</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="nx">j</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">decimal</span><span class="p">).</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
-        <span class="nx">decimal</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="nx">prompt</span><span class="p">(</span><span class="s1">&#39;Souřadnice bodu&#39;</span><span class="p">,</span> <span class="nx">output</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">));</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>When you call <code>format("DD° MM' SS'  DD° MM' SS'");</code> you'll get decimal value in return (or <code>prompt</code> to be accurate). What I like the most about this solution is the usage of Math.pow(). I think it is a neat way to transform the values as you need to divide parts of latitude or longitude by 60<sup>0</sup>, 60<sup>1</sup> and 60<sup>2</sup> respectively.</p>
-<p>There is definitely a googol of different solutions to this task, I just liked the simplicity of this one.</p>
         </section>
         </div>
     </div>

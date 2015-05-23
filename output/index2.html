@@ -39,6 +39,35 @@
 
     <div class="panel">
         <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/using-postgresql-to-update-outdated-map-links/" rel="bookmark" title="Permalink to Using PostgreSQL To Update Outdated Map Links">Using PostgreSQL To Update Outdated Map Links</a></h2>
+            <small>Written on Feb 16, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/regex.html">regex</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        </small>
+        <section>
+            <p><a href="http://www.edpp.cz/pdb_mapa-povodnoveho-planu-mesta/">We've rolled out</a> completely new map GUI at <a href="http://edpp.cz">edpp.cz</a> built on top of <a href="http://ol3js.org">OpenLayers 3</a>. It looks great and has lots of functions both for BFU and power users. The only pitfall that came with moving away from OpenLayers 2 were remarkable differences in zoom levels between the old map and the new one.</p>
+<p>Each of our maps is defined by our admins (center, zoom level, layers) at the map creation. Lots of links calling different views of map are created as well. They take form of <code>http://edpp.cz/some-map?0=0&amp;1=0...zoom=5</code>. That <code>zoom=&lt;Number&gt;</code> started causing troubles immediately after the map switch. No way my workmates would update them one by one as there were ~4,500 of them. Sounds like a task for little bit of regular expressions and some SQL updates.</p>
+<div class="highlight"><pre>UPDATE table
+    SET column = regexp_replace(column, &#39;zoom=\d&#39;, &#39;zoom=&#39; || subquery.zoom, &#39;g&#39;)
+    FROM (
+        SELECT regexp_replace(
+            substring(column from &#39;zoom=\d&#39;),
+            &#39;zoom=(\d)&#39;,
+            &#39;\1&#39;,
+            &#39;g&#39;)::integer + 2 AS zoom, guid
+        FROM table) AS subquery
+    WHERE column ~ &#39;zoom=\d&#39;
+        AND table.guid = subquery.guid
+</pre></div>
+
+
+<p>That's what I've come up with. It basically extracts the zoom level from the link, adds number two to its value and writes it back to the string.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
             <h2><a href="http://www.zimmi.cz/posts/2015/leaflet-with-custom-crs-epsg5514/" rel="bookmark" title="Permalink to Leaflet With Custom CRS (EPSG:5514)">Leaflet With Custom CRS (EPSG:5514)</a></h2>
             <small>Written on Jan 15, 2015
         and marked as
@@ -458,68 +487,6 @@ Total runtime: 3930.270 ms
 <li>Copy <code>$2,$1</code> to <em>Replace With</em> input</li>
 </ol>
 <p>Hit <em>Replace All</em> button and you're done.</p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/connecting-to-secured-arcgis-server-layer-with-openlayers-3/" rel="bookmark" title="Permalink to Connecting To Secured ArcGIS Server Layer With OpenLayers 3">Connecting To Secured ArcGIS Server Layer With OpenLayers 3</a></h2>
-            <small>Written on Sep 12, 2014
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>,         <a href="http://www.zimmi.cz/posts/tag/openlayers.html">openlayers</a>,         <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
-        </small>
-        <section>
-            <p>I was made to use ArcGIS Server with <a href="http://openlayers.org">Openlayers 3</a> just recently as one of the projects I've been working on demands such different tools to work together.</p>
-<p><strong>tl;dr: I hate Esri.</strong></p>
-<p>I found myself in need to access secured layers published via WMS on ArcGIS Server using username and password I was given, so here's a little how-to for anyone who would have to do the same.</p>
-<p>Let's start with a simple ol.layer.Image and pretend this is the secured layer we're looking for:</p>
-<div class="highlight"><pre>var layer = new ol.layer.Image({
-    extent: extent,
-    source: new ol.source.ImageWMS(/** @type {olx.source.ImageWMSOptions} */ ({
-        url: url,
-        params: {
-            &#39;LAYERS&#39;: &#39;layer&#39;,
-            &#39;CRS&#39;: &#39;EPSG:3857&#39;,
-        }
-    }))
-});
-</pre></div>
-
-
-<p>We need to retrieve the token, so we define a function:</p>
-<div class="highlight"><pre><span class="kd">function</span> <span class="nx">retrieveToken</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">req</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">;</span>
-
-    <span class="nx">req</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">status</span> <span class="o">==</span> <span class="s2">&quot;200&quot;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">responseText</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">callback</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">contents</span><span class="p">);</span> <span class="c1">// response contents is where the token is stored</span>
-        <span class="p">}</span>
-    <span class="p">};</span>
-    <span class="nx">req</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;http://server.address/arcgis/tokens/?request=getToken&amp;username=username&amp;password=password&amp;expiration=60&quot;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-    <span class="nx">req</span><span class="p">.</span><span class="nx">send</span><span class="p">()</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>I pass a parameter called <code>callback</code> - that's a very important step, otherwise you would not be able to retrieve the token when you actually need it (AJAX stands for asynchronous). Now you just pass the token to the layer params like this:</p>
-<div class="highlight"><pre><span class="nx">retrieveToken</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">layer</span><span class="p">.</span><span class="nx">getSource</span><span class="p">().</span><span class="nx">updateParams</span><span class="p">({</span>
-        <span class="nx">token</span><span class="o">:</span> <span class="nx">token</span>
-    <span class="p">})</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>When you open Firebug and inspect Network tab, you should find <code>token</code> URL parameter passed along with WMS <code>GetMap</code> request.</p>
-<p>Few sidenotes:</p>
-<ol>
-<li>Although you might be logged in ArcGIS Server via web interface, you might need to pass the <code>token</code>  URL param when trying to access Capabilities document. Don't know why though.</li>
-<li>You should probably take care of calling the <code>retrieveToken()</code> in shorter interval than the token expiration is set to. Otherwise you might end up with invalid token.</li>
-<li>You need to hide the username and password from anonymous users (I guess that's only possible with server side implementation of selective JavaScript loading).</li>
-</ol>
         </section>
         </div>
     </div>
