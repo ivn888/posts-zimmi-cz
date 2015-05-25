@@ -1,5 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-05-23T13:02:45+02:00</updated><entry><title>SSH GRASS Processing Status Check</title><link href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="alternate"></link><updated>2015-05-23T13:02:45+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-05-23:posts/2015/ssh-grass-processing-status-check/</id><summary type="html">&lt;p&gt;I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing &lt;code&gt;tail log_XX.log&lt;/code&gt; from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-05-25T10:28:08+02:00</updated><entry><title>Filtering points by distance in PostGIS</title><link href="http://www.zimmi.cz/posts/2015/filtering-points-by-distance-in-postgis/" rel="alternate"></link><updated>2015-05-25T10:28:08+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-05-25:posts/2015/filtering-points-by-distance-in-postgis/</id><summary type="html">&lt;p&gt;Filtering really big (millions of rows) point datasets by distance might get catchy when solved with wrong PostGIS functions. Without spatial indexes PostGIS would take ages to finish such task.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://gis.stackexchange.com/questions/148184/why-the-execution-of-a-query-is-very-slow-using-postgis"&gt;Someone over StackExchange asked&lt;/a&gt; why the next query had been running for 15 hours (!) with no result:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;
+    &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;ST_Distance&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;FROM&lt;/span&gt;
+    &lt;span class="n"&gt;shp1&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;shp2&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;
+&lt;span class="k"&gt;WHERE&lt;/span&gt;
+    &lt;span class="n"&gt;ST_Intersects&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+        &lt;span class="n"&gt;ST_Difference&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+            &lt;span class="n"&gt;ST_Buffer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;2000&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+            &lt;span class="n"&gt;ST_Buffer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;500&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;),&lt;/span&gt;
+        &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;AND&lt;/span&gt;
+    &lt;span class="k"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;400&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The answer is quite simple: because it was using wrong functions. Let's see:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;ST_Distance()&lt;/code&gt; does not use spatial index, it's a simple mathematical calculation, it's expensive and it can be replaced by spatial operator for point datasets.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ST_Buffer()&lt;/code&gt; will definitely take time to build polygons around points. And it's being run twice!&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ST_Difference()&lt;/code&gt; needs more time to compare the buffers and return just the portion of space they don't share. Isn't it a huge waste to create buffers and then throw them away?&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ST_Intersects()&lt;/code&gt; finally checks whether the point should be included in the result.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;That was a great challenge to test my knowledge of how PostGIS works and here's my shot at it:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="k"&gt;SELECT&lt;/span&gt;
+        &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt; &lt;span class="n"&gt;distance&lt;/span&gt;
+    &lt;span class="k"&gt;FROM&lt;/span&gt;
+        &lt;span class="n"&gt;shp1&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;shp2&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;
+    &lt;span class="k"&gt;WHERE&lt;/span&gt;
+        &lt;span class="k"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;400&lt;/span&gt; &lt;span class="k"&gt;AND&lt;/span&gt;
+        &lt;span class="n"&gt;ST_DWithin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;sq&lt;/span&gt;
+&lt;span class="k"&gt;WHERE&lt;/span&gt;
+    &lt;span class="n"&gt;distance&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;500&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ol&gt;
+&lt;li&gt;I use &lt;a href="http://postgis.net/docs/geometry_distance_centroid.html"&gt;&lt;code&gt;&amp;lt;-&amp;gt;&lt;/code&gt;&lt;/a&gt;, a.k.a geometry distance centroid instead of &lt;code&gt;ST_Distance()&lt;/code&gt;. It takes advantage of spatial indexes, thus it's fast. And it's perfectly fine to use it with point dataset, because the centroid of a bounding box of a point is? That point, exactly. &lt;strong&gt;Spatial indexes have to be built beforehand.&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Buffers are not necessary to check whether a geometry lies in a certain distance from another one. That's what &lt;code&gt;ST_Dwithin()&lt;/code&gt; was made for. With the inner &lt;code&gt;WHERE&lt;/code&gt; clause I get all the points lying at most 2,000 meters from the current, having the absolute value difference bigger than 400. &lt;code&gt;ST_Dwithin()&lt;/code&gt; will make use of any spatial index available, unlike &lt;code&gt;ST_Distance()&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;The outer &lt;code&gt;WHERE&lt;/code&gt; clause throws away all the points closer than 500 meters. Remember, we already got only those not further than 2,000 meters from the previous step.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;It took PostGIS 1060545,590 ms (~ 17 minutes) on my Quad-Core Intel® Core™ i5-4210M CPU @ 2.60GHz, 4 GB RAM, 500 GB SSD hard drive, PostgreSQL 9.3 and PostGIS 2.1 with two point datasets having 4M and 300K rows, respectively.&lt;/p&gt;</summary><category term="postgis"></category></entry><entry><title>SSH GRASS Processing Status Check</title><link href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="alternate"></link><updated>2015-05-23T13:02:45+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-05-23:posts/2015/ssh-grass-processing-status-check/</id><summary type="html">&lt;p&gt;I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing &lt;code&gt;tail log_XX.log&lt;/code&gt; from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.&lt;/p&gt;
 &lt;p&gt;Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says &lt;em&gt;done&lt;/em&gt;. Right after that &lt;code&gt;notify-send&lt;/code&gt; gives me a neat popup and Queen starts playing their &lt;em&gt;We are the champions&lt;/em&gt; thanks to &lt;code&gt;mpg123&lt;/code&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/env bash&lt;/span&gt;
 &lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$1&lt;/span&gt;
