@@ -39,6 +39,31 @@
 
     <div class="panel">
         <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2014/postgresql-remote-access/" rel="bookmark" title="Permalink to PostgreSQL Remote Access">PostgreSQL Remote Access</a></h2>
+            <small>Written on Sep 17, 2014
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p>PostgreSQL is set to listen only to connections coming from localhost by default. I guess that's fine as far as you don't need access to the database from anywhere else (like your work network). If you do, you need to log via SSH or use some online database management tool (go for <a href="http://adminer.org">Adminer</a> and forget about anything called php[pg|my]admin). Or you can set it up to access connections from other locations.</p>
+<p>You need to:</p>
+<ol>
+<li>set <code>listen_addresses</code> to <code>*</code> in your postgres.conf. That does not mean anyone can connect to your database, that means that the server will listen to connections coming from any available IP interface.</li>
+<li>insert new entry into pg_hba.conf looking like this: <code>host database user xxx.xxx.xxx.xxx md5</code>. Now we're saying we only want connections coming from IP <code>xxx.xxx.xxx.xxx</code> accepted.</li>
+<li>
+<p>Add rule allowing the database server access to iptables. Number 5 says it will be the fifth rule in the order. It must come before the final REJECT ALL rule if present.</p>
+<p><code>iptables -I INPUT 5 -p tcp --dport 5432 -s xxx.xxx.xxx.xxx -j ACCEPT</code>
+4. Just to be sure noone else is able to connect, reject all on port 5432.</p>
+<p><code>iptables -I INPUT 6 -p tcp --dport 5432 -j REJECT</code></p>
+</li>
+</ol>
+<p>You're set to remotely connect to your database server.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
             <h2><a href="http://www.zimmi.cz/posts/2014/switch-latitude-and-longitude-with-regular-expression/" rel="bookmark" title="Permalink to Switch Latitude And Longitude With Regular Expression">Switch Latitude And Longitude With Regular Expression</a></h2>
             <small>Written on Sep 14, 2014
         and marked as
@@ -549,40 +574,10 @@ z = map(lat, 16.59971950210866964, 63.68835804244784526, 0, height)
         </div>
     </div>
 
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/leaflet-chmi-radar-control/" rel="bookmark" title="Permalink to Leaflet CHMI Radar Control">Leaflet CHMI Radar Control</a></h2>
-            <small>Written on Sep 1, 2014
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/leaflet.html">leaflet</a>,         <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>I've been in love with Leaflet ever since v0.4 was released. Well-documented, clean API included, beautiful controls and tons of plugins makes it my number one choice to create a web map. I wrote a Google Maps API app used at edpp.cz a year and a half ago and I've been thinking of refactoring it since then. I don't think I even knew Leaflet existed back in those days.</p>
-<p>I used to use Google Maps as my primary tool for web maps, it used to be the only choice back then. OpenLayers API documentation was one of the worst docs I have ever read (<em>alphabetic sorting, please!</em>), thus making it a no-go for me. It looked ugly and was sort of overwhelmed with functions. Leaflet came out completely different and I decided to rewrite our main map app using this great open-source library.</p>
-
-<h3>My first control</h3>
-
-<p><img src="http://www.zimmi.cz/posts/assets/leaflet-chmi-radar-control/google_maps.png" title="Google maps layer control" class="left">Modularity is one of the things I like the most about Leaflet. I was struggling with creating checkboxes used to toggle layers in Google Maps app, it comes ready with Leaflet. Adding a control to the map is easy as piece of cake, you do <a href="http://leafletjs.com/reference.html#icontrol"><code>L.Control.extend({)}</code></a> and that&#8217;s it (almost). Since the map displays animated radar images showing the precipitation that occurred during last three hours or so I thought it would be great implementing this as a control: a button used to toggle the animation on/off and displaying the time currently shown image was created at.</p>
-
-<p>The image on the left side displays the old solution using Google Maps. It was using a lot of DOM manipulation, was quite hard to maintain and definitely not eye-candy. When the animation was turned on, another control popped up in the map&#8217;s top left corner displaying the time the image was taken at. The animation toggle (<em>srážkový radar</em>) was incorporated into the layer control. I decided to take it out and make it a separate feature of the map.</p>
-
-<p><img src="http://www.zimmi.cz/posts/assets/leaflet-chmi-radar-control/control.png" title="Leaflet radar control" class="right">You can see the result in the image below. The control is a simple button with the radar icon displaying the time when active. It is only useful for the Czech Republic and is highly dependent on the image provider (<abbr title="Czech Hydrometeorogical Institute">CHMI</abbr>), which means that if the URL of the images was to be changed, the whole control would break.</p>
-
-<p>You can<a href="http://www.zimmi.cz/posts/assets/leaflet-chmi-radar-control/radarcontrol.zip"> grab the code if you like</a>. You add the control to the map as any other control:</p>
-
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">radar</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">Radar</span><span class="p">();</span>
-<span class="nx">radar</span><span class="p">.</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
-</pre></div>
-
-
-<p>You can set the control visibility with <code>visible</code> property passed into <code>options</code> of the control.</p>
-        </section>
-        </div>
-    </div>
-
 <div class="pagination">
     <p class="paginator">
             <a href="http://www.zimmi.cz/posts/index2.html" class="button">&laquo; Previous page</a>
+            <a href="http://www.zimmi.cz/posts/index4.html" class="button">Next page &raquo;</a>
     </p>
 </div>            </div>
         </div>

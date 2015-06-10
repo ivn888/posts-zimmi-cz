@@ -40,8 +40,89 @@
 
     <div class="panel">
         <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using GDAL</a></h2>
+            <small>Written on Jun 10, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/gdal.html">gdal</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        </small>
+        <section>
+            <p>Recently I needed to clip several raster files with polygonal layer of municipalities. A solution to this task is pretty straightforward using <a href="http://gdal.org/">GDAL</a> and a bit of Bash and QGIS thrown in.</p>
+<p>The necessary steps are:</p>
+<ol>
+<li>Put each polygon to a separate file. This can be done easily with <code>Vector - Data Management Tools - Split Vector Layer</code> in QGIS. The solution below assumes that each shapefile has the same basename as the raster file.</li>
+<li>These polygons are stored in the <code>obce</code> subfolder relative to the folder with rasters.</li>
+<li>An <code>output</code> folder exists that is used for... output, yes.</li>
+<li>Rasters are saved with output alpha band for nodata (<code>-dstalpha</code> flag).</li>
+<li>The script takes one argument - raster name.</li>
+<li>Profit!</li>
+</ol>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
+
+<span class="nv">OBEC</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nv">BASE</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$OBEC</span> _jpeg.tif<span class="k">)</span>
+<span class="nb">echo</span> <span class="nv">$BASE</span>
+<span class="nv">EXTENT</span><span class="o">=</span><span class="k">$(</span>ogrinfo -so obce/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.shp <span class="nv">$BASE</span> <span class="p">|</span> grep Extent <span class="se">\</span>
+<span class="p">|</span> sed <span class="s1">&#39;s/Extent: //g&#39;</span> <span class="p">|</span> sed <span class="s1">&#39;s/(//g&#39;</span> <span class="p">|</span> sed <span class="s1">&#39;s/)//g&#39;</span> <span class="se">\</span>
+<span class="p">|</span> sed <span class="s1">&#39;s/ - /, /g&#39;</span><span class="k">)</span>
+<span class="nv">EXTENT</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$EXTENT</span> <span class="p">|</span> awk -F <span class="s1">&#39;,&#39;</span> <span class="s1">&#39;{print $1 &quot; &quot; $4 &quot; &quot; $3 &quot; &quot; $2}&#39;</span><span class="k">)</span>
+gdal_translate -projwin <span class="nv">$EXTENT</span> -of GTiff <span class="nv">$OBEC</span> output/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.tif
+gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <span class="s1">&#39;EPSG:5514&#39;</span> <span class="se">\</span>
+    -co <span class="nv">COMPRESS</span><span class="o">=</span>JPEG <span class="se">\</span>
+    -co <span class="nv">TILED</span><span class="o">=</span>YES -<span class="se">\</span>
+    of GTiff <span class="se">\</span>
+    -cutline obce/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.shp <span class="se">\</span>
+    output/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.tif output/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.final.tif
+</pre></div>
+
+
+<p>Note that if <code>gdalwarp</code> doesn't recognize an EPSG code (which is the case for my country national grid), you might pass it as a PROJ.4 string.</p>
+<p>According to the point 5 in the above list, the script needs to be run in a loop:</p>
+<div class="highlight"><pre><span class="k">for</span> f in *_jpeg.tif<span class="p">;</span>
+    <span class="k">do</span> the_script_above.sh <span class="nv">$f</span>
+<span class="p">;</span><span class="k">done</span>
+</pre></div>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check">SSH GRASS Processing Status Check</a></h2>
+            <small>Written on May 30, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p>I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.</p>
+<p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
+<span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
+
+<span class="k">while</span> <span class="nb">true</span><span class="p">;</span> <span class="k">do</span>
+    <span class="nb">echo</span> <span class="s2">&quot;############ </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2"> ############&quot;</span>
+    <span class="nv">x</span><span class="o">=</span><span class="k">$(</span>ssh user@remote.server <span class="s2">&quot;tail -n 30 path/to/my/log_</span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="k">)</span>
+
+    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
+        <span class="k">then</span>
+            notify-send -u critical <span class="s2">&quot;Finally </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">&quot;</span>
+            mpg123 -n <span class="m">250</span> ~/Music/queen-we_are_the_champions.mp3
+            <span class="nb">exit</span>
+<span class="nb">        </span><span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
+    <span class="k">fi</span>
+    sleep 60
+<span class="k">done</span>
+</pre></div>
+
+
+<p>What seemed to be really frustrating makes me happy right now. Unless Freddie starts singing in the middle of the night.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
             <h2><a href="http://www.zimmi.cz/posts/2015/filtering-points-by-distance-in-postgis/" rel="bookmark" title="Permalink to Filtering points by distance in PostGIS">Filtering points by distance in PostGIS</a></h2>
-            <small>Written on May 25, 2015
+            <small>Written on May 30, 2015
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
         </small>
@@ -97,40 +178,6 @@
 <li>The outer <code>WHERE</code> clause throws away all the points closer than 500 meters. Remember, we already got only those not further than 2,000 meters from the previous step.</li>
 </ol>
 <p>It took PostGIS 1060545,590 ms (~ 17 minutes) on my Quad-Core Intel® Core™ i5-4210M CPU @ 2.60GHz, 4 GB RAM, 500 GB SSD hard drive, PostgreSQL 9.3 and PostGIS 2.1 with two point datasets having 4M and 300K rows, respectively.</p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check">SSH GRASS Processing Status Check</a></h2>
-            <small>Written on May 23, 2015
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.</p>
-<p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
-<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
-<span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
-
-<span class="k">while</span> <span class="nb">true</span><span class="p">;</span> <span class="k">do</span>
-    <span class="nb">echo</span> <span class="s2">&quot;############ </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2"> ############&quot;</span>
-    <span class="nv">x</span><span class="o">=</span><span class="k">$(</span>ssh user@remote.server <span class="s2">&quot;tail -n 30 path/to/my/log_</span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="k">)</span>
-
-    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
-        <span class="k">then</span>
-            notify-send -u critical <span class="s2">&quot;Finally </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">&quot;</span>
-            mpg123 -n <span class="m">250</span> ~/Music/queen-we_are_the_champions.mp3
-            <span class="nb">exit</span>
-<span class="nb">        </span><span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
-    <span class="k">fi</span>
-    sleep 60
-<span class="k">done</span>
-</pre></div>
-
-
-<p>What seemed to be really frustrating makes me happy right now. Unless Freddie starts singing in the middle of the night.</p>
         </section>
         </div>
     </div>
@@ -937,39 +984,6 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
 <li>Derive image width (CRS, pixels) from the saved image, thus getting the same zoom level you were using in QGIS.</li>
 </ol>
 <p>Code given is not bulletproof, it will fail on any network error. However, if you restart it after such a crash, it checks for existing files and starts with the first missing, so you don't have to download all the tiles again.</p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/hosting-website-on-openshift/" rel="bookmark" title="Permalink to Hosting Website On Openshift">Hosting Website On Openshift</a></h2>
-            <small>Written on Feb 23, 2015
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/openshift.html">openshift</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got it working eventually.</p>
-<h2>Things to know before taking the leap</h2>
-<p>Some domain providers don't support CNAME changes for root domains (zimmi.cz in my case). This means you can't simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do so:</p>
-<div class="highlight"><pre>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
-</pre></div>
-
-
-<p>Which is great until you realize you've just created two different websites. That's where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
-<div class="highlight"><pre>zimmi.cz A 174.129.25.170
-</pre></div>
-
-
-<p>Now everything works fine and you have your <code>www.domain.tld</code> up and running.</p>
-<h2>OpenShift subdomains</h2>
-<p>I wasn't successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing DNS to it:</p>
-<div class="highlight"><pre>posts.zimmi.cz A 174.179.25.170
-www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
-</pre></div>
-
-
-<p>Just don't forget to handle both naked and <code>www</code> version. When Google reindexes new URLs (http://www.zimmi.cz/posts instead of http://posts.zimmi.cz) subdomain application might be deleted.</p>
         </section>
         </div>
     </div>

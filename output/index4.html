@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Michal Zimmermann | Pieces of knowledge from the world of GIS.</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/foundation.min.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/screen.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/pygment.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/railscasts.min.css">
+</head>
+
+<body id="index" class="home">
+    <div class="fixed">
+        <nav class="top-bar">
+            <section class="top-bar-section">
+                <ul class="left">
+                    <li class="divider"></li>
+                    <li class="active"><a href="/posts">Home</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS</a></li>
+                </ul>
+            </section>
+        </nav>
+    </div>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/posts">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2014/leaflet-chmi-radar-control/" rel="bookmark" title="Permalink to Leaflet CHMI Radar Control">Leaflet CHMI Radar Control</a></h2>
+            <small>Written on Sep 1, 2014
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/leaflet.html">leaflet</a>,         <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p>I've been in love with Leaflet ever since v0.4 was released. Well-documented, clean API included, beautiful controls and tons of plugins makes it my number one choice to create a web map. I wrote a Google Maps API app used at edpp.cz a year and a half ago and I've been thinking of refactoring it since then. I don't think I even knew Leaflet existed back in those days.</p>
+<p>I used to use Google Maps as my primary tool for web maps, it used to be the only choice back then. OpenLayers API documentation was one of the worst docs I have ever read (<em>alphabetic sorting, please!</em>), thus making it a no-go for me. It looked ugly and was sort of overwhelmed with functions. Leaflet came out completely different and I decided to rewrite our main map app using this great open-source library.</p>
+
+<h3>My first control</h3>
+
+<p><img src="http://www.zimmi.cz/posts/assets/leaflet-chmi-radar-control/google_maps.png" title="Google maps layer control" class="left">Modularity is one of the things I like the most about Leaflet. I was struggling with creating checkboxes used to toggle layers in Google Maps app, it comes ready with Leaflet. Adding a control to the map is easy as piece of cake, you do <a href="http://leafletjs.com/reference.html#icontrol"><code>L.Control.extend({)}</code></a> and that&#8217;s it (almost). Since the map displays animated radar images showing the precipitation that occurred during last three hours or so I thought it would be great implementing this as a control: a button used to toggle the animation on/off and displaying the time currently shown image was created at.</p>
+
+<p>The image on the left side displays the old solution using Google Maps. It was using a lot of DOM manipulation, was quite hard to maintain and definitely not eye-candy. When the animation was turned on, another control popped up in the map&#8217;s top left corner displaying the time the image was taken at. The animation toggle (<em>srážkový radar</em>) was incorporated into the layer control. I decided to take it out and make it a separate feature of the map.</p>
+
+<p><img src="http://www.zimmi.cz/posts/assets/leaflet-chmi-radar-control/control.png" title="Leaflet radar control" class="right">You can see the result in the image below. The control is a simple button with the radar icon displaying the time when active. It is only useful for the Czech Republic and is highly dependent on the image provider (<abbr title="Czech Hydrometeorogical Institute">CHMI</abbr>), which means that if the URL of the images was to be changed, the whole control would break.</p>
+
+<p>You can<a href="http://www.zimmi.cz/posts/assets/leaflet-chmi-radar-control/radarcontrol.zip"> grab the code if you like</a>. You add the control to the map as any other control:</p>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">radar</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">Radar</span><span class="p">();</span>
+<span class="nx">radar</span><span class="p">.</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</pre></div>
+
+
+<p>You can set the control visibility with <code>visible</code> property passed into <code>options</code> of the control.</p>
+        </section>
+        </div>
+    </div>
+
+<div class="pagination">
+    <p class="paginator">
+            <a href="http://www.zimmi.cz/posts/index3.html" class="button">&laquo; Previous page</a>
+    </p>
+</div>            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-43432739-2']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+</body>
+</html>

@@ -1,5 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-05-25T10:28:08+02:00</updated><entry><title>Filtering points by distance in PostGIS</title><link href="http://www.zimmi.cz/posts/2015/filtering-points-by-distance-in-postgis/" rel="alternate"></link><updated>2015-05-25T10:28:08+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-05-25:posts/2015/filtering-points-by-distance-in-postgis/</id><summary type="html">&lt;p&gt;Filtering really big (millions of rows) point datasets by distance might get catchy when solved with wrong PostGIS functions. Without spatial indexes PostGIS would take ages to finish such task.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-06-10T19:24:57+02:00</updated><entry><title>Clip Raster With Vector Using GDAL</title><link href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/" rel="alternate"></link><updated>2015-06-10T19:24:57+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-06-10:posts/2015/clip-raster-with-vector-using-gdal/</id><summary type="html">&lt;p&gt;Recently I needed to clip several raster files with polygonal layer of municipalities. A solution to this task is pretty straightforward using &lt;a href="http://gdal.org/"&gt;GDAL&lt;/a&gt; and a bit of Bash and QGIS thrown in.&lt;/p&gt;
+&lt;p&gt;The necessary steps are:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Put each polygon to a separate file. This can be done easily with &lt;code&gt;Vector - Data Management Tools - Split Vector Layer&lt;/code&gt; in QGIS. The solution below assumes that each shapefile has the same basename as the raster file.&lt;/li&gt;
+&lt;li&gt;These polygons are stored in the &lt;code&gt;obce&lt;/code&gt; subfolder relative to the folder with rasters.&lt;/li&gt;
+&lt;li&gt;An &lt;code&gt;output&lt;/code&gt; folder exists that is used for... output, yes.&lt;/li&gt;
+&lt;li&gt;Rasters are saved with output alpha band for nodata (&lt;code&gt;-dstalpha&lt;/code&gt; flag).&lt;/li&gt;
+&lt;li&gt;The script takes one argument - raster name.&lt;/li&gt;
+&lt;li&gt;Profit!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/env bash&lt;/span&gt;
+
+&lt;span class="nv"&gt;OBEC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$1&lt;/span&gt;
+&lt;span class="nv"&gt;BASE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;basename &lt;span class="nv"&gt;$OBEC&lt;/span&gt; _jpeg.tif&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$BASE&lt;/span&gt;
+&lt;span class="nv"&gt;EXTENT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;ogrinfo -so obce/&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BASE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;.shp &lt;span class="nv"&gt;$BASE&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep Extent &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt; sed &lt;span class="s1"&gt;&amp;#39;s/Extent: //g&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sed &lt;span class="s1"&gt;&amp;#39;s/(//g&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sed &lt;span class="s1"&gt;&amp;#39;s/)//g&amp;#39;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt; sed &lt;span class="s1"&gt;&amp;#39;s/ - /, /g&amp;#39;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;EXTENT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$EXTENT&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; awk -F &lt;span class="s1"&gt;&amp;#39;,&amp;#39;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{print $1 &amp;quot; &amp;quot; $4 &amp;quot; &amp;quot; $3 &amp;quot; &amp;quot; $2}&amp;#39;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
+gdal_translate -projwin &lt;span class="nv"&gt;$EXTENT&lt;/span&gt; -of GTiff &lt;span class="nv"&gt;$OBEC&lt;/span&gt; output/&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BASE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;.tif
+gdalwarp -dstalpha -s_srs &lt;span class="s1"&gt;&amp;#39;EPSG:5514&amp;#39;&lt;/span&gt; -t_srs &lt;span class="s1"&gt;&amp;#39;EPSG:5514&amp;#39;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    -co &lt;span class="nv"&gt;COMPRESS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;JPEG &lt;span class="se"&gt;\&lt;/span&gt;
+    -co &lt;span class="nv"&gt;TILED&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;YES -&lt;span class="se"&gt;\&lt;/span&gt;
+    of GTiff &lt;span class="se"&gt;\&lt;/span&gt;
+    -cutline obce/&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BASE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;.shp &lt;span class="se"&gt;\&lt;/span&gt;
+    output/&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BASE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;.tif output/&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BASE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;.final.tif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Note that if &lt;code&gt;gdalwarp&lt;/code&gt; doesn't recognize an EPSG code (which is the case for my country national grid), you might pass it as a PROJ.4 string.&lt;/p&gt;
+&lt;p&gt;According to the point 5 in the above list, the script needs to be run in a loop:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; f in *_jpeg.tif&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;do&lt;/span&gt; the_script_above.sh &lt;span class="nv"&gt;$f&lt;/span&gt;
+&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="k"&gt;done&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="gdal"></category></entry><entry><title>SSH GRASS Processing Status Check</title><link href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="alternate"></link><updated>2015-05-30T20:01:40+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-05-30:posts/2015/ssh-grass-processing-status-check/</id><summary type="html">&lt;p&gt;I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing &lt;code&gt;tail log_XX.log&lt;/code&gt; from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.&lt;/p&gt;
+&lt;p&gt;Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says &lt;em&gt;done&lt;/em&gt;. Right after that &lt;code&gt;notify-send&lt;/code&gt; gives me a neat popup and Queen starts playing their &lt;em&gt;We are the champions&lt;/em&gt; thanks to &lt;code&gt;mpg123&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/env bash&lt;/span&gt;
+&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$1&lt;/span&gt;
+
+&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;############ &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; ############&amp;quot;&lt;/span&gt;
+    &lt;span class="nv"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;ssh user@remote.server &lt;span class="s2"&gt;&amp;quot;tail -n 30 path/to/my/log_&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;.log&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[[&lt;/span&gt; &lt;span class="nv"&gt;$x&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; *&lt;span class="s2"&gt;&amp;quot;done&amp;quot;&lt;/span&gt;* &lt;span class="o"&gt;]]&lt;/span&gt;
+        &lt;span class="k"&gt;then&lt;/span&gt;
+            notify-send -u critical &lt;span class="s2"&gt;&amp;quot;Finally &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+            mpg123 -n &lt;span class="m"&gt;250&lt;/span&gt; ~/Music/queen-we_are_the_champions.mp3
+            &lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="nb"&gt;        &lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Not yet&amp;quot;&lt;/span&gt;
+    &lt;span class="k"&gt;fi&lt;/span&gt;
+    sleep 60
+&lt;span class="k"&gt;done&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;What seemed to be really frustrating makes me happy right now. Unless Freddie starts singing in the middle of the night.&lt;/p&gt;</summary><category term="bash"></category><category term="linux"></category></entry><entry><title>Filtering points by distance in PostGIS</title><link href="http://www.zimmi.cz/posts/2015/filtering-points-by-distance-in-postgis/" rel="alternate"></link><updated>2015-05-30T20:01:40+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-05-30:posts/2015/filtering-points-by-distance-in-postgis/</id><summary type="html">&lt;p&gt;Filtering really big (millions of rows) point datasets by distance might get catchy when solved with wrong PostGIS functions. Without spatial indexes PostGIS would take ages to finish such task.&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://gis.stackexchange.com/questions/148184/why-the-execution-of-a-query-is-very-slow-using-postgis"&gt;Someone over StackExchange asked&lt;/a&gt; why the next query had been running for 15 hours (!) with no result:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;
     &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gid&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
@@ -49,28 +104,7 @@
 &lt;li&gt;Buffers are not necessary to check whether a geometry lies in a certain distance from another one. That's what &lt;code&gt;ST_Dwithin()&lt;/code&gt; was made for. With the inner &lt;code&gt;WHERE&lt;/code&gt; clause I get all the points lying at most 2,000 meters from the current, having the absolute value difference bigger than 400. &lt;code&gt;ST_Dwithin()&lt;/code&gt; will make use of any spatial index available, unlike &lt;code&gt;ST_Distance()&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;The outer &lt;code&gt;WHERE&lt;/code&gt; clause throws away all the points closer than 500 meters. Remember, we already got only those not further than 2,000 meters from the previous step.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;It took PostGIS 1060545,590 ms (~ 17 minutes) on my Quad-Core Intel® Core™ i5-4210M CPU @ 2.60GHz, 4 GB RAM, 500 GB SSD hard drive, PostgreSQL 9.3 and PostGIS 2.1 with two point datasets having 4M and 300K rows, respectively.&lt;/p&gt;</summary><category term="postgis"></category></entry><entry><title>SSH GRASS Processing Status Check</title><link href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="alternate"></link><updated>2015-05-23T13:02:45+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-05-23:posts/2015/ssh-grass-processing-status-check/</id><summary type="html">&lt;p&gt;I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing &lt;code&gt;tail log_XX.log&lt;/code&gt; from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.&lt;/p&gt;
-&lt;p&gt;Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says &lt;em&gt;done&lt;/em&gt;. Right after that &lt;code&gt;notify-send&lt;/code&gt; gives me a neat popup and Queen starts playing their &lt;em&gt;We are the champions&lt;/em&gt; thanks to &lt;code&gt;mpg123&lt;/code&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/env bash&lt;/span&gt;
-&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$1&lt;/span&gt;
-
-&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;############ &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; ############&amp;quot;&lt;/span&gt;
-    &lt;span class="nv"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;ssh user@remote.server &lt;span class="s2"&gt;&amp;quot;tail -n 30 path/to/my/log_&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;.log&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
-
-    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[[&lt;/span&gt; &lt;span class="nv"&gt;$x&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; *&lt;span class="s2"&gt;&amp;quot;done&amp;quot;&lt;/span&gt;* &lt;span class="o"&gt;]]&lt;/span&gt;
-        &lt;span class="k"&gt;then&lt;/span&gt;
-            notify-send -u critical &lt;span class="s2"&gt;&amp;quot;Finally &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
-            mpg123 -n &lt;span class="m"&gt;250&lt;/span&gt; ~/Music/queen-we_are_the_champions.mp3
-            &lt;span class="nb"&gt;exit&lt;/span&gt;
-&lt;span class="nb"&gt;        &lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Not yet&amp;quot;&lt;/span&gt;
-    &lt;span class="k"&gt;fi&lt;/span&gt;
-    sleep 60
-&lt;span class="k"&gt;done&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;What seemed to be really frustrating makes me happy right now. Unless Freddie starts singing in the middle of the night.&lt;/p&gt;</summary><category term="bash"></category><category term="linux"></category></entry><entry><title>Animating SVG Maps With SMIL</title><link href="http://www.zimmi.cz/posts/2015/animating-svg-maps-with-smil/" rel="alternate"></link><updated>2015-04-29T18:24:00+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-04-29:posts/2015/animating-svg-maps-with-smil/</id><summary type="html">&lt;p&gt;Using SVG to build web maps have both pros and cons and to be honest I don't know any &lt;em&gt;serious&lt;/em&gt; map/GIS project built on top of SVG. However, as a part of my job at university, I was forced to use both SVG and SMIL to produce animated web map (see the small version below or the big one at &lt;a href="https://zimmicz.github.io/svg-smil-airplanes/map.svg"&gt;GitHub&lt;/a&gt;) and I'd like to share my findings.&lt;/p&gt;
+&lt;p&gt;It took PostGIS 1060545,590 ms (~ 17 minutes) on my Quad-Core Intel® Core™ i5-4210M CPU @ 2.60GHz, 4 GB RAM, 500 GB SSD hard drive, PostgreSQL 9.3 and PostGIS 2.1 with two point datasets having 4M and 300K rows, respectively.&lt;/p&gt;</summary><category term="postgis"></category></entry><entry><title>Animating SVG Maps With SMIL</title><link href="http://www.zimmi.cz/posts/2015/animating-svg-maps-with-smil/" rel="alternate"></link><updated>2015-04-29T18:24:00+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-04-29:posts/2015/animating-svg-maps-with-smil/</id><summary type="html">&lt;p&gt;Using SVG to build web maps have both pros and cons and to be honest I don't know any &lt;em&gt;serious&lt;/em&gt; map/GIS project built on top of SVG. However, as a part of my job at university, I was forced to use both SVG and SMIL to produce animated web map (see the small version below or the big one at &lt;a href="https://zimmicz.github.io/svg-smil-airplanes/map.svg"&gt;GitHub&lt;/a&gt;) and I'd like to share my findings.&lt;/p&gt;
 &lt;p&gt;&lt;object width="400" data="https://zimmicz.github.io/svg-smil-airplanes/map.svg" type="image/svg+xml"&gt;&lt;/object&gt;&lt;/p&gt;
 &lt;h2&gt;Data preprocessing&lt;/h2&gt;
 &lt;p&gt;I chose &lt;a href="http://www.naturalearthdata.com/"&gt;Natural Earth dataset&lt;/a&gt; both for basemap and thematic layer:&lt;/p&gt;
