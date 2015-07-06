@@ -51,7 +51,7 @@
     <section>
         <p>Right now I'm setting up a project aimed at crop evaluation over ortophotos, HR and VHR imagery. All the steps of evaluation will be done in QGIS with PostGIS used for data storage and post-processing.</p>
 <p>In the initial phase, fifteen GIS operators will be using QGIS to reshape geometries and fill attribute data accordingly. Fifteen are not so many, but it is enough to be a possible source of errors. Luckily, there are many things you can do with QGIS to prevent people from making mistakes.</p>
-<h2>QGIS project file is a friend</h2>
+<h2>QGIS project file</h2>
 <p>QGIS project, the .qgs file, is a pure XML and, unlike ESRI's .mxd, can be edited with any text editor. That's great advantage when you need to prepare one project for many different operators. My project has to load some database layers that should be different for different operators that have different database accounts.</p>
 <p>How do you do that? It's enough to create a project using your own credentials and then replace them with <code>USERNAME</code> and <code>PASSWORD</code> strings as seen below. What happens when the user loads the project?</p>
 <div class="highlight"><pre><span class="nt">&lt;datasource&gt;</span>dbname=&#39;database&#39; host=host port=5432 user=&#39;USERNAME&#39; password=&#39;PASSWORD&#39; sslmode=require key=&#39;qgis_id&#39; srid=5514 type=POLYGON table=&quot;schema&quot;.&quot;table&quot; (wkb_geometry) sql=<span class="nt">&lt;/datasource&gt;</span>

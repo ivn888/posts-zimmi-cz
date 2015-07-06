@@ -6,7 +6,7 @@ Right now I'm setting up a project aimed at crop evaluation over ortophotos, HR 
 
 In the initial phase, fifteen GIS operators will be using QGIS to reshape geometries and fill attribute data accordingly. Fifteen are not so many, but it is enough to be a possible source of errors. Luckily, there are many things you can do with QGIS to prevent people from making mistakes.
 
-## QGIS project file is a friend
+## QGIS project file
 
 QGIS project, the .qgs file, is a pure XML and, unlike ESRI's .mxd, can be edited with any text editor. That's great advantage when you need to prepare one project for many different operators. My project has to load some database layers that should be different for different operators that have different database accounts.
 
