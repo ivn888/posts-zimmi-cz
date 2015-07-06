@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Michal Zimmermann | category: Tools</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/foundation.min.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/screen.css" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/pygment.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/railscasts.min.css">
+</head>
+
+<body id="index" class="home">
+    <div class="fixed">
+        <nav class="top-bar">
+            <section class="top-bar-section">
+                <ul class="left">
+                    <li class="divider"></li>
+                    <li class="active"><a href="/posts">Home</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS</a></li>
+                </ul>
+            </section>
+        </nav>
+    </div>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/posts">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+<h2 class="text-center">Articles in the Tools category</h2>
+
+    <div class="panel">
+        <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/" rel="bookmark" title="Permalink to QGIS Tips For Collaborative Mapping">QGIS Tips For Collaborative Mapping</a></h2>
+            <small>Written on Jul 6, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>        | <a href="http://www.zimmi.cz/posts/category/tools.html">Tools</a>
+        </small>
+        <section>
+            <p>Right now I'm setting up a project aimed at crop evaluation over ortophotos, HR and VHR imagery. All the steps of evaluation will be done in QGIS with PostGIS used for data storage and post-processing.</p>
+<p>In the initial phase, fifteen GIS operators will be using QGIS to reshape geometries and fill attribute data accordingly. Fifteen are not so many, but it is enough to be a possible source of errors. Luckily, there are many things you can do with QGIS to prevent people from making mistakes.</p>
+<h2>QGIS project file is a friend</h2>
+<p>QGIS project, the .qgs file, is a pure XML and, unlike ESRI's .mxd, can be edited with any text editor. That's great advantage when you need to prepare one project for many different operators. My project has to load some database layers that should be different for different operators that have different database accounts.</p>
+<p>How do you do that? It's enough to create a project using your own credentials and then replace them with <code>USERNAME</code> and <code>PASSWORD</code> strings as seen below. What happens when the user loads the project?</p>
+<div class="highlight"><pre><span class="nt">&lt;datasource&gt;</span>dbname=&#39;database&#39; host=host port=5432 user=&#39;USERNAME&#39; password=&#39;PASSWORD&#39; sslmode=require key=&#39;qgis_id&#39; srid=5514 type=POLYGON table=&quot;schema&quot;.&quot;table&quot; (wkb_geometry) sql=<span class="nt">&lt;/datasource&gt;</span>
+</pre></div>
+
+
+<p>A popup window will be shown asking him/her to handle bad layers, as QGIS will not be able to connect to the layer. When he/she fills in right credentials (just once), the layer will be loaded. Don't forget to <strong>use a table name that doesn't exist</strong>, QGIS will use the credentials stored with PostGIS connection otherwise and won't ask for them. <em>I don't like this behaviour.</em></p>
+<p>Using this multiple times for each user-specific layer is a great time saver.</p>
+<h2>Adjust attribute table to fit your needs</h2>
+<p>QGIS attribute table has so many settings you probably don't use on daily basis and yet they might be invaluable in such project. All of them are available from layer properties under the Fields tab.</p>
+<p class='text-center'><img src="http://www.zimmi.cz/posts/assets/qgis-tips-for-collaborative-mapping/hidden.png" width=50% class="img-responsive centered"></p>
+
+<p>Sadly, our PostGIS layers are very wide in terms of column count. Not all of the columns are to be edited or even seen by operators, so it might be a good idea to hide them by setting their Edit Widget to Hidden. Those that should be seen, but not edited, might be set as not editable by unchecking that option.</p>
+<p>Lots of our attributes use enumerations provided by our project partner as CSV files. We use them in QGIS as value maps, so operators don't have to type them manually - we both make their work easier and eliminate mistakes they made.</p>
+<p class='text-center'><img src="http://www.zimmi.cz/posts/assets/qgis-tips-for-collaborative-mapping/valuemap.png" width=50% class="img-responsive centered"></p>
+
+<p>Note QGIS swallows the first row of the given CSV file as if it was a header. Don't forget about this when creating your own enumerations. Once set, operators will see a friendly combo box instead of a hostile blank input in the attribute table.</p>
+<p>These are just small adjustments that can make a big difference in your QGIS workflow.</p>
+        </section>
+        </div>
+    </div>
+
+<div class="pagination">
+    <p class="paginator">
+    </p>
+</div>            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-43432739-2']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+</body>
+</html>
