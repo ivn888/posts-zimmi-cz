@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>Michal Zimmermann | tag: qgis</title>
+          <title>Michal Zimmermann | Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
         <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+
+
+
+    <meta name="tags" contents="qgis" />
+    <meta name="tags" contents="postgis" />
+    <meta name="tags" contents="python" />
+    <meta name="tags" contents="svg" />
+    <meta name="tags" contents="linux" />
+
         <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/foundation.min.css" />
         <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/screen.css" />
         <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/pygment.css" />
@@ -36,17 +45,15 @@
         </div>
         <div class="row">
             <div class="large-12 columns">
-<h2 class="text-center">Articles tagged with qgis tag</h2>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</a></h2>
-            <small>Written on Aug 9, 2015
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
-        </small>
-        <section>
-            <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/">QGIS Tips For Collaborative Mapping</a> we're in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
+<div class="panel">
+    <div class="post-name">
+        <h2><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</a></h2>
+        <small>Written on Aug 9, 2015
+    and marked as
+    <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>,     <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,     <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,     <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,     <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>    | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+    </small>
+    <section>
+        <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/">QGIS Tips For Collaborative Mapping</a> we're in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
 <p>With the QGIS workflow up and running, I've been focused on different QGIS related task: <strong>automatic map generation</strong> for land blocks that meet certain conditions. The logic behind identifying such land blocks is as follows:</p>
 <ul>
 <li>if the original area and the measured one differ more than 0.5 % or</li>
@@ -184,47 +191,25 @@
 <h2>Conclusion</h2>
 <p>I created pretty efficient semi-automated workflow using several open source technologies that saves me a lot of work. Although QGIS has some minor pet peeves (scale with decimal places, not showing the entire feature, not substituting variables at times), it definitely makes boring map creation quite amusing. The more I work with big data / on big tasks, the more I find Linux a must-have.</p>
 <p>The whole process was done with QGIS 2.10, PostGIS 2.1, PostgreSQL 9.3, Python 2.7, ImageMagick 6.7.</p>
-        </section>
-        </div>
+    </section>
     </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/" rel="bookmark" title="Permalink to QGIS Tips For Collaborative Mapping">QGIS Tips For Collaborative Mapping</a></h2>
-            <small>Written on Jul 21, 2015
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>        | <a href="http://www.zimmi.cz/posts/category/tools.html">Tools</a>
-        </small>
-        <section>
-            <p>Right now I'm setting up a project aimed at crop evaluation over ortophotos, HR and VHR imagery. All the steps of evaluation will be done in QGIS with PostGIS used for data storage and post-processing.</p>
-<p>In the initial phase, fifteen GIS operators will be using QGIS to reshape geometries and fill attribute data accordingly. Fifteen are not so many, but it is enough to be a possible source of errors. Luckily, there are many things you can do with QGIS to prevent people from making mistakes.</p>
-<h2>QGIS project file</h2>
-<p>QGIS project, the .qgs file, is a pure XML and, unlike ESRI's .mxd, can be edited with any text editor. That's great advantage when you need to prepare one project for many different operators. My project has to load some database layers that should be different for different operators that have different database accounts.</p>
-<p>How do you do that? It's enough to create a project using your own credentials and then replace them with <code>USERNAME</code> and <code>PASSWORD</code> strings as seen below. What happens when the user loads the project?</p>
-<div class="highlight"><pre><span class="nt">&lt;datasource&gt;</span>dbname=&#39;database&#39; host=host port=5432 user=&#39;USERNAME&#39; password=&#39;PASSWORD&#39; sslmode=require key=&#39;qgis_id&#39; srid=5514 type=POLYGON table=&quot;schema&quot;.&quot;table&quot; (wkb_geometry) sql=<span class="nt">&lt;/datasource&gt;</span>
-</pre></div>
-
-
-<p>A popup window will be shown asking him/her to handle bad layers, as QGIS will not be able to connect to the layer. When he/she fills in right credentials (just once), the layer will be loaded. Don't forget to <strong>use a table name that doesn't exist</strong>, QGIS will use the credentials stored with PostGIS connection otherwise and won't ask for them. <em>I don't like this behaviour.</em></p>
-<p>Using this multiple times for each user-specific layer is a great time saver.</p>
-<h2>Adjust attribute table to fit your needs</h2>
-<p>QGIS attribute table has so many settings you probably don't use on daily basis and yet they might be invaluable in such project. All of them are available from layer properties under the Fields tab.</p>
-<p class='text-center'><img src="http://www.zimmi.cz/posts/assets/qgis-tips-for-collaborative-mapping/hidden.png" width=50% class="img-responsive centered"></p>
-
-<p>Sadly, our PostGIS layers are very wide in terms of column count. Not all of the columns are to be edited or even seen by operators, so it might be a good idea to hide them by setting their Edit Widget to Hidden. Those that should be seen, but not edited, might be set as not editable by unchecking that option.</p>
-<p>Lots of our attributes use enumerations provided by our project partner as CSV files. We use them in QGIS as value maps, so operators don't have to type them manually - we both make their work easier and eliminate mistakes they made.</p>
-<p class='text-center'><img src="http://www.zimmi.cz/posts/assets/qgis-tips-for-collaborative-mapping/valuemap.png" width=50% class="img-responsive centered"></p>
-
-<p>Note QGIS swallows the first row of the given CSV file as if it was a header. Don't forget about this when creating your own enumerations. Once set, operators will see a friendly combo box instead of a hostile blank input in the attribute table.</p>
-<p>These are just small adjustments that can make a big difference in your QGIS workflow.</p>
-        </section>
-        </div>
-    </div>
-
-<div class="pagination">
-    <p class="paginator">
-    </p>
-</div>            </div>
+<div class="neighbors">
+    <h3>More reading</h3>
+    <ul>
+        <li>
+            <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/">
+                 QGIS Tips For Collaborative Mapping
+            </a>
+        </li>
+         <li>
+             <a href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/">
+                 Clip Raster With Vector Using GDAL
+             </a>
+         </li>
+        </li>
+    </ul>
+</div></div>
+            </div>
         </div>
         <div class="row">
             <div class="large-12 columns footer">

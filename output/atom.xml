@@ -1,5 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-07-21T19:17:00+02:00</updated><entry><title>QGIS Tips For Collaborative Mapping</title><link href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/" rel="alternate"></link><updated>2015-07-21T19:17:00+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-07-21:posts/2015/qgis-tips-for-collaborative-mapping/</id><summary type="html">&lt;p&gt;Right now I'm setting up a project aimed at crop evaluation over ortophotos, HR and VHR imagery. All the steps of evaluation will be done in QGIS with PostGIS used for data storage and post-processing.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-08-09T13:35:59+02:00</updated><entry><title>Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</title><link href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="alternate"></link><updated>2015-08-09T13:35:59+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-08-09:posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/</id><summary type="html">&lt;p&gt;As mentioned in &lt;a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/"&gt;QGIS Tips For Collaborative Mapping&lt;/a&gt; we're in the middle of crop evaluation project at &lt;a href="http://www.clevermaps.cz/"&gt;CleverMaps&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;With the QGIS workflow up and running, I've been focused on different QGIS related task: &lt;strong&gt;automatic map generation&lt;/strong&gt; for land blocks that meet certain conditions. The logic behind identifying such land blocks is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;if the original area and the measured one differ more than 0.5 % or&lt;/li&gt;
+&lt;li&gt;number of declared crops differs from number of crops identified or&lt;/li&gt;
+&lt;li&gt;at least one parcel in the land block was given a certain error code&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let's assume that with several lines of SQL code we can store these mentioned above in a table called &lt;code&gt;land_blocks&lt;/code&gt; with geometries being the result of calling &lt;code&gt;ST_Union()&lt;/code&gt; over parcels for each land block.&lt;/p&gt;
+&lt;h2&gt;Map composition&lt;/h2&gt;
+&lt;p&gt;Every map should feature following layers:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;land blocks (remember the &lt;code&gt;land_blocks&lt;/code&gt; table?) - labeled with ID, yellowish borders, no fill&lt;/li&gt;
+&lt;li&gt;land parcels - that's my source layer - labeled with letters, blue borders, no fill&lt;/li&gt;
+&lt;li&gt;other layers&lt;/li&gt;
+&lt;li&gt;HR, VHR, NIR imagery, orthophoto - served via WMS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Labels should be visible only for the featured land block (both for the land parcels and the land block itself. The whole map scales dynamically, showing small land blocks zoomed in and the large ones zoomed out.&lt;/p&gt;
+&lt;p class='text-center'&gt;&lt;a id="desired-map" title="Desired map" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"&gt;&lt;img title="Desired map" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Every map features additional items:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;dynamic list of subsidies farmer asks for - showing both measured and declared area&lt;/li&gt;
+&lt;li&gt;dynamic list of land parcels with their areas and error codes&lt;/li&gt;
+&lt;li&gt;scalebar&lt;/li&gt;
+&lt;li&gt;map key&lt;/li&gt;
+&lt;li&gt;logos&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Atlas creation&lt;/h2&gt;
+&lt;p&gt;Now with requirements defined, let's create some maps. It's incredibly easy to generate a series of maps with QGIS atlas options.&lt;/p&gt;
+&lt;h3&gt;Atlas generation settings&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Coverage layer&lt;/strong&gt; is presumably the only thing you really need - as the name suggests, it covers your area of interest. One map will be created for each feature in this layer, unless you decide to use some &lt;strong&gt;filtering&lt;/strong&gt; - which I did.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Output filenames&lt;/strong&gt; can be tweaked to your needs, here's what such a function might look like. If there is a slash in the land block ID (XXXXXXX/Y), the filename is set to &lt;code&gt;USER-ID_XXXXXXX-00Y_M_00&lt;/code&gt;, &lt;code&gt;USER-ID_XXXXXXX-000_M_00&lt;/code&gt; otherwise.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;CASE&lt;/span&gt; &lt;span class="k"&gt;WHEN&lt;/span&gt; &lt;span class="n"&gt;strpos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;atlasfeature&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;kod_pb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;
+    &lt;span class="k"&gt;THEN&lt;/span&gt;
+        &lt;span class="n"&gt;ji&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;_&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt;
+        &lt;span class="n"&gt;substr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+            &lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;atlasfeature&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;kod_pb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;strpos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;atlasfeature&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;kod_pb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="c1"&gt;-- slash position&lt;/span&gt;
+        &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;-&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt;
+        &lt;span class="n"&gt;lpad&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+            &lt;span class="n"&gt;substr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+                &lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;atlasfeature&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;kod_pb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+                &lt;span class="n"&gt;strpos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;atlasfeature&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;kod_pb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                &lt;span class="k"&gt;length&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;atlasfeature&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;kod_pb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+            &lt;span class="p"&gt;),&lt;/span&gt;
+        &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;_M_00&amp;#39;&lt;/span&gt;
+    &lt;span class="k"&gt;ELSE&lt;/span&gt;
+        &lt;span class="n"&gt;ji&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;_&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;atlasfeature&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;kod_pb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;-000_M_00&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;END&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Map scale &amp;amp; variable substitutions&lt;/h3&gt;
+&lt;p&gt;Different land blocks are of different sizes, thus needing different &lt;strong&gt;scales&lt;/strong&gt; to fit in the map. Again, QGIS handles this &lt;em&gt;might-become-a-nightmare-pretty-easily&lt;/em&gt; issue with a single click. You can define the scale as:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;margin around feature: percentage of the space displayed around&lt;/li&gt;
+&lt;li&gt;predefined scale (best fit): my choice, sometimes it doesn't display the entire land block though&lt;/li&gt;
+&lt;li&gt;fixed scale: sets the scale the same for all the maps&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;With these settings, I get a map similar to the one below. Notice two interesting things:&lt;/p&gt;
+&lt;p class='text-center'&gt;&lt;a title="QGIS map skeleton" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"&gt;&lt;img title="QGIS map skeleton" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Scale uses decimal places, which I find &lt;em&gt;a huge failure&lt;/em&gt;. Has anyone ever seen a map with such scale? The worst is there is no easy way to hide these, or at least I didn't find one.&lt;/li&gt;
+&lt;li&gt;You can see a bunch of &lt;code&gt;[something in the brackets]&lt;/code&gt; notations. These will be substituted with actual values during the atlas generation. Showing land block ID with a preceeding label is as easy as &lt;code&gt;[%concat('PB: ', "kod_pb")%]&lt;/code&gt; (mind the percentage sign).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Styling the map using atlas features&lt;/h3&gt;
+&lt;p&gt;Atlas features are a great help for &lt;strong&gt;map customization&lt;/strong&gt;. As mentioned earlier, in my case, only one land block label per map should be visible. That can be achieved with a simple label dialog expression:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;CASE&lt;/span&gt;
+    &lt;span class="k"&gt;WHEN&lt;/span&gt; &lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;atlasfeatureid&lt;/span&gt;
+    &lt;span class="k"&gt;THEN&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;kod_pb&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;END&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;QGIS keeps reference to each coverage layer feature ID during atlas generation, so you can use it for comparison. The best part is you can use IDs with &lt;strong&gt;any layer&lt;/strong&gt; you need:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;CASE&lt;/span&gt;
+    &lt;span class="k"&gt;WHEN&lt;/span&gt; &lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;atlasfeature&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;kod_pb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;kod_pb&amp;quot;&lt;/span&gt;
+    &lt;span class="k"&gt;THEN&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;kod_zp&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;END&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;With this simple expression, I get labels only for those land parcels that are part of the mapped land block. Even the &lt;strong&gt;layer style&lt;/strong&gt; can be controlled with atlas feature. Land parcels inside the land block have blue borders, the rest is yellowish, remember? It's a piece of cake with rule-based styling.&lt;/p&gt;
+&lt;p class='text-center'&gt;&lt;a title="Layer style based on atlas feature" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"&gt;&lt;img title="Layer style based on atlas feature" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3&gt;Atlas generation&lt;/h3&gt;
+&lt;p&gt;When you're set, atlas can be created with a single button. I used SVG as an output format to easily manipulate the map content afterwards. The resulting maps look like the one in &lt;a href="#desired-map"&gt;the first picture&lt;/a&gt; without the text in the red rectangle. A Python script appends this to each map afterwards.&lt;/p&gt;
+&lt;p&gt;Roughly speaking, generating 300 maps takes an hour or so, I guess that depends on the map complexity and hardware though.&lt;/p&gt;
+&lt;h3&gt;Adding textual content&lt;/h3&gt;
+&lt;p&gt;SVG output is just plain old XML that you can edit by hand or by script. A simple Python script, part of map post-processing, loads SVG from the database and adds it to the left pane of each map.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;
+      &lt;span class="n"&gt;ji&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="n"&gt;kod_pb&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="n"&gt;concat&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;&amp;lt;g fill=&amp;quot;none&amp;quot; stroke=&amp;quot;#000000&amp;quot; stroke-opacity=&amp;quot;1&amp;quot; stroke-width=&amp;quot;1&amp;quot;&lt;/span&gt;
+&lt;span class="s1"&gt;                  stroke-linecap=&amp;quot;square&amp;quot; stroke-linejoin=&amp;quot;bevel&amp;quot; transform=&amp;quot;matrix(1.18081,0,0,1.18081,270.0,550.0)&amp;quot;&lt;/span&gt;
+&lt;span class="s1"&gt;                  font-family=&amp;quot;Droid Sans&amp;quot; font-size=&amp;quot;35&amp;quot; font-style=&amp;quot;normal&amp;quot;&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;kultura&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vymery&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vymery_hodnoty&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;vcs_titul&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vcs_brk&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vcs_brs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vcs_chmel&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;vcs_zvv&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vcs_zv&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vcs_ovv&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vcs_ov&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vcs_cur&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vcs_bip&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;lfa&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lfa_h1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lfa_h2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lfa_h3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;lfa_h4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lfa_h5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lfa_oa&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lfa_ob&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lfa_s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;natura&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;aeo_eafrd_text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeo_eafrd_a1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;dv_aeo_eafrd_a2o&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeo_eafrd_a2v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeo_eafrd_b1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;dv_aeo_eafrd_b2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeo_eafrd_b3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeo_eafrd_b4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;dv_aeo_eafrd_b5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeo_eafrd_b6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeo_eafrd_b7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;dv_aeo_eafrd_b8&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeo_eafrd_b9&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeo_eafrd_c1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;dv_aeo_eafrd_c3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;aeko_text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_c&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;dv_aeko_d1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_d2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_d3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_d4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_d5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;dv_aeko_d6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_d7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_d8&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_d9&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_d10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="n"&gt;dv_aeko_e&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_aeko_f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ez&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dzes_text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rep&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;obi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;seop&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;meop&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pbz&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dzes7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;&amp;lt;/g&amp;gt;&amp;#39;&lt;/span&gt;
+      &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;popis&lt;/span&gt;
+&lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="p"&gt;(...);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Each column from the previous query is a result of &lt;code&gt;SELECT&lt;/code&gt; similar to the one below.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="n"&gt;concat&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;lt;text fill=&amp;quot;#000000&amp;quot; fill-opacity=&amp;quot;1&amp;quot; stroke=&amp;quot;none&amp;quot;&amp;gt;BrK: &amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dv_brk&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39; ha / &amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;MV_BRK&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39; ha;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;kod_dpz&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;/text&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;vcs_brk&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;transform="matrix(1.18081,0,0,1.18081,270.0,550.0)&lt;/code&gt; part puts the text on the right spot. Great finding about SVG is that it places each &lt;code&gt;&amp;lt;text&amp;gt;&lt;/code&gt; element on the new line, so you don't need to deal with calculating the position in your script.&lt;/p&gt;
+&lt;p&gt;Scale adjustment is done with a dirty lambda function.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;content&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;re&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;r&amp;quot;&amp;gt;(\d{1,3}\.\d{3,5})&amp;lt;/text&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&amp;gt;    &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;round&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;float&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;group&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;&amp;lt;/text&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;old_map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;SVG to JPEG conversion&lt;/h3&gt;
+&lt;p&gt;We deliver maps as JPEG files with 150 DPI on A4 paper format. &lt;a href="http://www.imagemagick.org/script/index.php"&gt;ImageMagick&lt;/a&gt; converts the formats with a simple shell command:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;convert -density &lt;span class="m"&gt;150&lt;/span&gt; -resize 1753x1240 input.svg output.jpg
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;I created pretty efficient semi-automated workflow using several open source technologies that saves me a lot of work. Although QGIS has some minor pet peeves (scale with decimal places, not showing the entire feature, not substituting variables at times), it definitely makes boring map creation quite amusing. The more I work with big data / on big tasks, the more I find Linux a must-have.&lt;/p&gt;
+&lt;p&gt;The whole process was done with QGIS 2.10, PostGIS 2.1, PostgreSQL 9.3, Python 2.7, ImageMagick 6.7.&lt;/p&gt;</summary><category term="qgis"></category><category term="postgis"></category><category term="python"></category><category term="svg"></category><category term="linux"></category></entry><entry><title>QGIS Tips For Collaborative Mapping</title><link href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/" rel="alternate"></link><updated>2015-07-21T19:17:00+02:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-07-21:posts/2015/qgis-tips-for-collaborative-mapping/</id><summary type="html">&lt;p&gt;Right now I'm setting up a project aimed at crop evaluation over ortophotos, HR and VHR imagery. All the steps of evaluation will be done in QGIS with PostGIS used for data storage and post-processing.&lt;/p&gt;
 &lt;p&gt;In the initial phase, fifteen GIS operators will be using QGIS to reshape geometries and fill attribute data accordingly. Fifteen are not so many, but it is enough to be a possible source of errors. Luckily, there are many things you can do with QGIS to prevent people from making mistakes.&lt;/p&gt;
 &lt;h2&gt;QGIS project file&lt;/h2&gt;
 &lt;p&gt;QGIS project, the .qgs file, is a pure XML and, unlike ESRI's .mxd, can be edited with any text editor. That's great advantage when you need to prepare one project for many different operators. My project has to load some database layers that should be different for different operators that have different database accounts.&lt;/p&gt;
