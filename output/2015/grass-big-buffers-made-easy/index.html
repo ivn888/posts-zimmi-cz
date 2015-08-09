@@ -43,7 +43,7 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h2><a href="http://www.zimmi.cz/posts/2015/grass-big-buffers-made-easy/" rel="bookmark" title="Permalink to GRASS: Big Buffers Made Easy">GRASS: Big Buffers Made Easy</a></h2>
+        <h1><a href="http://www.zimmi.cz/posts/2015/grass-big-buffers-made-easy/" rel="bookmark" title="Permalink to GRASS: Big Buffers Made Easy">GRASS: Big Buffers Made Easy</a></h1>
         <small>Written on Apr 20, 2015
     and marked as
     <a href="http://www.zimmi.cz/posts/tag/grass.html">grass</a>    | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
@@ -60,47 +60,47 @@
 <p>Two of those four are rather problematic with PostGIS: line smoothing and diffing the original geometries (I didn't get to the last one, so it might be 3 of 4 as well).</p>
 <h2>Hello, I'm GRASS</h2>
 <p>I haven't used GRASS for ages and even back then I didn't get to know it much, but it saved the day for me this time.</p>
-<div class="highlight"><pre><span class="x">grass -text path/to/mapset -c</span>
+<div class="highlight"><pre>grass -text path/to/mapset -c
 
-<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot; output=ilot_050 layer=ilot_2015_050 snap=-1 --overwrite</span>
-<span class="err">#</span><span class="x"> turn the snapping off, I don&#39;t want the input changed in any way, even though it is not topologically valid</span>
-<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot; output=lollipops_050 layer=lollipops.lollipops_2015_050_tmp snap=-1 --overwrite</span>
-<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot; output=holes_050 layer=phase_3.holes_050 snap=-1 --overwrite</span>
-<span class="x">v.db.addcolumn map=ilot_050 columns=&quot;id_0 int&quot;</span>
-<span class="x">v.db.update map=ilot_050 column=id_0 value=1</span>
+v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>ilot_050 <span class="nv">layer</span><span class="o">=</span>ilot_2015_050 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+<span class="c"># turn the snapping off, I don&#39;t want the input changed in any way, even though it is not topologically valid</span>
+v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>lollipops_050 <span class="nv">layer</span><span class="o">=</span>lollipops.lollipops_2015_050_tmp <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>holes_050 <span class="nv">layer</span><span class="o">=</span>phase_3.holes_050 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+v.db.addcolumn <span class="nv">map</span><span class="o">=</span>ilot_050 <span class="nv">columns</span><span class="o">=</span><span class="s2">&quot;id_0 int&quot;</span>
+v.db.update <span class="nv">map</span><span class="o">=</span>ilot_050 <span class="nv">column</span><span class="o">=</span>id_0 <span class="nv">value</span><span class="o">=</span>1
 
-<span class="err">#</span><span class="x"> dissolve didn&#39;t work without a column specified, dunno why</span>
-<span class="x">v.dissolve input=ilot_050 column=id_0 output=ilot_050_dissolve --overwrite</span>
-<span class="x">v.buffer input=ilot_050_dissolve output=ilot_050_buffer distance=20 --overwrite</span>
+<span class="c"># dissolve didn&#39;t work without a column specified, dunno why</span>
+v.dissolve <span class="nv">input</span><span class="o">=</span>ilot_050 <span class="nv">column</span><span class="o">=</span>id_0 <span class="nv">output</span><span class="o">=</span>ilot_050_dissolve --overwrite
+v.buffer <span class="nv">input</span><span class="o">=</span>ilot_050_dissolve <span class="nv">output</span><span class="o">=</span>ilot_050_buffer <span class="nv">distance</span><span class="o">=</span><span class="m">20</span> --overwrite
 
-<span class="err">#</span><span class="x"> v.out and v.in routine used just because I didn&#39;t get the way attributes work in GRASS, would do it differently next time</span>
-<span class="x">v.out.ogr input=ilot_050_buffer output=ilot_050_buffer format=ESRI_Shapefile --overwrite</span>
-<span class="x">v.in.ogr input=ilot_050_buffer output=ilot_050_buffer snap=-1 --overwrite</span>
-<span class="x">v.overlay ainput=ilot_050_buffer binput=holes_050 operator=or output=combined_050_01 snap=-1 --overwrite</span>
+<span class="c"># v.out and v.in routine used just because I didn&#39;t get the way attributes work in GRASS, would do it differently next time</span>
+v.out.ogr <span class="nv">input</span><span class="o">=</span>ilot_050_buffer <span class="nv">output</span><span class="o">=</span>ilot_050_buffer <span class="nv">format</span><span class="o">=</span>ESRI_Shapefile --overwrite
+v.in.ogr <span class="nv">input</span><span class="o">=</span>ilot_050_buffer <span class="nv">output</span><span class="o">=</span>ilot_050_buffer <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+v.overlay <span class="nv">ainput</span><span class="o">=</span>ilot_050_buffer <span class="nv">binput</span><span class="o">=</span>holes_050 <span class="nv">operator</span><span class="o">=</span>or <span class="nv">output</span><span class="o">=</span>combined_050_01 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 
-<span class="err">#</span><span class="x"> tried v.patch to combine the three layers, it gave some strange results in the final overlay</span>
-<span class="x">v.overlay ainput=combined_050_01 binput=lollipops_050 operator=or output=combined_050_02 snap=-1 --overwrite</span>
-<span class="x">v.out.ogr input=combined_050_02 output=combined_050 format=ESRI_Shapefile --overwrite</span>
-<span class="x">v.in.ogr input=combined_050 output=combined_050_in snap=-1 --overwrite</span>
-<span class="x">v.db.addcolumn map=combined_050_in columns=&quot;id_1 int&quot;</span>
-<span class="x">v.db.update map=combined_050_in column=id_1 value=1</span>
-<span class="x">v.dissolve input=combined_050_in column=id_1 output=combined_050_dissolve --overwrite</span>
+<span class="c"># tried v.patch to combine the three layers, it gave some strange results in the final overlay</span>
+v.overlay <span class="nv">ainput</span><span class="o">=</span>combined_050_01 <span class="nv">binput</span><span class="o">=</span>lollipops_050 <span class="nv">operator</span><span class="o">=</span>or <span class="nv">output</span><span class="o">=</span>combined_050_02 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+v.out.ogr <span class="nv">input</span><span class="o">=</span>combined_050_02 <span class="nv">output</span><span class="o">=</span>combined_050 <span class="nv">format</span><span class="o">=</span>ESRI_Shapefile --overwrite
+v.in.ogr <span class="nv">input</span><span class="o">=</span>combined_050 <span class="nv">output</span><span class="o">=</span>combined_050_in <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+v.db.addcolumn <span class="nv">map</span><span class="o">=</span>combined_050_in <span class="nv">columns</span><span class="o">=</span><span class="s2">&quot;id_1 int&quot;</span>
+v.db.update <span class="nv">map</span><span class="o">=</span>combined_050_in <span class="nv">column</span><span class="o">=</span>id_1 <span class="nv">value</span><span class="o">=</span>1
+v.dissolve <span class="nv">input</span><span class="o">=</span>combined_050_in <span class="nv">column</span><span class="o">=</span>id_1 <span class="nv">output</span><span class="o">=</span>combined_050_dissolve --overwrite
 
-<span class="err">#</span><span class="x"> get rid of &lt; 10cm edges</span>
-<span class="x">v.generalize input=combined_050_dissolve output=combined_050_gen method=reduction threshold=0.1 --overwrite</span>
-<span class="x">v.out.ogr input=combined_050_gen output=combined_050_gen format=ESRI_Shapefile --overwrite</span>
-<span class="x">v.in.ogr input=combined_050_gen output=combined_050_gen snap=-1 --overwrite</span>
-<span class="x">v.overlay ainput=combined_050_gen binput=ilot_050 operator=not snap=1e-05 --overwrite output=ilot_050_diff</span>
-<span class="x">v.out.postgis input=ilot_050_diff output=&quot;PG:dbname=db user=postgres password=postgres&quot; output_layer=onf3.buffer_050_diff options=&quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&quot; --overwrite</span>
-<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=ign user=postgres password=postgres&quot; output=buffer_050 layer=onf3.buffer_050_diff snap=-1 --overwrite</span>
-<span class="x">v.in.ogr input=&quot;PG:host=localhost dbname=ign user=postgres password=postgres&quot; output=grid layer=grid snap=-1 --overwrite</span>
-<span class="x">v.db.connect -d map=buffer_050</span>
+<span class="c"># get rid of &lt; 10cm edges</span>
+v.generalize <span class="nv">input</span><span class="o">=</span>combined_050_dissolve <span class="nv">output</span><span class="o">=</span>combined_050_gen <span class="nv">method</span><span class="o">=</span>reduction <span class="nv">threshold</span><span class="o">=</span>0.1 --overwrite
+v.out.ogr <span class="nv">input</span><span class="o">=</span>combined_050_gen <span class="nv">output</span><span class="o">=</span>combined_050_gen <span class="nv">format</span><span class="o">=</span>ESRI_Shapefile --overwrite
+v.in.ogr <span class="nv">input</span><span class="o">=</span>combined_050_gen <span class="nv">output</span><span class="o">=</span>combined_050_gen <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+v.overlay <span class="nv">ainput</span><span class="o">=</span>combined_050_gen <span class="nv">binput</span><span class="o">=</span>ilot_050 <span class="nv">operator</span><span class="o">=</span>not <span class="nv">snap</span><span class="o">=</span>1e-05 --overwrite <span class="nv">output</span><span class="o">=</span>ilot_050_diff
+v.out.postgis <span class="nv">input</span><span class="o">=</span>ilot_050_diff <span class="nv">output</span><span class="o">=</span><span class="s2">&quot;PG:dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output_layer</span><span class="o">=</span>onf3.buffer_050_diff <span class="nv">options</span><span class="o">=</span><span class="s2">&quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&quot;</span> --overwrite
+v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=ign user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>buffer_050 <span class="nv">layer</span><span class="o">=</span>onf3.buffer_050_diff <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=ign user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>grid <span class="nv">layer</span><span class="o">=</span>grid <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+v.db.connect -d <span class="nv">map</span><span class="o">=</span>buffer_050
 
-<span class="err">#</span><span class="x"> instead of v.out and v.in routine</span>
-<span class="x">db.connect driver=sqlite database=&#39;</span><span class="p">$</span><span class="nv">GISDBASE</span><span class="x">/</span><span class="p">$</span><span class="nv">LOCATION_NAME</span><span class="x">/</span><span class="p">$</span><span class="nv">MAPSET</span><span class="x">/sqlite.db&#39;</span>
-<span class="x">v.db.addtable map=buffer_050</span>
-<span class="x">v.overlay ainput=buffer_050 binput=grid operator=and output=buffer_050_grid snap=-1 --overwrite</span>
-<span class="x">v.out.postgis input=buffer_050_grid output=&quot;PG:dbname=ign user=postgres password=postgres&quot; output_layer=onf3.buffer_050_diff_grid options=&quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&quot; --overwrite</span>
+<span class="c"># instead of v.out and v.in routine</span>
+db.connect <span class="nv">driver</span><span class="o">=</span>sqlite <span class="nv">database</span><span class="o">=</span><span class="s1">&#39;$GISDBASE/$LOCATION_NAME/$MAPSET/sqlite.db&#39;</span>
+v.db.addtable <span class="nv">map</span><span class="o">=</span>buffer_050
+v.overlay <span class="nv">ainput</span><span class="o">=</span>buffer_050 <span class="nv">binput</span><span class="o">=</span>grid <span class="nv">operator</span><span class="o">=</span>and <span class="nv">output</span><span class="o">=</span>buffer_050_grid <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
+v.out.postgis <span class="nv">input</span><span class="o">=</span>buffer_050_grid <span class="nv">output</span><span class="o">=</span><span class="s2">&quot;PG:dbname=ign user=postgres password=postgres&quot;</span> <span class="nv">output_layer</span><span class="o">=</span>onf3.buffer_050_diff_grid <span class="nv">options</span><span class="o">=</span><span class="s2">&quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&quot;</span> --overwrite
 </pre></div>
 
 

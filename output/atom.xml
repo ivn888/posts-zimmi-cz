@@ -465,47 +465,47 @@ gdalwarp -dstalpha -s_srs &lt;span class="s1"&gt;&amp;#39;EPSG:5514&amp;#39;&lt;
 &lt;p&gt;Two of those four are rather problematic with PostGIS: line smoothing and diffing the original geometries (I didn't get to the last one, so it might be 3 of 4 as well).&lt;/p&gt;
 &lt;h2&gt;Hello, I'm GRASS&lt;/h2&gt;
 &lt;p&gt;I haven't used GRASS for ages and even back then I didn't get to know it much, but it saved the day for me this time.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="x"&gt;grass -text path/to/mapset -c&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;grass -text path/to/mapset -c
 
-&lt;span class="x"&gt;v.in.ogr input=&amp;quot;PG:host=localhost dbname=db user=postgres password=postgres&amp;quot; output=ilot_050 layer=ilot_2015_050 snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="x"&gt; turn the snapping off, I don&amp;#39;t want the input changed in any way, even though it is not topologically valid&lt;/span&gt;
-&lt;span class="x"&gt;v.in.ogr input=&amp;quot;PG:host=localhost dbname=db user=postgres password=postgres&amp;quot; output=lollipops_050 layer=lollipops.lollipops_2015_050_tmp snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.in.ogr input=&amp;quot;PG:host=localhost dbname=db user=postgres password=postgres&amp;quot; output=holes_050 layer=phase_3.holes_050 snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.db.addcolumn map=ilot_050 columns=&amp;quot;id_0 int&amp;quot;&lt;/span&gt;
-&lt;span class="x"&gt;v.db.update map=ilot_050 column=id_0 value=1&lt;/span&gt;
+v.in.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;PG:host=localhost dbname=db user=postgres password=postgres&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050 &lt;span class="nv"&gt;layer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_2015_050 &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+&lt;span class="c"&gt;# turn the snapping off, I don&amp;#39;t want the input changed in any way, even though it is not topologically valid&lt;/span&gt;
+v.in.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;PG:host=localhost dbname=db user=postgres password=postgres&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;lollipops_050 &lt;span class="nv"&gt;layer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;lollipops.lollipops_2015_050_tmp &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+v.in.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;PG:host=localhost dbname=db user=postgres password=postgres&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;holes_050 &lt;span class="nv"&gt;layer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;phase_3.holes_050 &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+v.db.addcolumn &lt;span class="nv"&gt;map&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050 &lt;span class="nv"&gt;columns&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;id_0 int&amp;quot;&lt;/span&gt;
+v.db.update &lt;span class="nv"&gt;map&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050 &lt;span class="nv"&gt;column&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;id_0 &lt;span class="nv"&gt;value&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1
 
-&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="x"&gt; dissolve didn&amp;#39;t work without a column specified, dunno why&lt;/span&gt;
-&lt;span class="x"&gt;v.dissolve input=ilot_050 column=id_0 output=ilot_050_dissolve --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.buffer input=ilot_050_dissolve output=ilot_050_buffer distance=20 --overwrite&lt;/span&gt;
+&lt;span class="c"&gt;# dissolve didn&amp;#39;t work without a column specified, dunno why&lt;/span&gt;
+v.dissolve &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050 &lt;span class="nv"&gt;column&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;id_0 &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_dissolve --overwrite
+v.buffer &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_dissolve &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_buffer &lt;span class="nv"&gt;distance&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;20&lt;/span&gt; --overwrite
 
-&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="x"&gt; v.out and v.in routine used just because I didn&amp;#39;t get the way attributes work in GRASS, would do it differently next time&lt;/span&gt;
-&lt;span class="x"&gt;v.out.ogr input=ilot_050_buffer output=ilot_050_buffer format=ESRI_Shapefile --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.in.ogr input=ilot_050_buffer output=ilot_050_buffer snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.overlay ainput=ilot_050_buffer binput=holes_050 operator=or output=combined_050_01 snap=-1 --overwrite&lt;/span&gt;
+&lt;span class="c"&gt;# v.out and v.in routine used just because I didn&amp;#39;t get the way attributes work in GRASS, would do it differently next time&lt;/span&gt;
+v.out.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_buffer &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_buffer &lt;span class="nv"&gt;format&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ESRI_Shapefile --overwrite
+v.in.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_buffer &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_buffer &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+v.overlay &lt;span class="nv"&gt;ainput&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_buffer &lt;span class="nv"&gt;binput&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;holes_050 &lt;span class="nv"&gt;operator&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;or &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_01 &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
 
-&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="x"&gt; tried v.patch to combine the three layers, it gave some strange results in the final overlay&lt;/span&gt;
-&lt;span class="x"&gt;v.overlay ainput=combined_050_01 binput=lollipops_050 operator=or output=combined_050_02 snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.out.ogr input=combined_050_02 output=combined_050 format=ESRI_Shapefile --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.in.ogr input=combined_050 output=combined_050_in snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.db.addcolumn map=combined_050_in columns=&amp;quot;id_1 int&amp;quot;&lt;/span&gt;
-&lt;span class="x"&gt;v.db.update map=combined_050_in column=id_1 value=1&lt;/span&gt;
-&lt;span class="x"&gt;v.dissolve input=combined_050_in column=id_1 output=combined_050_dissolve --overwrite&lt;/span&gt;
+&lt;span class="c"&gt;# tried v.patch to combine the three layers, it gave some strange results in the final overlay&lt;/span&gt;
+v.overlay &lt;span class="nv"&gt;ainput&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_01 &lt;span class="nv"&gt;binput&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;lollipops_050 &lt;span class="nv"&gt;operator&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;or &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_02 &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+v.out.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_02 &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050 &lt;span class="nv"&gt;format&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ESRI_Shapefile --overwrite
+v.in.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050 &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_in &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+v.db.addcolumn &lt;span class="nv"&gt;map&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_in &lt;span class="nv"&gt;columns&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;id_1 int&amp;quot;&lt;/span&gt;
+v.db.update &lt;span class="nv"&gt;map&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_in &lt;span class="nv"&gt;column&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;id_1 &lt;span class="nv"&gt;value&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1
+v.dissolve &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_in &lt;span class="nv"&gt;column&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;id_1 &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_dissolve --overwrite
 
-&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="x"&gt; get rid of &amp;lt; 10cm edges&lt;/span&gt;
-&lt;span class="x"&gt;v.generalize input=combined_050_dissolve output=combined_050_gen method=reduction threshold=0.1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.out.ogr input=combined_050_gen output=combined_050_gen format=ESRI_Shapefile --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.in.ogr input=combined_050_gen output=combined_050_gen snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.overlay ainput=combined_050_gen binput=ilot_050 operator=not snap=1e-05 --overwrite output=ilot_050_diff&lt;/span&gt;
-&lt;span class="x"&gt;v.out.postgis input=ilot_050_diff output=&amp;quot;PG:dbname=db user=postgres password=postgres&amp;quot; output_layer=onf3.buffer_050_diff options=&amp;quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&amp;quot; --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.in.ogr input=&amp;quot;PG:host=localhost dbname=ign user=postgres password=postgres&amp;quot; output=buffer_050 layer=onf3.buffer_050_diff snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.in.ogr input=&amp;quot;PG:host=localhost dbname=ign user=postgres password=postgres&amp;quot; output=grid layer=grid snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.db.connect -d map=buffer_050&lt;/span&gt;
+&lt;span class="c"&gt;# get rid of &amp;lt; 10cm edges&lt;/span&gt;
+v.generalize &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_dissolve &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_gen &lt;span class="nv"&gt;method&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;reduction &lt;span class="nv"&gt;threshold&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0.1 --overwrite
+v.out.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_gen &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_gen &lt;span class="nv"&gt;format&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ESRI_Shapefile --overwrite
+v.in.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_gen &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_gen &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+v.overlay &lt;span class="nv"&gt;ainput&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;combined_050_gen &lt;span class="nv"&gt;binput&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050 &lt;span class="nv"&gt;operator&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;not &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1e-05 --overwrite &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_diff
+v.out.postgis &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ilot_050_diff &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;PG:dbname=db user=postgres password=postgres&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;output_layer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;onf3.buffer_050_diff &lt;span class="nv"&gt;options&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&amp;quot;&lt;/span&gt; --overwrite
+v.in.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;PG:host=localhost dbname=ign user=postgres password=postgres&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;buffer_050 &lt;span class="nv"&gt;layer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;onf3.buffer_050_diff &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+v.in.ogr &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;PG:host=localhost dbname=ign user=postgres password=postgres&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;grid &lt;span class="nv"&gt;layer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;grid &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+v.db.connect -d &lt;span class="nv"&gt;map&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;buffer_050
 
-&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="x"&gt; instead of v.out and v.in routine&lt;/span&gt;
-&lt;span class="x"&gt;db.connect driver=sqlite database=&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;$&lt;/span&gt;&lt;span class="nv"&gt;GISDBASE&lt;/span&gt;&lt;span class="x"&gt;/&lt;/span&gt;&lt;span class="p"&gt;$&lt;/span&gt;&lt;span class="nv"&gt;LOCATION_NAME&lt;/span&gt;&lt;span class="x"&gt;/&lt;/span&gt;&lt;span class="p"&gt;$&lt;/span&gt;&lt;span class="nv"&gt;MAPSET&lt;/span&gt;&lt;span class="x"&gt;/sqlite.db&amp;#39;&lt;/span&gt;
-&lt;span class="x"&gt;v.db.addtable map=buffer_050&lt;/span&gt;
-&lt;span class="x"&gt;v.overlay ainput=buffer_050 binput=grid operator=and output=buffer_050_grid snap=-1 --overwrite&lt;/span&gt;
-&lt;span class="x"&gt;v.out.postgis input=buffer_050_grid output=&amp;quot;PG:dbname=ign user=postgres password=postgres&amp;quot; output_layer=onf3.buffer_050_diff_grid options=&amp;quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&amp;quot; --overwrite&lt;/span&gt;
+&lt;span class="c"&gt;# instead of v.out and v.in routine&lt;/span&gt;
+db.connect &lt;span class="nv"&gt;driver&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;sqlite &lt;span class="nv"&gt;database&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;$GISDBASE/$LOCATION_NAME/$MAPSET/sqlite.db&amp;#39;&lt;/span&gt;
+v.db.addtable &lt;span class="nv"&gt;map&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;buffer_050
+v.overlay &lt;span class="nv"&gt;ainput&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;buffer_050 &lt;span class="nv"&gt;binput&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;grid &lt;span class="nv"&gt;operator&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;and &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;buffer_050_grid &lt;span class="nv"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-1 --overwrite
+v.out.postgis &lt;span class="nv"&gt;input&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;buffer_050_grid &lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;PG:dbname=ign user=postgres password=postgres&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;output_layer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;onf3.buffer_050_diff_grid &lt;span class="nv"&gt;options&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;GEOMETRY_NAME=wkb_geometry,SRID=2154&amp;quot;&lt;/span&gt; --overwrite
 &lt;/pre&gt;&lt;/div&gt;
 
 

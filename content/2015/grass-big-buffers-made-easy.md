@@ -18,6 +18,7 @@ Two of those four are rather problematic with PostGIS: line smoothing and diffin
 
 I haven't used GRASS for ages and even back then I didn't get to know it much, but it saved the day for me this time.
 
+    :::bash
     grass -text path/to/mapset -c
 
     v.in.ogr input="PG:host=localhost dbname=db user=postgres password=postgres" output=ilot_050 layer=ilot_2015_050 snap=-1 --overwrite

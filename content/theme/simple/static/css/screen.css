@@ -57,8 +57,7 @@ img.right {
 }
 
 
-.panel h2 a {
-    /*background: url('../img/border.svg') center 45px repeat-x;*/
+.panel h1 a {
     border-bottom: 5px dotted #d8d8d8;
     color: #333333;
     display: inline;
@@ -67,16 +66,25 @@ img.right {
     padding-top: 0rem;
 }
 
-.panel h2 a:hover {
+.panel h1 a:hover {
     border-bottom-color: #cc0000;
     color: #cc0000;
 }
 
+.panel h2,
 .panel h3,
 .panel h4 {
     border-bottom: 4px dotted #d8d8d8;
     color: #cc0000;
     padding-bottom: .5rem;
+}
+
+.panel h3 {
+  border-bottom: 3px dotted #d8d8d8
+}
+
+.panel h4 {
+  border-bottom: 2px dotted #d8d8d8
 }
 
 pre {
