@@ -4,8 +4,9 @@
         <title>Michal Zimmermann | tag: bash</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
-        <link rel="stylesheet" href="/theme/css/style.min.css?9985933b">
+        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9985933b">
 
 </head>
 
@@ -13,7 +14,7 @@
     <nav class="top-bar" data-topbar role="navigation">
         <ul class="title-area">
             <li class="name">
-                <h1><a href="/posts">Home</a></h1>
+                <h1><a href="http://www.zimmi.cz/posts/posts">Home</a></h1>
             </li>
      <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
             <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
@@ -21,9 +22,9 @@
         <section class="top-bar-section">
     <!-- Right Nav Section -->
             <ul class="right">
-                <li><a href="/categories">Categories</a></li>
-                <li><a href="/tags">Tags</a></li>
-                <li><a href="/feed.xml">RSS feed</a></li>
+                <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
+                <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
+                <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS feed</a></li>
             </ul>
         </section>
     </nav>
@@ -38,10 +39,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2015/how-to-use-queue-with-rsync/" rel="bookmark" title="Permalink to How to Use Queue with Rsync">How to Use Queue with Rsync</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/how-to-use-queue-with-rsync/" rel="bookmark" title="Permalink to How to Use Queue with Rsync">How to Use Queue with Rsync</a></h2>
             <small>Written on Oct 1, 2015
         and marked as
-        <a href="/tag/linux.html">linux</a>,         <a href="/tag/bash.html">bash</a>        | <a href="/category/automation.html">automation</a>
+        <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
         </small>
         <section>
             <p>Having more than 120K 5MB+ images that should be moved to the server is a great oportunity for some automatic bash processing. It might be good idea to use <a href="http://www.imagemagick.org/script/index.php">ImageMagick</a> <a href="http://www.imagemagick.org/script/convert.php">convert tool</a> to make images smaller in a simple for loop. <a href="http://www.gnu.org/software/parallel/">GNU Parallel</a> can significantly increase the performance by running one job per CPU core.</p>
@@ -68,10 +69,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check">SSH GRASS Processing Status Check</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check">SSH GRASS Processing Status Check</a></h2>
             <small>Written on Jul 21, 2015
         and marked as
-        <a href="/tag/bash.html">bash</a>,         <a href="/tag/linux.html">linux</a>        | <a href="/category/development.html">development</a>
+        <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
         </small>
         <section>
             <p>I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.</p>
@@ -102,10 +103,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2014/bash-prepend-to-filename/" rel="bookmark" title="Permalink to Bash: Prepend To Filename">Bash: Prepend To Filename</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2014/bash-prepend-to-filename/" rel="bookmark" title="Permalink to Bash: Prepend To Filename">Bash: Prepend To Filename</a></h2>
             <small>Written on Nov 1, 2014
         and marked as
-        <a href="/tag/linux.html">linux</a>,         <a href="/tag/bash.html">bash</a>        | <a href="/category/development.html">development</a>
+        <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
         </small>
         <section>
             <div class="highlight"><pre><span class="x">for f in *; do mv &quot;</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot; &quot;prepend_</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot;; done</span>
@@ -133,7 +134,17 @@
                 </footer><!-- /#contentinfo -->
             </div>
         </div>
-<script src="/theme/js/packed.js?8bee1467"></script>
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-43432739-2']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+<script src="http://www.zimmi.cz/posts/theme/js/packed.js?8bee1467"></script>
 <script>
 $(document).foundation();
 </script>
