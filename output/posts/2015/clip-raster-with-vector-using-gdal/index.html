@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Michal Zimmermann | Clip Raster With Vector Using GDAL</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+
+
+
+    <meta name="tags" contents="linux" />
+    <meta name="tags" contents="gdal" />
+
+        <link rel="stylesheet" href="/theme/css/style.min.css?9985933b">
+
+</head>
+
+<body id="index" class="home">
+    <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+            <li class="name">
+                <h1><a href="/posts">Home</a></h1>
+            </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+            <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+        </ul>
+        <section class="top-bar-section">
+    <!-- Right Nav Section -->
+            <ul class="right">
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/tags">Tags</a></li>
+                <li><a href="/feed.xml">RSS feed</a></li>
+            </ul>
+        </section>
+    </nav>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/posts">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+<div class="panel">
+    <div class="post-name">
+        <h1><a href="/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using GDAL</a></h1>
+        <small>Written on Jul 21, 2015
+    and marked as
+    <a href="/tag/linux.html">linux</a>,     <a href="/tag/gdal.html">gdal</a>    | <a href="/category/automation.html">automation</a>
+    </small>
+    <section>
+        <p>Recently I needed to clip several raster files with polygonal layer of municipalities. A solution to this task is pretty straightforward using <a href="http://gdal.org/">GDAL</a> and a bit of Bash and QGIS thrown in.</p>
+<p>The necessary steps are:</p>
+<ol>
+<li>Put each polygon to a separate file. This can be done easily with <code>Vector - Data Management Tools - Split Vector Layer</code> in QGIS. The solution below assumes that each shapefile has the same basename as the raster file.</li>
+<li>These polygons are stored in the <code>obce</code> subfolder relative to the folder with rasters.</li>
+<li>An <code>output</code> folder exists that is used for... output, yes.</li>
+<li>Rasters are saved with output alpha band for nodata (<code>-dstalpha</code> flag).</li>
+<li>The script takes one argument - raster name.</li>
+<li>Profit!</li>
+</ol>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
+
+<span class="nv">OBEC</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nv">BASE</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$OBEC</span> _jpeg.tif<span class="k">)</span>
+<span class="nb">echo</span> <span class="nv">$BASE</span>
+<span class="nv">EXTENT</span><span class="o">=</span><span class="k">$(</span>ogrinfo -so obce/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.shp <span class="nv">$BASE</span> <span class="p">|</span> grep Extent <span class="se">\</span>
+<span class="p">|</span> sed <span class="s1">&#39;s/Extent: //g&#39;</span> <span class="p">|</span> sed <span class="s1">&#39;s/(//g&#39;</span> <span class="p">|</span> sed <span class="s1">&#39;s/)//g&#39;</span> <span class="se">\</span>
+<span class="p">|</span> sed <span class="s1">&#39;s/ - /, /g&#39;</span><span class="k">)</span>
+<span class="nv">EXTENT</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$EXTENT</span> <span class="p">|</span> awk -F <span class="s1">&#39;,&#39;</span> <span class="s1">&#39;{print $1 &quot; &quot; $4 &quot; &quot; $3 &quot; &quot; $2}&#39;</span><span class="k">)</span>
+gdal_translate -projwin <span class="nv">$EXTENT</span> -of GTiff <span class="nv">$OBEC</span> output/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.tif
+gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <span class="s1">&#39;EPSG:5514&#39;</span> <span class="se">\</span>
+    -co <span class="nv">COMPRESS</span><span class="o">=</span>JPEG <span class="se">\</span>
+    -co <span class="nv">TILED</span><span class="o">=</span>YES -<span class="se">\</span>
+    of GTiff <span class="se">\</span>
+    -cutline obce/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.shp <span class="se">\</span>
+    output/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.tif output/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.final.tif
+</pre></div>
+
+
+<p>Note that if <code>gdalwarp</code> doesn't recognize an EPSG code (which is the case for my country national grid), you might pass it as a PROJ.4 string.</p>
+<p>According to the point 5 in the above list, the script needs to be run in a loop:</p>
+<div class="highlight"><pre><span class="k">for</span> f in *_jpeg.tif<span class="p">;</span>
+    <span class="k">do</span> the_script_above.sh <span class="nv">$f</span>
+<span class="p">;</span><span class="k">done</span>
+</pre></div>
+    </section>
+    </div>
+<div class="neighbors">
+    <h3>More reading</h3>
+    <ul>
+        <li>
+            <a href="/posts/2015/filtering-points-by-distance-in-postgis/">
+                 Filtering points by distance in PostGIS
+            </a>
+        </li>
+         <li>
+             <a href="/posts/2015/ssh-grass-processing-status-check/">
+                 SSH GRASS Processing Status Check
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2015/grass-big-buffers-made-easy/">
+                 GRASS: Big Buffers Made Easy
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/">
+                 Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick
+             </a>
+         </li>
+        </li>
+    </ul>
+</div></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+<script src="/theme/js/packed.js?8bee1467"></script>
+<script>
+$(document).foundation();
+</script>
+</body>
+</html>

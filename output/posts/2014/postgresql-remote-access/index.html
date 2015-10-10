@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Michal Zimmermann | PostgreSQL Remote Access</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+
+
+
+    <meta name="tags" contents="postgresql" />
+    <meta name="tags" contents="linux" />
+
+        <link rel="stylesheet" href="/theme/css/style.min.css?9985933b">
+
+</head>
+
+<body id="index" class="home">
+    <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+            <li class="name">
+                <h1><a href="/posts">Home</a></h1>
+            </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+            <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+        </ul>
+        <section class="top-bar-section">
+    <!-- Right Nav Section -->
+            <ul class="right">
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/tags">Tags</a></li>
+                <li><a href="/feed.xml">RSS feed</a></li>
+            </ul>
+        </section>
+    </nav>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/posts">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+<div class="panel">
+    <div class="post-name">
+        <h1><a href="/posts/2014/postgresql-remote-access/" rel="bookmark" title="Permalink to PostgreSQL Remote Access">PostgreSQL Remote Access</a></h1>
+        <small>Written on Sep 17, 2014
+    and marked as
+    <a href="/tag/postgresql.html">postgresql</a>,     <a href="/tag/linux.html">linux</a>    | <a href="/category/development.html">development</a>
+    </small>
+    <section>
+        <p>PostgreSQL is set to listen only to connections coming from localhost by default. I guess that's fine as far as you don't need access to the database from anywhere else (like your work network). If you do, you need to log via SSH or use some online database management tool (go for <a href="http://adminer.org">Adminer</a> and forget about anything called php[pg|my]admin). Or you can set it up to access connections from other locations.</p>
+<p>You need to:</p>
+<ol>
+<li>set <code>listen_addresses</code> to <code>*</code> in your postgres.conf. That does not mean anyone can connect to your database, that means that the server will listen to connections coming from any available IP interface.</li>
+<li>insert new entry into pg_hba.conf looking like this: <code>host database user xxx.xxx.xxx.xxx md5</code>. Now we're saying we only want connections coming from IP <code>xxx.xxx.xxx.xxx</code> accepted.</li>
+<li>
+<p>Add rule allowing the database server access to iptables. Number 5 says it will be the fifth rule in the order. It must come before the final REJECT ALL rule if present.</p>
+<p><code>iptables -I INPUT 5 -p tcp --dport 5432 -s xxx.xxx.xxx.xxx -j ACCEPT</code>
+4. Just to be sure noone else is able to connect, reject all on port 5432.</p>
+<p><code>iptables -I INPUT 6 -p tcp --dport 5432 -j REJECT</code></p>
+</li>
+</ol>
+<p>You're set to remotely connect to your database server.</p>
+    </section>
+    </div>
+<div class="neighbors">
+    <h3>More reading</h3>
+    <ul>
+        <li>
+            <a href="/posts/2014/switch-latitude-and-longitude-with-regular-expression/">
+                 Switch Latitude And Longitude With Regular Expression
+            </a>
+        </li>
+         <li>
+             <a href="/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/">
+                 Notify When Average of 10 Subsequent Numbers Is Bigger Than Given Value
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2014/switch-latitude-and-longitude-with-regular-expression/">
+                 Switch Latitude And Longitude With Regular Expression
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/">
+                 Notify When Average of 10 Subsequent Numbers Is Bigger Than Given Value
+             </a>
+         </li>
+        </li>
+    </ul>
+</div></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+<script src="/theme/js/packed.js?8bee1467"></script>
+<script>
+$(document).foundation();
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Michal Zimmermann | SSH GRASS Processing Status Check</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+
+
+
+    <meta name="tags" contents="bash" />
+    <meta name="tags" contents="linux" />
+
+        <link rel="stylesheet" href="/theme/css/style.min.css?9985933b">
+
+</head>
+
+<body id="index" class="home">
+    <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+            <li class="name">
+                <h1><a href="/posts">Home</a></h1>
+            </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+            <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+        </ul>
+        <section class="top-bar-section">
+    <!-- Right Nav Section -->
+            <ul class="right">
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/tags">Tags</a></li>
+                <li><a href="/feed.xml">RSS feed</a></li>
+            </ul>
+        </section>
+    </nav>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/posts">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+<div class="panel">
+    <div class="post-name">
+        <h1><a href="/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check">SSH GRASS Processing Status Check</a></h1>
+        <small>Written on Jul 21, 2015
+    and marked as
+    <a href="/tag/bash.html">bash</a>,     <a href="/tag/linux.html">linux</a>    | <a href="/category/development.html">development</a>
+    </small>
+    <section>
+        <p>I've been running some GRASS/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten minutes.</p>
+<p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
+<span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
+
+<span class="k">while</span> <span class="nb">true</span><span class="p">;</span> <span class="k">do</span>
+    <span class="nb">echo</span> <span class="s2">&quot;############ </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2"> ############&quot;</span>
+    <span class="nv">x</span><span class="o">=</span><span class="k">$(</span>ssh user@remote.server <span class="s2">&quot;tail -n 30 path/to/my/log_</span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="k">)</span>
+
+    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
+        <span class="k">then</span>
+            notify-send -u critical <span class="s2">&quot;Finally </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">&quot;</span>
+            mpg123 -n <span class="m">250</span> ~/Music/queen-we_are_the_champions.mp3
+            <span class="nb">exit</span>
+<span class="nb">        </span><span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
+    <span class="k">fi</span>
+    sleep 60
+<span class="k">done</span>
+</pre></div>
+
+
+<p>What seemed to be really frustrating makes me happy right now. Unless Freddie starts singing in the middle of the night.</p>
+    </section>
+    </div>
+<div class="neighbors">
+    <h3>More reading</h3>
+    <ul>
+        <li>
+            <a href="/posts/2015/clip-raster-with-vector-using-gdal/">
+                 Clip Raster With Vector Using GDAL
+            </a>
+        </li>
+         <li>
+             <a href="/posts/2015/qgis-tips-for-collaborative-mapping/">
+                 QGIS Tips For Collaborative Mapping
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2015/hosting-website-on-openshift/">
+                 Hosting Website On Openshift
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2015/postgresql-in-vs-exists/">
+                 PostgreSQL IN vs EXISTS
+             </a>
+         </li>
+        </li>
+    </ul>
+</div></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+<script src="/theme/js/packed.js?8bee1467"></script>
+<script>
+$(document).foundation();
+</script>
+</body>
+</html>

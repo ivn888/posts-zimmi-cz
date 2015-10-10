@@ -4,9 +4,8 @@
         <title>Michal Zimmermann | category: automation</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
-        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
-        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9985933b">
+        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="/theme/css/style.min.css?9985933b">
 
 </head>
 
@@ -14,7 +13,7 @@
     <nav class="top-bar" data-topbar role="navigation">
         <ul class="title-area">
             <li class="name">
-                <h1><a href="http://www.zimmi.cz/posts/posts">Home</a></h1>
+                <h1><a href="/posts">Home</a></h1>
             </li>
      <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
             <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
@@ -22,9 +21,9 @@
         <section class="top-bar-section">
     <!-- Right Nav Section -->
             <ul class="right">
-                <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
-                <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
-                <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS feed</a></li>
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/tags">Tags</a></li>
+                <li><a href="/feed.xml">RSS feed</a></li>
             </ul>
         </section>
     </nav>
@@ -39,10 +38,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/how-to-use-queue-with-rsync/" rel="bookmark" title="Permalink to How to Use Queue with Rsync">How to Use Queue with Rsync</a></h2>
+            <h2><a href="/posts/2015/how-to-use-queue-with-rsync/" rel="bookmark" title="Permalink to How to Use Queue with Rsync">How to Use Queue with Rsync</a></h2>
             <small>Written on Oct 1, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/tag/linux.html">linux</a>,         <a href="/tag/bash.html">bash</a>        | <a href="/category/automation.html">automation</a>
         </small>
         <section>
             <p>Having more than 120K 5MB+ images that should be moved to the server is a great oportunity for some automatic bash processing. It might be good idea to use <a href="http://www.imagemagick.org/script/index.php">ImageMagick</a> <a href="http://www.imagemagick.org/script/convert.php">convert tool</a> to make images smaller in a simple for loop. <a href="http://www.gnu.org/software/parallel/">GNU Parallel</a> can significantly increase the performance by running one job per CPU core.</p>
@@ -69,13 +68,13 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</a></h2>
+            <h2><a href="/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</a></h2>
             <small>Written on Aug 9, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/tag/qgis.html">qgis</a>,         <a href="/tag/postgis.html">postgis</a>,         <a href="/tag/python.html">python</a>,         <a href="/tag/svg.html">svg</a>,         <a href="/tag/linux.html">linux</a>        | <a href="/category/automation.html">automation</a>
         </small>
         <section>
-            <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/">QGIS Tips For Collaborative Mapping</a> we're in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
+            <p>As mentioned in <a href="/posts/2015/qgis-tips-for-collaborative-mapping/">QGIS Tips For Collaborative Mapping</a> we're in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
 <p>With the QGIS workflow up and running, I've been focused on different QGIS related task: <strong>automatic map generation</strong> for land blocks that meet certain conditions. The logic behind identifying such land blocks is as follows:</p>
 <ul>
 <li>if the original area and the measured one differ more than 0.5 % or</li>
@@ -92,7 +91,7 @@
 <li>HR, VHR, NIR imagery, orthophoto - served via WMS</li>
 </ul>
 <p>Labels should be visible only for the featured land block (both for the land parcels and the land block itself. The whole map scales dynamically, showing small land blocks zoomed in and the large ones zoomed out.</p>
-<p class='text-center'><a id="desired-map" title="Desired map" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a id="desired-map" title="Desired map" href="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
 
 <p>Every map features additional items:</p>
 <ul>
@@ -135,7 +134,7 @@
 <li>fixed scale: sets the scale the same for all the maps</li>
 </ul>
 <p>With these settings, I get a map similar to the one below. Notice two interesting things:</p>
-<p class='text-center'><a title="QGIS map skeleton" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a title="QGIS map skeleton" href="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
 
 <ul>
 <li>Scale uses decimal places, which I find <em>a huge failure</em>. Has anyone ever seen a map with such scale? The worst is there is no easy way to hide these, or at least I didn't find one.</li>
@@ -159,7 +158,7 @@
 
 
 <p>With this simple expression, I get labels only for those land parcels that are part of the mapped land block. Even the <strong>layer style</strong> can be controlled with atlas feature. Land parcels inside the land block have blue borders, the rest is yellowish, remember? It's a piece of cake with rule-based styling.</p>
-<p class='text-center'><a title="Layer style based on atlas feature" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a title="Layer style based on atlas feature" href="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
 
 <h3>Atlas generation</h3>
 <p>When you're set, atlas can be created with a single button. I used SVG as an output format to easily manipulate the map content afterwards. The resulting maps look like the one in <a href="#desired-map">the first picture</a> without the text in the red rectangle. A Python script appends this to each map afterwards.</p>
@@ -219,10 +218,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using GDAL</a></h2>
+            <h2><a href="/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using GDAL</a></h2>
             <small>Written on Jul 21, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/gdal.html">gdal</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/tag/linux.html">linux</a>,         <a href="/tag/gdal.html">gdal</a>        | <a href="/category/automation.html">automation</a>
         </small>
         <section>
             <p>Recently I needed to clip several raster files with polygonal layer of municipalities. A solution to this task is pretty straightforward using <a href="http://gdal.org/">GDAL</a> and a bit of Bash and QGIS thrown in.</p>
@@ -266,10 +265,10 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/grass-big-buffers-made-easy/" rel="bookmark" title="Permalink to GRASS: Big Buffers Made Easy">GRASS: Big Buffers Made Easy</a></h2>
+            <h2><a href="/posts/2015/grass-big-buffers-made-easy/" rel="bookmark" title="Permalink to GRASS: Big Buffers Made Easy">GRASS: Big Buffers Made Easy</a></h2>
             <small>Written on Apr 20, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/grass.html">grass</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/tag/grass.html">grass</a>        | <a href="/category/automation.html">automation</a>
         </small>
         <section>
             <p>Recently I've written about <a href="/2015/postgis-buffers-intersections-differences-and-collections/">struggling with fairly complex geometries in PostGIS</a>. Lesson learned from the last time was to use more smaller geometries instead of several really huge. You can obtain the small ones from the big by <a href="/2015/postgis-rectangular-grid-creation/">cutting it with a grid</a>.</p>
@@ -342,10 +341,10 @@ v.out.postgis <span class="nv">input</span><span class="o">=</span>buffer_050_gr
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/wms-download-for-future-offline-use/" rel="bookmark" title="Permalink to WMS Download For Future Offline Use">WMS Download For Future Offline Use</a></h2>
+            <h2><a href="/posts/2015/wms-download-for-future-offline-use/" rel="bookmark" title="Permalink to WMS Download For Future Offline Use">WMS Download For Future Offline Use</a></h2>
             <small>Written on Mar 15, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/wms.html">wms</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/tag/ogc.html">ogc</a>,         <a href="/tag/python.html">python</a>,         <a href="/tag/wms.html">wms</a>        | <a href="/category/automation.html">automation</a>
         </small>
         <section>
             <p>Using WMS in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with WMS layers.</p>
@@ -462,17 +461,7 @@ v.out.postgis <span class="nv">input</span><span class="o">=</span>buffer_050_gr
                 </footer><!-- /#contentinfo -->
             </div>
         </div>
-    <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-43432739-2']);
-    _gaq.push(['_trackPageview']);
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-    </script>
-<script src="http://www.zimmi.cz/posts/theme/js/packed.js?6bdca3bc"></script>
+<script src="/theme/js/packed.js?8bee1467"></script>
 <script>
 $(document).foundation();
 </script>

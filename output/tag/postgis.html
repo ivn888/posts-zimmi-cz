@@ -4,9 +4,8 @@
         <title>Michal Zimmermann | tag: postgis</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
-        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
-        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9985933b">
+        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="/theme/css/style.min.css?9985933b">
 
 </head>
 
@@ -14,7 +13,7 @@
     <nav class="top-bar" data-topbar role="navigation">
         <ul class="title-area">
             <li class="name">
-                <h1><a href="http://www.zimmi.cz/posts/posts">Home</a></h1>
+                <h1><a href="/posts">Home</a></h1>
             </li>
      <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
             <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
@@ -22,9 +21,9 @@
         <section class="top-bar-section">
     <!-- Right Nav Section -->
             <ul class="right">
-                <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
-                <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
-                <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS feed</a></li>
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/tags">Tags</a></li>
+                <li><a href="/feed.xml">RSS feed</a></li>
             </ul>
         </section>
     </nav>
@@ -39,13 +38,13 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</a></h2>
+            <h2><a href="/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</a></h2>
             <small>Written on Aug 9, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/tag/qgis.html">qgis</a>,         <a href="/tag/postgis.html">postgis</a>,         <a href="/tag/python.html">python</a>,         <a href="/tag/svg.html">svg</a>,         <a href="/tag/linux.html">linux</a>        | <a href="/category/automation.html">automation</a>
         </small>
         <section>
-            <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/">QGIS Tips For Collaborative Mapping</a> we're in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
+            <p>As mentioned in <a href="/posts/2015/qgis-tips-for-collaborative-mapping/">QGIS Tips For Collaborative Mapping</a> we're in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
 <p>With the QGIS workflow up and running, I've been focused on different QGIS related task: <strong>automatic map generation</strong> for land blocks that meet certain conditions. The logic behind identifying such land blocks is as follows:</p>
 <ul>
 <li>if the original area and the measured one differ more than 0.5 % or</li>
@@ -62,7 +61,7 @@
 <li>HR, VHR, NIR imagery, orthophoto - served via WMS</li>
 </ul>
 <p>Labels should be visible only for the featured land block (both for the land parcels and the land block itself. The whole map scales dynamically, showing small land blocks zoomed in and the large ones zoomed out.</p>
-<p class='text-center'><a id="desired-map" title="Desired map" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a id="desired-map" title="Desired map" href="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
 
 <p>Every map features additional items:</p>
 <ul>
@@ -105,7 +104,7 @@
 <li>fixed scale: sets the scale the same for all the maps</li>
 </ul>
 <p>With these settings, I get a map similar to the one below. Notice two interesting things:</p>
-<p class='text-center'><a title="QGIS map skeleton" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a title="QGIS map skeleton" href="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
 
 <ul>
 <li>Scale uses decimal places, which I find <em>a huge failure</em>. Has anyone ever seen a map with such scale? The worst is there is no easy way to hide these, or at least I didn't find one.</li>
@@ -129,7 +128,7 @@
 
 
 <p>With this simple expression, I get labels only for those land parcels that are part of the mapped land block. Even the <strong>layer style</strong> can be controlled with atlas feature. Land parcels inside the land block have blue borders, the rest is yellowish, remember? It's a piece of cake with rule-based styling.</p>
-<p class='text-center'><a title="Layer style based on atlas feature" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a title="Layer style based on atlas feature" href="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
 
 <h3>Atlas generation</h3>
 <p>When you're set, atlas can be created with a single button. I used SVG as an output format to easily manipulate the map content afterwards. The resulting maps look like the one in <a href="#desired-map">the first picture</a> without the text in the red rectangle. A Python script appends this to each map afterwards.</p>
@@ -189,10 +188,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/filtering-points-by-distance-in-postgis/" rel="bookmark" title="Permalink to Filtering points by distance in PostGIS">Filtering points by distance in PostGIS</a></h2>
+            <h2><a href="/posts/2015/filtering-points-by-distance-in-postgis/" rel="bookmark" title="Permalink to Filtering points by distance in PostGIS">Filtering points by distance in PostGIS</a></h2>
             <small>Written on Jul 21, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/tag/postgis.html">postgis</a>        | <a href="/category/sql.html">SQL</a>
         </small>
         <section>
             <p>Filtering really big (millions of rows) point datasets by distance might get catchy when solved with wrong PostGIS functions. Without spatial indexes PostGIS would take ages to finish such task.</p>
@@ -252,10 +251,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-finding-biggest-land-users-nearby/" rel="bookmark" title="Permalink to PostGIS: Finding Biggest Land Users Nearby">PostGIS: Finding Biggest Land Users Nearby</a></h2>
+            <h2><a href="/posts/2015/postgis-finding-biggest-land-users-nearby/" rel="bookmark" title="Permalink to PostGIS: Finding Biggest Land Users Nearby">PostGIS: Finding Biggest Land Users Nearby</a></h2>
             <small>Written on Apr 3, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/tag/postgresql.html">postgresql</a>,         <a href="/tag/postgis.html">postgis</a>        | <a href="/category/sql.html">SQL</a>
         </small>
         <section>
             <p>At <a href="http://clevermaps.cz">CleverMaps</a> we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird challenges.</p>
@@ -317,10 +316,10 @@ JOIN ints
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-count-line-self-intersections/" rel="bookmark" title="Permalink to PostGIS: Count Line Self-Intersections">PostGIS: Count Line Self-Intersections</a></h2>
+            <h2><a href="/posts/2015/postgis-count-line-self-intersections/" rel="bookmark" title="Permalink to PostGIS: Count Line Self-Intersections">PostGIS: Count Line Self-Intersections</a></h2>
             <small>Written on Mar 30, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/tag/postgresql.html">postgresql</a>,         <a href="/tag/postgis.html">postgis</a>        | <a href="/category/sql.html">SQL</a>
         </small>
         <section>
             <p><a href="https://gis.stackexchange.com/questions/107927/counting-self-intersections-of-linestring-using-postgis/140674#140674">Is there a way of using PostgreSQL + PostGIS for finding the number of self intersections in a linestring?</a> was a question that made me think of this problem. I came up with a solution that takes just a few lines of code.</p>
@@ -336,7 +335,7 @@ COPY test2 (id, wkb_geometry) FROM stdin;
 </pre></div>
 
 
-<p><img src="http://www.zimmi.cz/posts/assets/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
+<p><img src="/assets/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
 <p>Note that those geometries are valid while not being simple, thus, <code>ST_IsValidReason()</code> wouldn't help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those two.</p>
 <div class="highlight"><pre>WITH noded AS (
 SELECT id, COUNT(id)
@@ -379,10 +378,10 @@ SELECT noded.id, noded.count - test.count cnt FROM noded JOIN test USING (id);
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-rectangular-grid-creation/" rel="bookmark" title="Permalink to PostGIS: Rectangular Grid Creation">PostGIS: Rectangular Grid Creation</a></h2>
+            <h2><a href="/posts/2015/postgis-rectangular-grid-creation/" rel="bookmark" title="Permalink to PostGIS: Rectangular Grid Creation">PostGIS: Rectangular Grid Creation</a></h2>
             <small>Written on Mar 24, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/tag/postgresql.html">postgresql</a>,         <a href="/tag/postgis.html">postgis</a>        | <a href="/category/sql.html">SQL</a>
         </small>
         <section>
             <p>Creating a rectangular grid to cover a given extent with same sized cells is one of the basic GIS tasks I've had to solve several times so far. I used QGIS or some Python to give me a bunch of <code>INSERT</code> statements to run in PostGIS database, now I've come with a final solution at last.</p>
@@ -486,10 +485,10 @@ FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-buffers-intersections-differences-and-collections/" rel="bookmark" title="Permalink to PostGIS: Buffers, Intersections, Differences And Collections">PostGIS: Buffers, Intersections, Differences And Collections</a></h2>
+            <h2><a href="/posts/2015/postgis-buffers-intersections-differences-and-collections/" rel="bookmark" title="Permalink to PostGIS: Buffers, Intersections, Differences And Collections">PostGIS: Buffers, Intersections, Differences And Collections</a></h2>
             <small>Written on Mar 19, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/tag/postgis.html">postgis</a>,         <a href="/tag/postgresql.html">postgresql</a>        | <a href="/category/sql.html">SQL</a>
         </small>
         <section>
             <p>Being part of <a href="http://clevermaps.cz">CleverMaps</a> means doing lot of nasty work with PostGIS. Recently, I've been given a following task that needed to be done for a really big project dealing with agricultural parcels:</p>
@@ -670,10 +669,10 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/" rel="bookmark" title="Permalink to PostGIS Case Study: Vozejkmap Open Data (Part II)">PostGIS Case Study: Vozejkmap Open Data (Part II)</a></h2>
+            <h2><a href="/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/" rel="bookmark" title="Permalink to PostGIS Case Study: Vozejkmap Open Data (Part II)">PostGIS Case Study: Vozejkmap Open Data (Part II)</a></h2>
             <small>Written on Feb 21, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/tag/postgresql.html">postgresql</a>,         <a href="/tag/postgis.html">postgis</a>        | <a href="/category/sql.html">SQL</a>
         </small>
         <section>
             <p><a href="{{ pcposturl(2014, 12, 02, 'postgis-case-study-vozejkmap-open-data-part-i') }}">In the first part of my little case study</a> I downloaded <a href="http://vozejkmap.cz">vozejkmap.cz</a> dataset and imported it into the PostGIS database. Having spatial data safely stored the time comes to get it onto the map. Libraries used are:</p>
@@ -729,7 +728,7 @@ FROM vozejkmap AS lg ) AS f
 <h2>Leaflet map</h2>
 <p>Map JavaScript is rather simple with ~30 lines of code (not taking styles into account). Thanks to the great plugins it is easy to show ~7,600 points on the map real quick.</p>
 <p>I didn't do much customization apart from styling markers and binding popups.</p>
-<p><img src="http://www.zimmi.cz/posts/assets/postgis-case-study-vozejkmap-open-data-part-ii/map.png" title="vozejkmap.cz data map" class="img-responsive centered"></p>
+<p><img src="/assets/postgis-case-study-vozejkmap-open-data-part-ii/map.png" title="vozejkmap.cz data map" class="img-responsive centered"></p>
 <h2>What's next</h2>
 <ol>
 <li><a href="http://turfjs.org">Turf</a> which means I need to think of what could be fun to do with this data</li>
@@ -743,10 +742,10 @@ FROM vozejkmap AS lg ) AS f
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/" rel="bookmark" title="Permalink to PostGIS Case Study: VozejkMap Open Data (Part I)">PostGIS Case Study: VozejkMap Open Data (Part I)</a></h2>
+            <h2><a href="/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/" rel="bookmark" title="Permalink to PostGIS Case Study: VozejkMap Open Data (Part I)">PostGIS Case Study: VozejkMap Open Data (Part I)</a></h2>
             <small>Written on Dec 2, 2014
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/tag/postgresql.html">postgresql</a>,         <a href="/tag/postgis.html">postgis</a>        | <a href="/category/sql.html">SQL</a>
         </small>
         <section>
             <p><a href="http://www.vozejkmap.cz">VozejkMap.cz</a> is a Czech <strong>open data</strong> iniatitive that collects data about wheelchair accessible places, e.g. pubs, toilets, cafes etc. As part of being open, they offer a <a href="http://www.vozejkmap.cz/opendata/">JSON data download</a>. JSON is a great text format, not so great spatial format (leaving GeoJSON aside) though. Anyway, nothing that <a href="http://posts.zimmi.cz/tag/postgis/">PostGIS</a> wouldn't be able to take care of.</p>
@@ -917,10 +916,10 @@ UPDATE vozejkmap SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326);
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/postgis-spatial-indexing-with-st_intersects/" rel="bookmark" title="Permalink to PostGIS Spatial Indexing With ST_Intersects">PostGIS Spatial Indexing With ST_Intersects</a></h2>
+            <h2><a href="/posts/2014/postgis-spatial-indexing-with-st_intersects/" rel="bookmark" title="Permalink to PostGIS Spatial Indexing With ST_Intersects">PostGIS Spatial Indexing With ST_Intersects</a></h2>
             <small>Written on Nov 23, 2014
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/tag/postgis.html">postgis</a>        | <a href="/category/sql.html">SQL</a>
         </small>
         <section>
             <p><a href="http://postgis.net/docs/ST_Intersects.html">PostGIS docs</a> clearly states that:
@@ -994,17 +993,7 @@ Total runtime: 3930.270 ms
                 </footer><!-- /#contentinfo -->
             </div>
         </div>
-    <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-43432739-2']);
-    _gaq.push(['_trackPageview']);
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-    </script>
-<script src="http://www.zimmi.cz/posts/theme/js/packed.js?6bdca3bc"></script>
+<script src="/theme/js/packed.js?8bee1467"></script>
 <script>
 $(document).foundation();
 </script>

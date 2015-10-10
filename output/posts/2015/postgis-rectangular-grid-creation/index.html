@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Michal Zimmermann | PostGIS: Rectangular Grid Creation</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+
+
+
+    <meta name="tags" contents="postgresql" />
+    <meta name="tags" contents="postgis" />
+
+        <link rel="stylesheet" href="/theme/css/style.min.css?9985933b">
+
+</head>
+
+<body id="index" class="home">
+    <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+            <li class="name">
+                <h1><a href="/posts">Home</a></h1>
+            </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+            <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+        </ul>
+        <section class="top-bar-section">
+    <!-- Right Nav Section -->
+            <ul class="right">
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/tags">Tags</a></li>
+                <li><a href="/feed.xml">RSS feed</a></li>
+            </ul>
+        </section>
+    </nav>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/posts">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+<div class="panel">
+    <div class="post-name">
+        <h1><a href="/posts/2015/postgis-rectangular-grid-creation/" rel="bookmark" title="Permalink to PostGIS: Rectangular Grid Creation">PostGIS: Rectangular Grid Creation</a></h1>
+        <small>Written on Mar 24, 2015
+    and marked as
+    <a href="/tag/postgresql.html">postgresql</a>,     <a href="/tag/postgis.html">postgis</a>    | <a href="/category/sql.html">SQL</a>
+    </small>
+    <section>
+        <p>Creating a rectangular grid to cover a given extent with same sized cells is one of the basic GIS tasks I've had to solve several times so far. I used QGIS or some Python to give me a bunch of <code>INSERT</code> statements to run in PostGIS database, now I've come with a final solution at last.</p>
+<div class="highlight"><pre>CREATE OR REPLACE FUNCTION cm_grid(
+    blx float8, -- bottom left x coordinate
+    bly float8, -- bottom left y coordinate
+    trx float8, -- top right x coordinate
+    try float8, -- top right y coordinate
+    xsize float8, -- cell width
+    ysize float8, -- cell height
+    srid integer DEFAULT 5514,
+    OUT col varchar,
+    OUT &quot;row&quot; varchar,
+    OUT geom geometry
+) RETURNS SETOF record AS
+$$
+DECLARE
+    width float8; -- total area width
+    height float8; -- total area height
+    cols integer;
+    rows integer;
+BEGIN
+    width  := @($1 - $3); -- absolute value
+    height := @($2 - $4); -- absolute value
+    cols   := ceil(width / xsize);
+    rows   := ceil(height / ysize);
+    RETURN QUERY
+        SELECT
+            cast(
+                lpad((i)::varchar,
+                CASE WHEN
+                    char_length(rows::varchar) &gt; char_length(cols::varchar)
+                        THEN  char_length(rows::varchar)
+                        ELSE char_length(cols::varchar)
+                END,
+                &#39;0&#39;)
+                AS varchar
+            ) AS row,
+            cast(
+                lpad((j)::varchar,
+                CASE WHEN
+                    char_length(rows::varchar) &gt; char_length(cols::varchar)
+                        THEN  char_length(rows::varchar)
+                        ELSE char_length(cols::varchar)
+                END,
+                &#39;0&#39;) AS varchar
+            ) AS col,
+            ST_SetSRID(
+                ST_GeomFromText(
+                    &#39;POLYGON((&#39; ||
+                        array_to_string(
+                            ARRAY[i * xsize + blx, j * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;,&#39; ||
+                        array_to_string(
+                            ARRAY[i * xsize + blx, (j+1) * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;,&#39; ||
+                        array_to_string(
+                            ARRAY[(i+1) * xsize + blx, (j+1) * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;,&#39; ||
+                        array_to_string(
+                            ARRAY[(i+1) * xsize + blx, j * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;,&#39; ||
+                        array_to_string(
+                            ARRAY[i * xsize + blx, j * ysize + bly],
+                            &#39; &#39;
+                        ) || &#39;
+                    ))&#39;
+                )
+            , srid) AS geom
+        FROM
+            generate_series(0, cols) AS i,
+            generate_series(0, rows) AS j;
+END;
+$$
+LANGUAGE plpgsql;
+</pre></div>
+
+
+<p>And you call it like this:</p>
+<div class="highlight"><pre>CREATE TABLE grid AS
+SELECT *
+FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
+</pre></div>
+
+
+<p>Few notes:</p>
+<ul>
+<li>it takes bounding box coordinates (bottom left, top right) for an extent,</li>
+<li>followed by cell width and height,</li>
+<li>and optional SRID (defaults to 5514 which is Czech national grid),</li>
+<li>each cell is indexed with <code>row</code> and <code>col</code> number</li>
+</ul>
+<p>The messy <code>CASE</code> statement makes sure both <code>row</code> and <code>col</code> are of the same length. I used <code>array_to_string</code> for better readability. It might not be the fastest way, didn't do any benchmarks.</p>
+    </section>
+    </div>
+<div class="neighbors">
+    <h3>More reading</h3>
+    <ul>
+        <li>
+            <a href="/posts/2015/postgis-buffers-intersections-differences-and-collections/">
+                 PostGIS: Buffers, Intersections, Differences And Collections
+            </a>
+        </li>
+         <li>
+             <a href="/posts/2015/postgis-count-line-self-intersections/">
+                 PostGIS: Count Line Self-Intersections
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2015/postgis-buffers-intersections-differences-and-collections/">
+                 PostGIS: Buffers, Intersections, Differences And Collections
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2015/postgis-count-line-self-intersections/">
+                 PostGIS: Count Line Self-Intersections
+             </a>
+         </li>
+        </li>
+    </ul>
+</div></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+<script src="/theme/js/packed.js?8bee1467"></script>
+<script>
+$(document).foundation();
+</script>
+</body>
+</html>

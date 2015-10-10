@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Michal Zimmermann | Hosting Website On Openshift</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+
+
+
+    <meta name="tags" contents="openshift" />
+
+        <link rel="stylesheet" href="/theme/css/style.min.css?9985933b">
+
+</head>
+
+<body id="index" class="home">
+    <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+            <li class="name">
+                <h1><a href="/posts">Home</a></h1>
+            </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+            <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+        </ul>
+        <section class="top-bar-section">
+    <!-- Right Nav Section -->
+            <ul class="right">
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/tags">Tags</a></li>
+                <li><a href="/feed.xml">RSS feed</a></li>
+            </ul>
+        </section>
+    </nav>
+        <div class="row">
+          <div class="large-12 columns header">
+            <h1><a href="/posts">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
+          </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+<div class="panel">
+    <div class="post-name">
+        <h1><a href="/posts/2015/hosting-website-on-openshift/" rel="bookmark" title="Permalink to Hosting Website On Openshift">Hosting Website On Openshift</a></h1>
+        <small>Written on Feb 23, 2015
+    and marked as
+    <a href="/tag/openshift.html">openshift</a>    | <a href="/category/development.html">development</a>
+    </small>
+    <section>
+        <p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got it working eventually.</p>
+<h2>Things to know before taking the leap</h2>
+<p>Some domain providers don't support CNAME changes for root domains (zimmi.cz in my case). This means you can't simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do so:</p>
+<div class="highlight"><pre>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
+</pre></div>
+
+
+<p>Which is great until you realize you've just created two different websites. That's where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
+<div class="highlight"><pre>zimmi.cz A 174.129.25.170
+</pre></div>
+
+
+<p>Now everything works fine and you have your <code>www.domain.tld</code> up and running.</p>
+<h2>OpenShift subdomains</h2>
+<p>I wasn't successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing DNS to it:</p>
+<div class="highlight"><pre>posts.zimmi.cz A 174.179.25.170
+www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
+</pre></div>
+
+
+<p>Just don't forget to handle both naked and <code>www</code> version. When Google reindexes new URLs (http://www.zimmi.cz/posts instead of http://posts.zimmi.cz) subdomain application might be deleted.</p>
+    </section>
+    </div>
+<div class="neighbors">
+    <h3>More reading</h3>
+    <ul>
+        <li>
+            <a href="/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/">
+                 PostGIS Case Study: Vozejkmap Open Data (Part II)
+            </a>
+        </li>
+         <li>
+             <a href="/posts/2015/wms-download-for-future-offline-use/">
+                 WMS Download For Future Offline Use
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2015/leaflet-with-custom-crs-epsg5514/">
+                 Leaflet With Custom CRS (EPSG:5514)
+             </a>
+         </li>
+         <li>
+             <a href="/posts/2015/ssh-grass-processing-status-check/">
+                 SSH GRASS Processing Status Check
+             </a>
+         </li>
+        </li>
+    </ul>
+</div></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns footer">
+                <footer>
+                    <address>
+                    Written by <a href="http://www.zimmi.cz">Michal Zimmermann</a>.
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    </address><!-- /#about -->
+                </footer><!-- /#contentinfo -->
+            </div>
+        </div>
+<script src="/theme/js/packed.js?8bee1467"></script>
+<script>
+$(document).foundation();
+</script>
+</body>
+</html>
