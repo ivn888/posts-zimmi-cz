@@ -30,29 +30,30 @@
         <link href="{{ FEED_DOMAIN }}/{{ TAG_FEED_RSS|format(tag.slug) }}" type="application/rss+xml" rel="alternate" title="{{ SITENAME }} Tags RSS Feed" />
         {% endif %}
         {% endblock head %}
-        <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/{{ CSS_FOUNDATION }}" />
-        <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/{{ CSS_FILE }}" />
-        <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/pygment.css" />
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/railscasts.min.css">
+        {% assets filters="cssmin", output="css/style.min.css", "css/foundation.min.css", "css/pygment.css", "css/screen.css" %}
+        <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
+        {% endassets %}
+
 </head>
 
 <body id="index" class="home">
-    <div class="fixed">
-        <nav class="top-bar">
-            <section class="top-bar-section">
-                <ul class="left">
-                    <li class="divider"></li>
-                    <li class="active"><a href="/posts">Home</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{{ SITEURL }}/categories">Categories</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{{ SITEURL }}/tags">Tags</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{{ SITEURL }}/feed.xml">RSS</a></li>
-                </ul>
-            </section>
-        </nav>
-    </div>
+    <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+            <li class="name">
+                <h1><a href="{{ SITEURL }}/posts">Home</a></h1>
+            </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+            <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+        </ul>
+        <section class="top-bar-section">
+    <!-- Right Nav Section -->
+            <ul class="right">
+                <li><a href="{{ SITEURL }}/categories">Categories</a></li>
+                <li><a href="{{ SITEURL }}/tags">Tags</a></li>
+                <li><a href="{{ SITEURL }}/feed.xml">RSS feed</a></li>
+            </ul>
+        </section>
+    </nav>
         <div class="row">
           <div class="large-12 columns header">
             <h1><a href="/posts">{{ SITENAME }}</a> <small>{{ SITESUBTITLE }}</small></h1>
@@ -76,5 +77,11 @@
             </div>
         </div>
 {% include 'analytics.html' %}
+{% assets filters="yui_js", output="js/packed.js", "js/vendor/jquery.js", "js/foundation.min.js" %}
+<script src="{{ SITEURL }}/{{ ASSET_URL }}"></script>
+{% endassets %}
+<script>
+$(document).foundation();
+</script>
 </body>
 </html>

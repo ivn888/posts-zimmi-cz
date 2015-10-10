@@ -27,4 +27,4 @@ ARTICLE_SAVE_AS = '{date:%Y}/{slug}/index.html'
 GOOGLE_ANALYTICS = 'UA-43432739-2'
 
 PLUGIN_PATHS = ['content/plugins']
-PLUGINS = ['neighbors']
+PLUGINS = ['neighbors', 'assets', 'optimize_images']

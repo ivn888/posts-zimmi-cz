@@ -6,29 +6,28 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
         <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
-        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/foundation.min.css" />
-        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/screen.css" />
-        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/pygment.css" />
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/railscasts.min.css">
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9985933b">
+
 </head>
 
 <body id="index" class="home">
-    <div class="fixed">
-        <nav class="top-bar">
-            <section class="top-bar-section">
-                <ul class="left">
-                    <li class="divider"></li>
-                    <li class="active"><a href="/posts">Home</a></li>
-                    <li class="divider"></li>
-                    <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
-                    <li class="divider"></li>
-                    <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
-                    <li class="divider"></li>
-                    <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS</a></li>
-                </ul>
-            </section>
-        </nav>
-    </div>
+    <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+            <li class="name">
+                <h1><a href="http://www.zimmi.cz/posts/posts">Home</a></h1>
+            </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+            <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+        </ul>
+        <section class="top-bar-section">
+    <!-- Right Nav Section -->
+            <ul class="right">
+                <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
+                <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
+                <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS feed</a></li>
+            </ul>
+        </section>
+    </nav>
         <div class="row">
           <div class="large-12 columns header">
             <h1><a href="/posts">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>
@@ -111,5 +110,9 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
     </script>
+<script src="http://www.zimmi.cz/posts/theme/js/packed.js?6bdca3bc"></script>
+<script>
+$(document).foundation();
+</script>
 </body>
 </html>

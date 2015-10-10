@@ -39,10 +39,11 @@ ARTICLE_URL = 'posts/{date:%Y}/{slug}/'
 ARTICLE_SAVE_AS = 'posts/{date:%Y}/{slug}/index.html'
 READERS = {'html': None}
 CSS_FOUNDATION = 'foundation.min.css'
+CSS_NORMALIZE = 'normalize.css'
 CSS_FILE = 'screen.css'
 LOCALE = 'en_US.UTF-8'
 CATEGORIES_SAVE_AS = 'categories/index.html'
 TAGS_SAVE_AS = 'tags/index.html'
 
 PLUGIN_PATHS = ['content/plugins']
-PLUGINS = ['neighbors']
+PLUGINS = ['neighbors', 'assets', 'optimize_images']
