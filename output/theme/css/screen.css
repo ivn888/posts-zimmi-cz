@@ -40,6 +40,16 @@ img.right {
         text-transform: none;
     }
 
+@media screen and (max-width: 590px) {
+  html, body {
+    font-size: 80%;
+  }
+  .header h1 {
+    font-size: 110%;
+    margin-bottom: .5rem;
+  }
+}
+
 .panel {
     background: #f7f7f7;
     border: 1px solid #d8d8d8;
