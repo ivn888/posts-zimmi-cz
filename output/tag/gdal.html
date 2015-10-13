@@ -39,20 +39,20 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using GDAL</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using <span class="caps">GDAL</span></a></h2>
             <small>Written on Jul 21, 2015
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/gdal.html">gdal</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
         </small>
         <section>
-            <p>Recently I needed to clip several raster files with polygonal layer of municipalities. A solution to this task is pretty straightforward using <a href="http://gdal.org/">GDAL</a> and a bit of Bash and QGIS thrown in.</p>
-<p>The necessary steps are:</p>
+            <p>Recently I needed to clip several raster files with polygonal layer of municipalities. A solution to this task is pretty straightforward using <a href="http://gdal.org/"><span class="caps">GDAL</span></a> and a bit of Bash and <span class="caps">QGIS</span> thrown&nbsp;in.</p>
+<p>The necessary steps&nbsp;are:</p>
 <ol>
-<li>Put each polygon to a separate file. This can be done easily with <code>Vector - Data Management Tools - Split Vector Layer</code> in QGIS. The solution below assumes that each shapefile has the same basename as the raster file.</li>
-<li>These polygons are stored in the <code>obce</code> subfolder relative to the folder with rasters.</li>
-<li>An <code>output</code> folder exists that is used for... output, yes.</li>
+<li>Put each polygon to a separate file. This can be done easily with <code>Vector - Data Management Tools - Split Vector Layer</code> in <span class="caps">QGIS</span>. The solution below assumes that each shapefile has the same basename as the raster&nbsp;file.</li>
+<li>These polygons are stored in the <code>obce</code> subfolder relative to the folder with&nbsp;rasters.</li>
+<li>An <code>output</code> folder exists that is used for&#8230; output,&nbsp;yes.</li>
 <li>Rasters are saved with output alpha band for nodata (<code>-dstalpha</code> flag).</li>
-<li>The script takes one argument - raster name.</li>
+<li>The script takes one argument - raster&nbsp;name.</li>
 <li>Profit!</li>
 </ol>
 <div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
@@ -74,8 +74,8 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 </pre></div>
 
 
-<p>Note that if <code>gdalwarp</code> doesn't recognize an EPSG code (which is the case for my country national grid), you might pass it as a PROJ.4 string.</p>
-<p>According to the point 5 in the above list, the script needs to be run in a loop:</p>
+<p>Note that if <code>gdalwarp</code> doesn&#8217;t recognize an <span class="caps">EPSG</span> code (which is the case for my country national grid), you might pass it as a <span class="caps">PROJ</span>.4&nbsp;string.</p>
+<p>According to the point 5 in the above list, the script needs to be run in a&nbsp;loop:</p>
 <div class="highlight"><pre><span class="k">for</span> f in *_jpeg.tif<span class="p">;</span>
     <span class="k">do</span> the_script_above.sh <span class="nv">$f</span>
 <span class="p">;</span><span class="k">done</span>

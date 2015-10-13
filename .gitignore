@@ -4,3 +4,5 @@ _cache
 chef
 *.log
 *.pid
+*.pyc
+.webassets-cache

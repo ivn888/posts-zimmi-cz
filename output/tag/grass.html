@@ -39,23 +39,23 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/grass-big-buffers-made-easy/" rel="bookmark" title="Permalink to GRASS: Big Buffers Made Easy">GRASS: Big Buffers Made Easy</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/grass-big-buffers-made-easy/" rel="bookmark" title="Permalink to GRASS: Big Buffers Made Easy"><span class="caps">GRASS</span>: Big Buffers Made&nbsp;Easy</a></h2>
             <small>Written on Apr 20, 2015
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/grass.html">grass</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
         </small>
         <section>
-            <p>Recently I've written about <a href="/2015/postgis-buffers-intersections-differences-and-collections/">struggling with fairly complex geometries in PostGIS</a>. Lesson learned from the last time was to use more smaller geometries instead of several really huge. You can obtain the small ones from the big by <a href="/2015/postgis-rectangular-grid-creation/">cutting it with a grid</a>.</p>
-<p>A supervisor of a project I've been working on came up with a task that totally buried the previous process in a blink of an eye: <strong>Give me the buffer (diffed with original geometries) that is smoothed on the outer bounds so there are no edges shorter than 10 cm.</strong> I sighed. Then, I cursed. Then, I gave it a try with PostGIS. Achieving this goal involves these steps:</p>
+            <p>Recently I&#8217;ve written about <a href="/2015/postgis-buffers-intersections-differences-and-collections/">struggling with fairly complex geometries in PostGIS</a>. Lesson learned from the last time was to use more smaller geometries instead of several really huge. You can obtain the small ones from the big by <a href="/2015/postgis-rectangular-grid-creation/">cutting it with a grid</a>.</p>
+<p>A supervisor of a project I&#8217;ve been working on came up with a task that totally buried the previous process in a blink of an eye: <strong>Give me the buffer (diffed with original geometries) that is smoothed on the outer bounds so there are no edges shorter than 10 cm.</strong> I sighed. Then, I cursed. Then, I gave it a try with PostGIS. Achieving this goal involves these&nbsp;steps:</p>
 <ul>
-<li>Dissolve intersecting buffers</li>
-<li>Run some kind of generalization algorithm that is not defined in PostGIS</li>
-<li>Diff original geometries</li>
-<li>Cut buffer with grid so it works <del>faster</del> not so slow for the next steps</li>
+<li>Dissolve intersecting&nbsp;buffers</li>
+<li>Run some kind of generalization algorithm that is not defined in&nbsp;PostGIS</li>
+<li>Diff original&nbsp;geometries</li>
+<li>Cut buffer with grid so it works <del>faster</del> not so slow for the next&nbsp;steps</li>
 </ul>
-<p>Two of those four are rather problematic with PostGIS: line smoothing and diffing the original geometries (I didn't get to the last one, so it might be 3 of 4 as well).</p>
-<h2>Hello, I'm GRASS</h2>
-<p>I haven't used GRASS for ages and even back then I didn't get to know it much, but it saved the day for me this time.</p>
+<p>Two of those four are rather problematic with PostGIS: line smoothing and diffing the original geometries (I didn&#8217;t get to the last one, so it might be 3 of 4 as&nbsp;well).</p>
+<h2>Hello, I&#8217;m <span class="caps">GRASS</span></h2>
+<p>I haven&#8217;t used <span class="caps">GRASS</span> for ages and even back then I didn&#8217;t get to know it much, but it saved the day for me this&nbsp;time.</p>
 <div class="highlight"><pre>grass -text path/to/mapset -c
 
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>ilot_050 <span class="nv">layer</span><span class="o">=</span>ilot_2015_050 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
@@ -100,15 +100,15 @@ v.out.postgis <span class="nv">input</span><span class="o">=</span>buffer_050_gr
 </pre></div>
 
 
-<p><strong>It is damn fast</strong> compared to PostGIS. It can be automated. It can be parametrized. It is robust. It is great!</p>
-<h2>Lesson learned</h2>
+<p><strong>It is damn fast</strong> compared to PostGIS. It can be automated. It can be parametrized. It is robust. It is&nbsp;great!</p>
+<h2>Lesson&nbsp;learned</h2>
 <ul>
-<li>You cannot smooth lines by deleting edges shorter than <code>n</code> in PostGIS. At least I haven't found the way to do so without defining your own procedure. You can with GRASS.</li>
-<li>GRASS reduction algorithm always keep first and last node untouched. Thus, if they're closer than <code>n</code>, they'll stay even if you'd like to have them deleted.</li>
-<li>Getting to grips with GRASS attribute data is rather hard after using shapefiles all your GIS life.</li>
-<li>It is great to exploit synergy of different GIS tools used for what they're best at.</li>
+<li>You cannot smooth lines by deleting edges shorter than <code>n</code> in PostGIS. At least I haven&#8217;t found the way to do so without defining your own procedure. You can with <span class="caps">GRASS</span>.</li>
+<li><span class="caps">GRASS</span> reduction algorithm always keep first and last node untouched. Thus, if they&#8217;re closer than <code>n</code>, they&#8217;ll stay even if you&#8217;d like to have them&nbsp;deleted.</li>
+<li>Getting to grips with <span class="caps">GRASS</span> attribute data is rather hard after using shapefiles all your <span class="caps">GIS</span>&nbsp;life.</li>
+<li>It is great to exploit synergy of different <span class="caps">GIS</span> tools used for what they&#8217;re best&nbsp;at.</li>
 </ul>
-<p>The more I work with big data, the more I get used to not seeing them. That's kind of a twist after crafting maps at university.</p>
+<p>The more I work with big data, the more I get used to not seeing them. That&#8217;s kind of a twist after crafting maps at&nbsp;university.</p>
         </section>
         </div>
     </div>

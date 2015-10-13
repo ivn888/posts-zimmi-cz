@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-          <title>Michal Zimmermann | PostgreSQL Remote Access</title>
+          <title>Michal Zimmermann | PostgreSQL Remote&nbsp;Access</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
@@ -43,25 +43,25 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h1><a href="http://www.zimmi.cz/posts/2014/postgresql-remote-access/" rel="bookmark" title="Permalink to PostgreSQL Remote Access">PostgreSQL Remote Access</a></h1>
+        <h1><a href="http://www.zimmi.cz/posts/2014/postgresql-remote-access/" rel="bookmark" title="Permalink to PostgreSQL Remote Access">PostgreSQL Remote&nbsp;Access</a></h1>
         <small>Written on Sep 17, 2014
     and marked as
     <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,     <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>    | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
     </small>
     <section>
-        <p>PostgreSQL is set to listen only to connections coming from localhost by default. I guess that's fine as far as you don't need access to the database from anywhere else (like your work network). If you do, you need to log via SSH or use some online database management tool (go for <a href="http://adminer.org">Adminer</a> and forget about anything called php[pg|my]admin). Or you can set it up to access connections from other locations.</p>
-<p>You need to:</p>
+        <p>PostgreSQL is set to listen only to connections coming from localhost by default. I guess that&#8217;s fine as far as you don&#8217;t need access to the database from anywhere else (like your work network). If you do, you need to log via <span class="caps">SSH</span> or use some online database management tool (go for <a href="http://adminer.org">Adminer</a> and forget about anything called php[pg|my]admin). Or you can set it up to access connections from other&nbsp;locations.</p>
+<p>You need&nbsp;to:</p>
 <ol>
-<li>set <code>listen_addresses</code> to <code>*</code> in your postgres.conf. That does not mean anyone can connect to your database, that means that the server will listen to connections coming from any available IP interface.</li>
-<li>insert new entry into pg_hba.conf looking like this: <code>host database user xxx.xxx.xxx.xxx md5</code>. Now we're saying we only want connections coming from IP <code>xxx.xxx.xxx.xxx</code> accepted.</li>
+<li>set <code>listen_addresses</code> to <code>*</code> in your postgres.conf. That does not mean anyone can connect to your database, that means that the server will listen to connections coming from any available <span class="caps">IP</span>&nbsp;interface.</li>
+<li>insert new entry into pg_hba.conf looking like this: <code>host database user xxx.xxx.xxx.xxx md5</code>. Now we&#8217;re saying we only want connections coming from <span class="caps">IP</span> <code>xxx.xxx.xxx.xxx</code> accepted.</li>
 <li>
-<p>Add rule allowing the database server access to iptables. Number 5 says it will be the fifth rule in the order. It must come before the final REJECT ALL rule if present.</p>
+<p>Add rule allowing the database server access to iptables. Number 5 says it will be the fifth rule in the order. It must come before the final <span class="caps">REJECT</span> <span class="caps">ALL</span> rule if&nbsp;present.</p>
 <p><code>iptables -I INPUT 5 -p tcp --dport 5432 -s xxx.xxx.xxx.xxx -j ACCEPT</code>
-4. Just to be sure noone else is able to connect, reject all on port 5432.</p>
+4. Just to be sure noone else is able to connect, reject all on port&nbsp;5432.</p>
 <p><code>iptables -I INPUT 6 -p tcp --dport 5432 -j REJECT</code></p>
 </li>
 </ol>
-<p>You're set to remotely connect to your database server.</p>
+<p>You&#8217;re set to remotely connect to your database&nbsp;server.</p>
     </section>
     </div>
 <div class="neighbors">
@@ -69,22 +69,22 @@
     <ul>
         <li>
             <a href="http://www.zimmi.cz/posts/2014/switch-latitude-and-longitude-with-regular-expression/">
-                 Switch Latitude And Longitude With Regular Expression
+                 Switch Latitude And Longitude With Regular&nbsp;Expression
             </a>
         </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/">
-                 Notify When Average of 10 Subsequent Numbers Is Bigger Than Given Value
+                 Notify When Average of 10 Subsequent Numbers Is Bigger Than Given&nbsp;Value
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/switch-latitude-and-longitude-with-regular-expression/">
-                 Switch Latitude And Longitude With Regular Expression
+                 Switch Latitude And Longitude With Regular&nbsp;Expression
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/">
-                 Notify When Average of 10 Subsequent Numbers Is Bigger Than Given Value
+                 Notify When Average of 10 Subsequent Numbers Is Bigger Than Given&nbsp;Value
              </a>
          </li>
         </li>

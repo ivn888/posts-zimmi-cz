@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-          <title>Michal Zimmermann | Blogging On Docker: Piecrust To The Rescue</title>
+          <title>Michal Zimmermann | Blogging On Docker: Piecrust To The&nbsp;Rescue</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
@@ -43,23 +43,23 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h1><a href="http://www.zimmi.cz/posts/2014/blogging-on-docker-piecrust-to-the-rescue/" rel="bookmark" title="Permalink to Blogging On Docker: Piecrust To The Rescue">Blogging On Docker: Piecrust To The Rescue</a></h1>
+        <h1><a href="http://www.zimmi.cz/posts/2014/blogging-on-docker-piecrust-to-the-rescue/" rel="bookmark" title="Permalink to Blogging On Docker: Piecrust To The Rescue">Blogging On Docker: Piecrust To The&nbsp;Rescue</a></h1>
         <small>Written on Sep 11, 2014
     and marked as
     <a href="http://www.zimmi.cz/posts/tag/docker.html">docker</a>,     <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>    | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
     </small>
     <section>
-        <p>I love blogging. I hate blogging systems. I hate content management systems. I just want to blog. That's what <a href="http://bolt80.com/piecrust/">PieCrust</a> is all about - it lets you blog.</p>
-<p>It is powerful static website generator perfect for my needs (and for yours as well?). Blogging with PieCrust is really a piece of cake:</p>
+        <p>I love blogging. I hate blogging systems. I hate content management systems. I just want to blog. That&#8217;s what <a href="http://bolt80.com/piecrust/">PieCrust</a> is all about - it lets you&nbsp;blog.</p>
+<p>It is powerful static website generator perfect for my needs (and for yours as well?). Blogging with PieCrust is really a piece of&nbsp;cake:</p>
 <ol>
-<li>prepare post</li>
-<li>serve site</li>
-<li>bake site</li>
-<li>send it off to the public</li>
+<li>prepare&nbsp;post</li>
+<li>serve&nbsp;site</li>
+<li>bake&nbsp;site</li>
+<li>send it off to the&nbsp;public</li>
 </ol>
-<p>I love having clean OS. That's what <a href="http://docker.com">Docker</a> is all about - for me. Running PieCrust on Docker is really easy, it does not clutter your PC and it just works.</p>
-<p>If you ever want to use PieCrust on Docker, why don't you start with this code?
-    FROM centos:centos6</p>
+<p>I love having clean <span class="caps">OS</span>. That&#8217;s what <a href="http://docker.com">Docker</a> is all about - for me. Running PieCrust on Docker is really easy, it does not clutter your <span class="caps">PC</span> and it just&nbsp;works.</p>
+<p>If you ever want to use PieCrust on Docker, why don&#8217;t you start with this code?
+    <span class="caps">FROM</span>&nbsp;centos:centos6</p>
 <div class="highlight"><pre><span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">mirror</span><span class="nc">.webtatic.com</span><span class="o">/</span><span class="nt">yum</span><span class="o">/</span><span class="nt">el6</span><span class="o">/</span><span class="nt">latest</span><span class="nc">.rpm</span>
 <span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">download</span><span class="nc">.fedoraproject.org</span><span class="o">/</span><span class="nt">pub</span><span class="o">/</span><span class="nt">epel</span><span class="o">/</span><span class="nt">6</span><span class="o">/</span><span class="nt">x86_64</span><span class="o">/</span><span class="nt">epel-release-6-8</span><span class="nc">.noarch.rpm</span>
 <span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">rpms</span><span class="nc">.famillecollet.com</span><span class="o">/</span><span class="nt">enterprise</span><span class="o">/</span><span class="nt">remi-release-6</span><span class="nc">.rpm</span>
@@ -75,9 +75,9 @@
 </pre></div>
 
 
-<p>Running <code>sudo docker build --tag=piecrust .</code> will result in having docker container ready to run. Just run <code>sudo docker run -it -p 8080:8080 -v /host_piecrust_path/:/container_path piecrust /bin/bash</code> in terminal. While in container terminal, run <code>chef serve -n -p 8080 -a 0.0.0.0</code> and visit <a href="http://localhost:8080">http://localhost:8080</a>. You should see your PieCrust site up and running.</p>
-<p>The last command tells chef to serve your site on port 8080 (which should be free unless you're running Tomcat or something like that) and make it listen on every available network interface. If you used 127.0.0.1 instead, you would never reach your site from outside the container.</p>
-<p>See? Easy.</p>
+<p>Running <code>sudo docker build --tag=piecrust .</code> will result in having docker container ready to run. Just run <code>sudo docker run -it -p 8080:8080 -v /host_piecrust_path/:/container_path piecrust /bin/bash</code> in terminal. While in container terminal, run <code>chef serve -n -p 8080 -a 0.0.0.0</code> and visit <a href="http://localhost:8080">http://localhost:8080</a>. You should see your PieCrust site up and&nbsp;running.</p>
+<p>The last command tells chef to serve your site on port 8080 (which should be free unless you&#8217;re running Tomcat or something like that) and make it listen on every available network interface. If you used 127.0.0.1 instead, you would never reach your site from outside the&nbsp;container.</p>
+<p>See?&nbsp;Easy.</p>
     </section>
     </div>
 <div class="neighbors">
@@ -85,22 +85,22 @@
     <ul>
         <li>
             <a href="http://www.zimmi.cz/posts/2014/wmts-few-things-i-want-to-remember/">
-                 WMTS: Few Things I Want To Remember
+                 <span class="caps">WMTS</span>: Few Things I Want To&nbsp;Remember
             </a>
         </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/connecting-to-secured-arcgis-server-layer-with-openlayers-3/">
-                 Connecting To Secured ArcGIS Server Layer With OpenLayers 3
+                 Connecting To Secured ArcGIS Server Layer With OpenLayers&nbsp;3
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/degrees-to-decimal-with-javascript/">
-                 Degrees To Decimal With Javascript
+                 Degrees To Decimal With&nbsp;Javascript
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/switch-latitude-and-longitude-with-regular-expression/">
-                 Switch Latitude And Longitude With Regular Expression
+                 Switch Latitude And Longitude With Regular&nbsp;Expression
              </a>
          </li>
         </li>

@@ -39,14 +39,14 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/wms-download-for-future-offline-use/" rel="bookmark" title="Permalink to WMS Download For Future Offline Use">WMS Download For Future Offline Use</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/wms-download-for-future-offline-use/" rel="bookmark" title="Permalink to WMS Download For Future Offline Use"><span class="caps">WMS</span> Download For Future Offline&nbsp;Use</a></h2>
             <small>Written on Mar 15, 2015
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/wms.html">wms</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
         </small>
         <section>
-            <p>Using WMS in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with WMS layers.</p>
-<p><a href="https://geopython.github.io/OWSLib/">OWSLib</a> is a great tool to help you get images from WMS server. Code and some comments follow.</p>
+            <p>Using <span class="caps">WMS</span> in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with <span class="caps">WMS</span>&nbsp;layers.</p>
+<p><a href="https://geopython.github.io/OWSLib/">OWSLib</a> is a great tool to help you get images from <span class="caps">WMS</span> server. Code and some comments&nbsp;follow.</p>
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">random</span>
@@ -123,22 +123,22 @@
 </pre></div>
 
 
-<p>First, always make sure <strong>you are not violating terms of use</strong> defined by service provider. If you are not, here are the necessary steps:</p>
+<p>First, always make sure <strong>you are not violating terms of use</strong> defined by service provider. If you are not, here are the necessary&nbsp;steps:</p>
 <ol>
-<li>Define your area of interest with bottom left and top right coordinates.</li>
-<li>Calculate width of single image both in pixels and units of CRS to get the rightsized image. Note that there may be image size restrictions defined by provider (2048 &times; 2048 px is usually the biggest you can get).</li>
-<li>Define template <a href="https://en.wikipedia.org/wiki/World_file">world file</a> for referencing images. OWSLib doesn't provide world files to saved images, these have to be created by you. I recommend to use a template file for creating real world files.</li>
-<li>Be nice! Don't overload the service. I use <code>time.sleep()</code> for this.</li>
+<li>Define your area of interest with bottom left and top right&nbsp;coordinates.</li>
+<li>Calculate width of single image both in pixels and units of <span class="caps">CRS</span> to get the rightsized image. Note that there may be image size restrictions defined by provider (2048 &times; 2048 px is usually the biggest you can&nbsp;get).</li>
+<li>Define template <a href="https://en.wikipedia.org/wiki/World_file">world file</a> for referencing images. OWSLib doesn&#8217;t provide world files to saved images, these have to be created by you. I recommend to use a template file for creating real world&nbsp;files.</li>
+<li>Be nice! Don&#8217;t overload the service. I use <code>time.sleep()</code> for&nbsp;this.</li>
 <li>Profit.</li>
 </ol>
-<p>The trouble with WMS is that you can't set an arbitrary scale you want to obtain images in (e.g. 1:1 000). It's fairly easy to get all values needed to imitate this behavior though.</p>
-<p>Using <a href="http://qgis.org">QGIS</a> you can:</p>
+<p>The trouble with <span class="caps">WMS</span> is that you can&#8217;t set an arbitrary scale you want to obtain images in (e.g. 1:1 000). It&#8217;s fairly easy to get all values needed to imitate this behavior&nbsp;though.</p>
+<p>Using <a href="http://qgis.org"><span class="caps">QGIS</span></a> you&nbsp;can:</p>
 <ol>
-<li>Get bounding box of area you're interested in.</li>
-<li>Save current view as an image (together with the world file!) and use it as a specimen for your own world files.</li>
-<li>Derive image width (CRS, pixels) from the saved image, thus getting the same zoom level you were using in QGIS.</li>
+<li>Get bounding box of area you&#8217;re interested&nbsp;in.</li>
+<li>Save current view as an image (together with the world file!) and use it as a specimen for your own world&nbsp;files.</li>
+<li>Derive image width (<span class="caps">CRS</span>, pixels) from the saved image, thus getting the same zoom level you were using in <span class="caps">QGIS</span>.</li>
 </ol>
-<p>Code given is not bulletproof, it will fail on any network error. However, if you restart it after such a crash, it checks for existing files and starts with the first missing, so you don't have to download all the tiles again.</p>
+<p>Code given is not bulletproof, it will fail on any network error. However, if you restart it after such a crash, it checks for existing files and starts with the first missing, so you don&#8217;t have to download all the tiles&nbsp;again.</p>
         </section>
         </div>
     </div>

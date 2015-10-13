@@ -39,44 +39,44 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With <span class="caps">QGIS</span>, PostGIS, Python, <span class="caps">SVG</span> and&nbsp;ImageMagick</a></h2>
             <small>Written on Aug 9, 2015
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
         </small>
         <section>
-            <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/">QGIS Tips For Collaborative Mapping</a> we're in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
-<p>With the QGIS workflow up and running, I've been focused on different QGIS related task: <strong>automatic map generation</strong> for land blocks that meet certain conditions. The logic behind identifying such land blocks is as follows:</p>
+            <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/"><span class="caps">QGIS</span> Tips For Collaborative Mapping</a> we&#8217;re in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
+<p>With the <span class="caps">QGIS</span> workflow up and running, I&#8217;ve been focused on different <span class="caps">QGIS</span> related task: <strong>automatic map generation</strong> for land blocks that meet certain conditions. The logic behind identifying such land blocks is as&nbsp;follows:</p>
 <ul>
-<li>if the original area and the measured one differ more than 0.5 % or</li>
-<li>number of declared crops differs from number of crops identified or</li>
-<li>at least one parcel in the land block was given a certain error code</li>
+<li>if the original area and the measured one differ more than 0.5 %&nbsp;or</li>
+<li>number of declared crops differs from number of crops identified&nbsp;or</li>
+<li>at least one parcel in the land block was given a certain error&nbsp;code</li>
 </ul>
-<p>Let's assume that with several lines of SQL code we can store these mentioned above in a table called <code>land_blocks</code> with geometries being the result of calling <code>ST_Union()</code> over parcels for each land block.</p>
-<h2>Map composition</h2>
-<p>Every map should feature following layers:</p>
+<p>Let&#8217;s assume that with several lines of <span class="caps">SQL</span> code we can store these mentioned above in a table called <code>land_blocks</code> with geometries being the result of calling <code>ST_Union()</code> over parcels for each land&nbsp;block.</p>
+<h2>Map&nbsp;composition</h2>
+<p>Every map should feature following&nbsp;layers:</p>
 <ul>
-<li>land blocks (remember the <code>land_blocks</code> table?) - labeled with ID, yellowish borders, no fill</li>
-<li>land parcels - that's my source layer - labeled with letters, blue borders, no fill</li>
-<li>other layers</li>
-<li>HR, VHR, NIR imagery, orthophoto - served via WMS</li>
+<li>land blocks (remember the <code>land_blocks</code> table?) - labeled with <span class="caps">ID</span>, yellowish borders, no&nbsp;fill</li>
+<li>land parcels - that&#8217;s my source layer - labeled with letters, blue borders, no&nbsp;fill</li>
+<li>other&nbsp;layers</li>
+<li><span class="caps">HR</span>, <span class="caps">VHR</span>, <span class="caps">NIR</span> imagery, orthophoto - served via <span class="caps">WMS</span></li>
 </ul>
-<p>Labels should be visible only for the featured land block (both for the land parcels and the land block itself. The whole map scales dynamically, showing small land blocks zoomed in and the large ones zoomed out.</p>
+<p>Labels should be visible only for the featured land block (both for the land parcels and the land block itself. The whole map scales dynamically, showing small land blocks zoomed in and the large ones zoomed&nbsp;out.</p>
 <p class='text-center'><a id="desired-map" title="Desired map" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
 
-<p>Every map features additional items:</p>
+<p>Every map features additional&nbsp;items:</p>
 <ul>
-<li>dynamic list of subsidies farmer asks for - showing both measured and declared area</li>
-<li>dynamic list of land parcels with their areas and error codes</li>
+<li>dynamic list of subsidies farmer asks for - showing both measured and declared&nbsp;area</li>
+<li>dynamic list of land parcels with their areas and error&nbsp;codes</li>
 <li>scalebar</li>
-<li>map key</li>
+<li>map&nbsp;key</li>
 <li>logos</li>
 </ul>
-<h2>Atlas creation</h2>
-<p>Now with requirements defined, let's create some maps. It's incredibly easy to generate a series of maps with QGIS atlas options.</p>
-<h3>Atlas generation settings</h3>
-<p><strong>Coverage layer</strong> is presumably the only thing you really need - as the name suggests, it covers your area of interest. One map will be created for each feature in this layer, unless you decide to use some <strong>filtering</strong> - which I did.</p>
-<p><strong>Output filenames</strong> can be tweaked to your needs, here's what such a function might look like. If there is a slash in the land block ID (XXXXXXX/Y), the filename is set to <code>USER-ID_XXXXXXX-00Y_M_00</code>, <code>USER-ID_XXXXXXX-000_M_00</code> otherwise.</p>
+<h2>Atlas&nbsp;creation</h2>
+<p>Now with requirements defined, let&#8217;s create some maps. It&#8217;s incredibly easy to generate a series of maps with <span class="caps">QGIS</span> atlas&nbsp;options.</p>
+<h3>Atlas generation&nbsp;settings</h3>
+<p><strong>Coverage layer</strong> is presumably the only thing you really need - as the name suggests, it covers your area of interest. One map will be created for each feature in this layer, unless you decide to use some <strong>filtering</strong> - which I&nbsp;did.</p>
+<p><strong>Output filenames</strong> can be tweaked to your needs, here&#8217;s what such a function might look like. If there is a slash in the land block <span class="caps">ID</span> (<span class="caps">XXXXXXX</span>/Y), the filename is set to <code>USER-ID_XXXXXXX-00Y_M_00</code>, <code>USER-ID_XXXXXXX-000_M_00</code> otherwise.</p>
 <div class="highlight"><pre><span class="k">CASE</span> <span class="k">WHEN</span> <span class="n">strpos</span><span class="p">(</span><span class="n">attribute</span><span class="p">(</span><span class="err">$</span><span class="n">atlasfeature</span><span class="p">,</span> <span class="s1">&#39;kod_pb&#39;</span><span class="p">),</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
     <span class="k">THEN</span>
         <span class="n">ji</span> <span class="o">||</span> <span class="s1">&#39;_&#39;</span> <span class="o">||</span>
@@ -97,22 +97,22 @@
 </pre></div>
 
 
-<h3>Map scale &amp; variable substitutions</h3>
-<p>Different land blocks are of different sizes, thus needing different <strong>scales</strong> to fit in the map. Again, QGIS handles this <em>might-become-a-nightmare-pretty-easily</em> issue with a single click. You can define the scale as:</p>
+<h3>Map scale <span class="amp">&amp;</span> variable&nbsp;substitutions</h3>
+<p>Different land blocks are of different sizes, thus needing different <strong>scales</strong> to fit in the map. Again, <span class="caps">QGIS</span> handles this <em>might-become-a-nightmare-pretty-easily</em> issue with a single click. You can define the scale&nbsp;as:</p>
 <ul>
-<li>margin around feature: percentage of the space displayed around</li>
-<li>predefined scale (best fit): my choice, sometimes it doesn't display the entire land block though</li>
-<li>fixed scale: sets the scale the same for all the maps</li>
+<li>margin around feature: percentage of the space displayed&nbsp;around</li>
+<li>predefined scale (best fit): my choice, sometimes it doesn&#8217;t display the entire land block&nbsp;though</li>
+<li>fixed scale: sets the scale the same for all the&nbsp;maps</li>
 </ul>
-<p>With these settings, I get a map similar to the one below. Notice two interesting things:</p>
+<p>With these settings, I get a map similar to the one below. Notice two interesting&nbsp;things:</p>
 <p class='text-center'><a title="QGIS map skeleton" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
 
 <ul>
-<li>Scale uses decimal places, which I find <em>a huge failure</em>. Has anyone ever seen a map with such scale? The worst is there is no easy way to hide these, or at least I didn't find one.</li>
-<li>You can see a bunch of <code>[something in the brackets]</code> notations. These will be substituted with actual values during the atlas generation. Showing land block ID with a preceeding label is as easy as <code>[%concat('PB: ', "kod_pb")%]</code> (mind the percentage sign).</li>
+<li>Scale uses decimal places, which I find <em>a huge failure</em>. Has anyone ever seen a map with such scale? The worst is there is no easy way to hide these, or at least I didn&#8217;t find&nbsp;one.</li>
+<li>You can see a bunch of <code>[something in the brackets]</code> notations. These will be substituted with actual values during the atlas generation. Showing land block <span class="caps">ID</span> with a preceeding label is as easy as <code>[%concat('PB: ', "kod_pb")%]</code> (mind the percentage&nbsp;sign).</li>
 </ul>
-<h3>Styling the map using atlas features</h3>
-<p>Atlas features are a great help for <strong>map customization</strong>. As mentioned earlier, in my case, only one land block label per map should be visible. That can be achieved with a simple label dialog expression:</p>
+<h3>Styling the map using atlas&nbsp;features</h3>
+<p>Atlas features are a great help for <strong>map customization</strong>. As mentioned earlier, in my case, only one land block label per map should be visible. That can be achieved with a simple label dialog&nbsp;expression:</p>
 <div class="highlight"><pre><span class="k">CASE</span>
     <span class="k">WHEN</span> <span class="err">$</span><span class="n">id</span> <span class="o">=</span> <span class="err">$</span><span class="n">atlasfeatureid</span>
     <span class="k">THEN</span> <span class="ss">&quot;kod_pb&quot;</span>
@@ -120,7 +120,7 @@
 </pre></div>
 
 
-<p>QGIS keeps reference to each coverage layer feature ID during atlas generation, so you can use it for comparison. The best part is you can use IDs with <strong>any layer</strong> you need:</p>
+<p><span class="caps">QGIS</span> keeps reference to each coverage layer feature <span class="caps">ID</span> during atlas generation, so you can use it for comparison. The best part is you can use IDs with <strong>any layer</strong> you&nbsp;need:</p>
 <div class="highlight"><pre><span class="k">CASE</span>
     <span class="k">WHEN</span> <span class="n">attribute</span><span class="p">(</span><span class="err">$</span><span class="n">atlasfeature</span><span class="p">,</span> <span class="s1">&#39;kod_pb&#39;</span><span class="p">)</span> <span class="o">=</span> <span class="ss">&quot;kod_pb&quot;</span>
     <span class="k">THEN</span> <span class="ss">&quot;kod_zp&quot;</span>
@@ -128,14 +128,14 @@
 </pre></div>
 
 
-<p>With this simple expression, I get labels only for those land parcels that are part of the mapped land block. Even the <strong>layer style</strong> can be controlled with atlas feature. Land parcels inside the land block have blue borders, the rest is yellowish, remember? It's a piece of cake with rule-based styling.</p>
+<p>With this simple expression, I get labels only for those land parcels that are part of the mapped land block. Even the <strong>layer style</strong> can be controlled with atlas feature. Land parcels inside the land block have blue borders, the rest is yellowish, remember? It&#8217;s a piece of cake with rule-based&nbsp;styling.</p>
 <p class='text-center'><a title="Layer style based on atlas feature" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
 
-<h3>Atlas generation</h3>
-<p>When you're set, atlas can be created with a single button. I used SVG as an output format to easily manipulate the map content afterwards. The resulting maps look like the one in <a href="#desired-map">the first picture</a> without the text in the red rectangle. A Python script appends this to each map afterwards.</p>
-<p>Roughly speaking, generating 300 maps takes an hour or so, I guess that depends on the map complexity and hardware though.</p>
-<h3>Adding textual content</h3>
-<p>SVG output is just plain old XML that you can edit by hand or by script. A simple Python script, part of map post-processing, loads SVG from the database and adds it to the left pane of each map.</p>
+<h3>Atlas&nbsp;generation</h3>
+<p>When you&#8217;re set, atlas can be created with a single button. I used <span class="caps">SVG</span> as an output format to easily manipulate the map content afterwards. The resulting maps look like the one in <a href="#desired-map">the first picture</a> without the text in the red rectangle. A Python script appends this to each map&nbsp;afterwards.</p>
+<p>Roughly speaking, generating 300 maps takes an hour or so, I guess that depends on the map complexity and hardware&nbsp;though.</p>
+<h3>Adding textual&nbsp;content</h3>
+<p><span class="caps">SVG</span> output is just plain old <span class="caps">XML</span> that you can edit by hand or by script. A simple Python script, part of map post-processing, loads <span class="caps">SVG</span> from the database and adds it to the left pane of each&nbsp;map.</p>
 <div class="highlight"><pre><span class="k">SELECT</span>
       <span class="n">ji</span><span class="p">,</span>
       <span class="n">kod_pb</span><span class="p">,</span>
@@ -163,62 +163,62 @@
 </pre></div>
 
 
-<p>Each column from the previous query is a result of <code>SELECT</code> similar to the one below.</p>
+<p>Each column from the previous query is a result of <code>SELECT</code> similar to the one&nbsp;below.</p>
 <div class="highlight"><pre><span class="k">SELECT</span> <span class="n">concat</span><span class="p">(</span><span class="s1">&#39;&lt;text fill=&quot;#000000&quot; fill-opacity=&quot;1&quot; stroke=&quot;none&quot;&gt;BrK: &#39;</span><span class="p">,</span> <span class="n">dv_brk</span><span class="p">,</span> <span class="s1">&#39; ha / &#39;</span><span class="p">,</span> <span class="ss">&quot;MV_BRK&quot;</span><span class="p">,</span> <span class="s1">&#39; ha;&#39;</span><span class="p">,</span> <span class="n">kod_dpz</span><span class="p">,</span> <span class="s1">&#39;&lt;/text&gt;&#39;</span><span class="p">)</span> <span class="n">vcs_brk</span>
 </pre></div>
 
 
-<p>The <code>transform="matrix(1.18081,0,0,1.18081,270.0,550.0)</code> part puts the text on the right spot. Great finding about SVG is that it places each <code>&lt;text&gt;</code> element on the new line, so you don't need to deal with calculating the position in your script.</p>
-<p>Scale adjustment is done with a dirty lambda function.</p>
+<p>The <code>transform="matrix(1.18081,0,0,1.18081,270.0,550.0)</code> part puts the text on the right spot. Great finding about <span class="caps">SVG</span> is that it places each <code>&lt;text&gt;</code> element on the new line, so you don&#8217;t need to deal with calculating the position in your&nbsp;script.</p>
+<p>Scale adjustment is done with a dirty lambda&nbsp;function.</p>
 <div class="highlight"><pre><span class="n">content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&quot;&gt;(\d{1,3}\.\d{3,5})&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span> <span class="p">:</span><span class="s">&quot;&gt;    &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))))</span> <span class="o">+</span> <span class="s">&quot;&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="n">old_map</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 </pre></div>
 
 
-<h3>SVG to JPEG conversion</h3>
-<p>We deliver maps as JPEG files with 150 DPI on A4 paper format. <a href="http://www.imagemagick.org/script/index.php">ImageMagick</a> converts the formats with a simple shell command:</p>
+<h3><span class="caps">SVG</span> to <span class="caps">JPEG</span>&nbsp;conversion</h3>
+<p>We deliver maps as <span class="caps">JPEG</span> files with 150 <span class="caps">DPI</span> on A4 paper format. <a href="http://www.imagemagick.org/script/index.php">ImageMagick</a> converts the formats with a simple shell&nbsp;command:</p>
 <div class="highlight"><pre>convert -density <span class="m">150</span> -resize 1753x1240 input.svg output.jpg
 </pre></div>
 
 
 <h2>Conclusion</h2>
-<p>I created pretty efficient semi-automated workflow using several open source technologies that saves me a lot of work. Although QGIS has some minor pet peeves (scale with decimal places, not showing the entire feature, not substituting variables at times), it definitely makes boring map creation quite amusing. The more I work with big data / on big tasks, the more I find Linux a must-have.</p>
-<p>The whole process was done with QGIS 2.10, PostGIS 2.1, PostgreSQL 9.3, Python 2.7, ImageMagick 6.7.</p>
+<p>I created pretty efficient semi-automated workflow using several open source technologies that saves me a lot of work. Although <span class="caps">QGIS</span> has some minor pet peeves (scale with decimal places, not showing the entire feature, not substituting variables at times), it definitely makes boring map creation quite amusing. The more I work with big data / on big tasks, the more I find Linux a&nbsp;must-have.</p>
+<p>The whole process was done with <span class="caps">QGIS</span> 2.10, PostGIS 2.1, PostgreSQL 9.3, Python 2.7, ImageMagick&nbsp;6.7.</p>
         </section>
         </div>
     </div>
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/animating-svg-maps-with-smil/" rel="bookmark" title="Permalink to Animating SVG Maps With SMIL">Animating SVG Maps With SMIL</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/animating-svg-maps-with-smil/" rel="bookmark" title="Permalink to Animating SVG Maps With SMIL">Animating <span class="caps">SVG</span> Maps With <span class="caps">SMIL</span></a></h2>
             <small>Written on Apr 29, 2015
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/smil.html">smil</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
-            <p>Using SVG to build web maps have both pros and cons and to be honest I don't know any <em>serious</em> map/GIS project built on top of SVG. However, as a part of my job at university, I was forced to use both SVG and SMIL to produce animated web map (see the small version below or the big one at <a href="https://zimmicz.github.io/svg-smil-airplanes/map.svg">GitHub</a>) and I'd like to share my findings.</p>
+            <p>Using <span class="caps">SVG</span> to build web maps have both pros and cons and to be honest I don&#8217;t know any <em>serious</em> map/<span class="caps">GIS</span> project built on top of <span class="caps">SVG</span>. However, as a part of my job at university, I was forced to use both <span class="caps">SVG</span> and <span class="caps">SMIL</span> to produce animated web map (see the small version below or the big one at <a href="https://zimmicz.github.io/svg-smil-airplanes/map.svg">GitHub</a>) and I&#8217;d like to share my&nbsp;findings.</p>
 <p><object width="400" data="https://zimmicz.github.io/svg-smil-airplanes/map.svg" type="image/svg+xml"></object></p>
-<h2>Data preprocessing</h2>
-<p>I chose <a href="http://www.naturalearthdata.com/">Natural Earth dataset</a> both for basemap and thematic layer:</p>
+<h2>Data&nbsp;preprocessing</h2>
+<p>I chose <a href="http://www.naturalearthdata.com/">Natural Earth dataset</a> both for basemap and thematic&nbsp;layer:</p>
 <ul>
-<li>countries polygon layer for basemap</li>
-<li>airports point layer for thematic layer</li>
+<li>countries polygon layer for&nbsp;basemap</li>
+<li>airports point layer for thematic&nbsp;layer</li>
 </ul>
-<p>I decided that animation should go like this:</p>
+<p>I decided that animation should go like&nbsp;this:</p>
 <ol>
-<li>Load basemap and Vaclav Havel airport (PRG).</li>
-<li>Animate destinations one by one. They are revealed in order of their distance from PRG.</li>
-<li>Animate airways.</li>
-<li>Once airways are animated, animate airplanes along their path from PRG to their destination in order of their time of departure.</li>
+<li>Load basemap and Vaclav Havel airport (<span class="caps">PRG</span>).</li>
+<li>Animate destinations one by one. They are revealed in order of their distance from <span class="caps">PRG</span>.</li>
+<li>Animate&nbsp;airways.</li>
+<li>Once airways are animated, animate airplanes along their path from <span class="caps">PRG</span> to their destination in order of their time of&nbsp;departure.</li>
 <li>Profit.</li>
 </ol>
-<p>My goal was to create an animation of all departures from Vaclav Havel airport during one day. These data can be obtained at <a href="http://www.flightstats.com/">FlightStats</a>, I didn't find a way make this process automatic though. <a href="http://openflights.org/">OpenFlights</a> might be better source then.</p>
-<h2>SVG creation</h2>
-<p><a href="http://kartograph.org/">Kartograph</a> is a great tool both for SVG generation and scripting. What a pity it's probably a dead project according to the last commit date. After installing Python part of library used to create SVG files out of vector geometries, it can be run with something like this:</p>
+<p>My goal was to create an animation of all departures from Vaclav Havel airport during one day. These data can be obtained at <a href="http://www.flightstats.com/">FlightStats</a>, I didn&#8217;t find a way make this process automatic though. <a href="http://openflights.org/">OpenFlights</a> might be better source&nbsp;then.</p>
+<h2><span class="caps">SVG</span>&nbsp;creation</h2>
+<p><a href="http://kartograph.org/">Kartograph</a> is a great tool both for <span class="caps">SVG</span> generation and scripting. What a pity it&#8217;s probably a dead project according to the last commit date. After installing Python part of library used to create <span class="caps">SVG</span> files out of vector geometries, it can be run with something like&nbsp;this:</p>
 <div class="highlight"><pre>kartograph --output map.svg --pretty-print --style style.css config.json
 </pre></div>
 
 
-<p>Pretty self-explanatory, let's have a look at config file:</p>
+<p>Pretty self-explanatory, let&#8217;s have a look at config&nbsp;file:</p>
 <div class="highlight"><pre><span class="p">{</span>
     <span class="s2">&quot;layers&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;countries&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -260,15 +260,15 @@
 </pre></div>
 
 
-<p>It is possible to adjust map settings in many different ways. The most important/interesting:</p>
+<p>It is possible to adjust map settings in many different ways. The most&nbsp;important/interesting:</p>
 <ul>
-<li>Choose what attributes you want to have exported from source file with <code>attributes</code> key for every layer. They'll be available as <code>data-</code> attribute of SVG elements.</li>
-<li>It comes with Grid generation packed in! Really great. Sea generation works for some projections only.</li>
-<li>Set the projections you want to use with additional settings.</li>
-<li><code>bounds</code> settings should - according to the docs - use layer extent as well, I couldn't make it work though. Use <code>[-180, -90, 180, 90]</code> as a workaround to get the whole world. Don't forget to set <code>padding</code>, so your map doesn't get clipped on edges.</li>
-<li><code>export</code>ing coordinates rounded to one decimal place makes your SVG a lot smaller.</li>
+<li>Choose what attributes you want to have exported from source file with <code>attributes</code> key for every layer. They&#8217;ll be available as <code>data-</code> attribute of <span class="caps">SVG</span>&nbsp;elements.</li>
+<li>It comes with Grid generation packed in! Really great. Sea generation works for some projections&nbsp;only.</li>
+<li>Set the projections you want to use with additional&nbsp;settings.</li>
+<li><code>bounds</code> settings should - according to the docs - use layer extent as well, I couldn&#8217;t make it work though. Use <code>[-180, -90, 180, 90]</code> as a workaround to get the whole world. Don&#8217;t forget to set <code>padding</code>, so your map doesn&#8217;t get clipped on&nbsp;edges.</li>
+<li><code>export</code>ing coordinates rounded to one decimal place makes your <span class="caps">SVG</span> a lot&nbsp;smaller.</li>
 </ul>
-<p>You can change SVG look with simple CSS, just be sure to use layer names as CSS ids:</p>
+<p>You can change <span class="caps">SVG</span> look with simple <span class="caps">CSS</span>, just be sure to use layer names as <span class="caps">CSS</span>&nbsp;ids:</p>
 <div class="highlight"><pre><span class="nf">#airports</span> <span class="p">{</span>
     <span class="n">fill</span><span class="o">:</span> <span class="m">#CC0000</span><span class="p">;</span>
     <span class="n">fill</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
@@ -294,14 +294,14 @@
 </pre></div>
 
 
-<h2>Data adjustment &amp; animation</h2>
-<p><strong>SMIL</strong> is a XML based language for multimedia representation. It comes ready for timing, animation, visual transitions etc. I guess it might be considered easier to read for a web development beginner. Once you start using it, you immediately realize it suffers from the same disease like XML does: it is so wordy!</p>
-<p>Let's get back to my example. To animate airports one by one, let's give them unique ids, so they look something like:</p>
+<h2>Data adjustment <span class="amp">&amp;</span>&nbsp;animation</h2>
+<p><strong><span class="caps">SMIL</span></strong> is a <span class="caps">XML</span> based language for multimedia representation. It comes ready for timing, animation, visual transitions etc. I guess it might be considered easier to read for a web development beginner. Once you start using it, you immediately realize it suffers from the same disease like <span class="caps">XML</span> does: it is so&nbsp;wordy!</p>
+<p>Let&#8217;s get back to my example. To animate airports one by one, let&#8217;s give them unique ids, so they look something&nbsp;like:</p>
 <div class="highlight"><pre><span class="nt">&lt;circle</span> <span class="na">id=</span><span class="s">&quot;brs&quot;</span> <span class="na">stroke-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">fill-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">cx=</span><span class="s">&quot;476.597304864&quot;</span> <span class="na">cy=</span><span class="s">&quot;539.487783171&quot;</span> <span class="na">data-abbrev=</span><span class="s">&quot;BRS&quot;</span> <span class="na">data-name=</span><span class="s">&quot;Bristol Int&#39;l&quot;</span> <span class="na">r=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
 </pre></div>
 
 
-<p>That's something you do by hand as kartograph doesn't give ids to SVG elements. Once you're done with that, you can run SMIL animation. If you look closer at the final map, you'll notice there are three properties animated for each airport: fill opacity, stroke opacity and radius. Each property needs to use separate SMIL <code>&lt;animate /&gt;</code>, which might look like the one below:</p>
+<p>That&#8217;s something you do by hand as kartograph doesn&#8217;t give ids to <span class="caps">SVG</span> elements. Once you&#8217;re done with that, you can run <span class="caps">SMIL</span> animation. If you look closer at the final map, you&#8217;ll notice there are three properties animated for each airport: fill opacity, stroke opacity and radius. Each property needs to use separate <span class="caps">SMIL</span> <code>&lt;animate /&gt;</code>, which might look like the one&nbsp;below:</p>
 <div class="highlight"><pre><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;fill-opacity&quot;</span>
     <span class="na">id=</span><span class="s">&quot;kos_ani_fo&quot;</span>
     <span class="na">from=</span><span class="s">&quot;0&quot;</span>
@@ -331,13 +331,13 @@
 </pre></div>
 
 
-<p>I guess you get the idea how long this would take for more airports. Make sure to notice that SMIL can start animation based on another animation's end (<code>osr_ani.end</code>) - that's pretty neat.</p>
-<p>Airways animation works almost the same. First, add unique id to each airway:</p>
+<p>I guess you get the idea how long this would take for more airports. Make sure to notice that <span class="caps">SMIL</span> can start animation based on another animation&#8217;s end (<code>osr_ani.end</code>) - that&#8217;s pretty&nbsp;neat.</p>
+<p>Airways animation works almost the same. First, add unique id to each&nbsp;airway:</p>
 <div class="highlight"><pre><span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">&quot;M550.9,562.9L568.0,495.0 &quot;</span> <span class="na">id=</span><span class="s">&quot;travel-arn&quot;</span><span class="nt">/&gt;</span>
 </pre></div>
 
 
-<p>Second, start animation after all the airports are visible on the map. Notice the initial definition of <code>d</code> attribute - it's a line with zero length.</p>
+<p>Second, start animation after all the airports are visible on the map. Notice the initial definition of <code>d</code> attribute - it&#8217;s a line with zero&nbsp;length.</p>
 <div class="highlight"><pre><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;d&quot;</span>
     <span class="na">id=</span><span class="s">&quot;path_ani&quot;</span>
     <span class="na">from=</span><span class="s">&quot;M550.9,562.9L550.9,562.9&quot;</span>
@@ -349,7 +349,7 @@
 </pre></div>
 
 
-<p>Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript function:</p>
+<p>Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript&nbsp;function:</p>
 <div class="highlight"><pre><span class="cm">/**</span>
 <span class="cm"> * @param  number coef  scale radius by number of flights to the given destination</span>
 <span class="cm"> * @param  string flight_id</span>
@@ -388,7 +388,7 @@
 </pre></div>
 
 
-<p>SMIL with SVG seems to be interesting option for web map animation, a bit lengthy though. Syncing animations can easily become pain in the ass (<a href="https://stackoverflow.com/questions/29897355/svg-smil-animatemotion-only-triggers-once/">see StackOverflow thread</a>). Never call your function <code>animate</code> - there is namesake function defined in <a href="https://w3c.github.io/web-animations/">Web Animations API</a> that makes animation crash in Chrome. <code>&lt;animateMotion /&gt;</code> is a great tool to animate elements along path.</p>
+<p><span class="caps">SMIL</span> with <span class="caps">SVG</span> seems to be interesting option for web map animation, a bit lengthy though. Syncing animations can easily become pain in the ass (<a href="https://stackoverflow.com/questions/29897355/svg-smil-animatemotion-only-triggers-once/">see StackOverflow thread</a>). Never call your function <code>animate</code> - there is namesake function defined in <a href="https://w3c.github.io/web-animations/">Web Animations <span class="caps">API</span></a> that makes animation crash in Chrome. <code>&lt;animateMotion /&gt;</code> is a great tool to animate elements along&nbsp;path.</p>
         </section>
         </div>
     </div>

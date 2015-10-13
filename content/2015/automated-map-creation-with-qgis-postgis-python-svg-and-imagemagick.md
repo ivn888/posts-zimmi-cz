@@ -1,4 +1,5 @@
 Title: Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick
+Date: 2015-08-09 07:51
 Category: automation
 Tags: qgis,postgis,python,svg,linux
 

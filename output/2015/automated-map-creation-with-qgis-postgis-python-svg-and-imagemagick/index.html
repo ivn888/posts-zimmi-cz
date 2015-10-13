@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-          <title>Michal Zimmermann | Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</title>
+          <title>Michal Zimmermann | Automated Map Creation With <span class="caps">QGIS</span>, PostGIS, Python, <span class="caps">SVG</span> and&nbsp;ImageMagick</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
@@ -46,44 +46,44 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h1><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick</a></h1>
+        <h1><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With <span class="caps">QGIS</span>, PostGIS, Python, <span class="caps">SVG</span> and&nbsp;ImageMagick</a></h1>
         <small>Written on Aug 9, 2015
     and marked as
     <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>,     <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,     <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,     <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,     <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>    | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
     </small>
     <section>
-        <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/">QGIS Tips For Collaborative Mapping</a> we're in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
-<p>With the QGIS workflow up and running, I've been focused on different QGIS related task: <strong>automatic map generation</strong> for land blocks that meet certain conditions. The logic behind identifying such land blocks is as follows:</p>
+        <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/"><span class="caps">QGIS</span> Tips For Collaborative Mapping</a> we&#8217;re in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
+<p>With the <span class="caps">QGIS</span> workflow up and running, I&#8217;ve been focused on different <span class="caps">QGIS</span> related task: <strong>automatic map generation</strong> for land blocks that meet certain conditions. The logic behind identifying such land blocks is as&nbsp;follows:</p>
 <ul>
-<li>if the original area and the measured one differ more than 0.5 % or</li>
-<li>number of declared crops differs from number of crops identified or</li>
-<li>at least one parcel in the land block was given a certain error code</li>
+<li>if the original area and the measured one differ more than 0.5 %&nbsp;or</li>
+<li>number of declared crops differs from number of crops identified&nbsp;or</li>
+<li>at least one parcel in the land block was given a certain error&nbsp;code</li>
 </ul>
-<p>Let's assume that with several lines of SQL code we can store these mentioned above in a table called <code>land_blocks</code> with geometries being the result of calling <code>ST_Union()</code> over parcels for each land block.</p>
-<h2>Map composition</h2>
-<p>Every map should feature following layers:</p>
+<p>Let&#8217;s assume that with several lines of <span class="caps">SQL</span> code we can store these mentioned above in a table called <code>land_blocks</code> with geometries being the result of calling <code>ST_Union()</code> over parcels for each land&nbsp;block.</p>
+<h2>Map&nbsp;composition</h2>
+<p>Every map should feature following&nbsp;layers:</p>
 <ul>
-<li>land blocks (remember the <code>land_blocks</code> table?) - labeled with ID, yellowish borders, no fill</li>
-<li>land parcels - that's my source layer - labeled with letters, blue borders, no fill</li>
-<li>other layers</li>
-<li>HR, VHR, NIR imagery, orthophoto - served via WMS</li>
+<li>land blocks (remember the <code>land_blocks</code> table?) - labeled with <span class="caps">ID</span>, yellowish borders, no&nbsp;fill</li>
+<li>land parcels - that&#8217;s my source layer - labeled with letters, blue borders, no&nbsp;fill</li>
+<li>other&nbsp;layers</li>
+<li><span class="caps">HR</span>, <span class="caps">VHR</span>, <span class="caps">NIR</span> imagery, orthophoto - served via <span class="caps">WMS</span></li>
 </ul>
-<p>Labels should be visible only for the featured land block (both for the land parcels and the land block itself. The whole map scales dynamically, showing small land blocks zoomed in and the large ones zoomed out.</p>
+<p>Labels should be visible only for the featured land block (both for the land parcels and the land block itself. The whole map scales dynamically, showing small land blocks zoomed in and the large ones zoomed&nbsp;out.</p>
 <p class='text-center'><a id="desired-map" title="Desired map" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
 
-<p>Every map features additional items:</p>
+<p>Every map features additional&nbsp;items:</p>
 <ul>
-<li>dynamic list of subsidies farmer asks for - showing both measured and declared area</li>
-<li>dynamic list of land parcels with their areas and error codes</li>
+<li>dynamic list of subsidies farmer asks for - showing both measured and declared&nbsp;area</li>
+<li>dynamic list of land parcels with their areas and error&nbsp;codes</li>
 <li>scalebar</li>
-<li>map key</li>
+<li>map&nbsp;key</li>
 <li>logos</li>
 </ul>
-<h2>Atlas creation</h2>
-<p>Now with requirements defined, let's create some maps. It's incredibly easy to generate a series of maps with QGIS atlas options.</p>
-<h3>Atlas generation settings</h3>
-<p><strong>Coverage layer</strong> is presumably the only thing you really need - as the name suggests, it covers your area of interest. One map will be created for each feature in this layer, unless you decide to use some <strong>filtering</strong> - which I did.</p>
-<p><strong>Output filenames</strong> can be tweaked to your needs, here's what such a function might look like. If there is a slash in the land block ID (XXXXXXX/Y), the filename is set to <code>USER-ID_XXXXXXX-00Y_M_00</code>, <code>USER-ID_XXXXXXX-000_M_00</code> otherwise.</p>
+<h2>Atlas&nbsp;creation</h2>
+<p>Now with requirements defined, let&#8217;s create some maps. It&#8217;s incredibly easy to generate a series of maps with <span class="caps">QGIS</span> atlas&nbsp;options.</p>
+<h3>Atlas generation&nbsp;settings</h3>
+<p><strong>Coverage layer</strong> is presumably the only thing you really need - as the name suggests, it covers your area of interest. One map will be created for each feature in this layer, unless you decide to use some <strong>filtering</strong> - which I&nbsp;did.</p>
+<p><strong>Output filenames</strong> can be tweaked to your needs, here&#8217;s what such a function might look like. If there is a slash in the land block <span class="caps">ID</span> (<span class="caps">XXXXXXX</span>/Y), the filename is set to <code>USER-ID_XXXXXXX-00Y_M_00</code>, <code>USER-ID_XXXXXXX-000_M_00</code> otherwise.</p>
 <div class="highlight"><pre><span class="k">CASE</span> <span class="k">WHEN</span> <span class="n">strpos</span><span class="p">(</span><span class="n">attribute</span><span class="p">(</span><span class="err">$</span><span class="n">atlasfeature</span><span class="p">,</span> <span class="s1">&#39;kod_pb&#39;</span><span class="p">),</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
     <span class="k">THEN</span>
         <span class="n">ji</span> <span class="o">||</span> <span class="s1">&#39;_&#39;</span> <span class="o">||</span>
@@ -104,22 +104,22 @@
 </pre></div>
 
 
-<h3>Map scale &amp; variable substitutions</h3>
-<p>Different land blocks are of different sizes, thus needing different <strong>scales</strong> to fit in the map. Again, QGIS handles this <em>might-become-a-nightmare-pretty-easily</em> issue with a single click. You can define the scale as:</p>
+<h3>Map scale <span class="amp">&amp;</span> variable&nbsp;substitutions</h3>
+<p>Different land blocks are of different sizes, thus needing different <strong>scales</strong> to fit in the map. Again, <span class="caps">QGIS</span> handles this <em>might-become-a-nightmare-pretty-easily</em> issue with a single click. You can define the scale&nbsp;as:</p>
 <ul>
-<li>margin around feature: percentage of the space displayed around</li>
-<li>predefined scale (best fit): my choice, sometimes it doesn't display the entire land block though</li>
-<li>fixed scale: sets the scale the same for all the maps</li>
+<li>margin around feature: percentage of the space displayed&nbsp;around</li>
+<li>predefined scale (best fit): my choice, sometimes it doesn&#8217;t display the entire land block&nbsp;though</li>
+<li>fixed scale: sets the scale the same for all the&nbsp;maps</li>
 </ul>
-<p>With these settings, I get a map similar to the one below. Notice two interesting things:</p>
+<p>With these settings, I get a map similar to the one below. Notice two interesting&nbsp;things:</p>
 <p class='text-center'><a title="QGIS map skeleton" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
 
 <ul>
-<li>Scale uses decimal places, which I find <em>a huge failure</em>. Has anyone ever seen a map with such scale? The worst is there is no easy way to hide these, or at least I didn't find one.</li>
-<li>You can see a bunch of <code>[something in the brackets]</code> notations. These will be substituted with actual values during the atlas generation. Showing land block ID with a preceeding label is as easy as <code>[%concat('PB: ', "kod_pb")%]</code> (mind the percentage sign).</li>
+<li>Scale uses decimal places, which I find <em>a huge failure</em>. Has anyone ever seen a map with such scale? The worst is there is no easy way to hide these, or at least I didn&#8217;t find&nbsp;one.</li>
+<li>You can see a bunch of <code>[something in the brackets]</code> notations. These will be substituted with actual values during the atlas generation. Showing land block <span class="caps">ID</span> with a preceeding label is as easy as <code>[%concat('PB: ', "kod_pb")%]</code> (mind the percentage&nbsp;sign).</li>
 </ul>
-<h3>Styling the map using atlas features</h3>
-<p>Atlas features are a great help for <strong>map customization</strong>. As mentioned earlier, in my case, only one land block label per map should be visible. That can be achieved with a simple label dialog expression:</p>
+<h3>Styling the map using atlas&nbsp;features</h3>
+<p>Atlas features are a great help for <strong>map customization</strong>. As mentioned earlier, in my case, only one land block label per map should be visible. That can be achieved with a simple label dialog&nbsp;expression:</p>
 <div class="highlight"><pre><span class="k">CASE</span>
     <span class="k">WHEN</span> <span class="err">$</span><span class="n">id</span> <span class="o">=</span> <span class="err">$</span><span class="n">atlasfeatureid</span>
     <span class="k">THEN</span> <span class="ss">&quot;kod_pb&quot;</span>
@@ -127,7 +127,7 @@
 </pre></div>
 
 
-<p>QGIS keeps reference to each coverage layer feature ID during atlas generation, so you can use it for comparison. The best part is you can use IDs with <strong>any layer</strong> you need:</p>
+<p><span class="caps">QGIS</span> keeps reference to each coverage layer feature <span class="caps">ID</span> during atlas generation, so you can use it for comparison. The best part is you can use IDs with <strong>any layer</strong> you&nbsp;need:</p>
 <div class="highlight"><pre><span class="k">CASE</span>
     <span class="k">WHEN</span> <span class="n">attribute</span><span class="p">(</span><span class="err">$</span><span class="n">atlasfeature</span><span class="p">,</span> <span class="s1">&#39;kod_pb&#39;</span><span class="p">)</span> <span class="o">=</span> <span class="ss">&quot;kod_pb&quot;</span>
     <span class="k">THEN</span> <span class="ss">&quot;kod_zp&quot;</span>
@@ -135,14 +135,14 @@
 </pre></div>
 
 
-<p>With this simple expression, I get labels only for those land parcels that are part of the mapped land block. Even the <strong>layer style</strong> can be controlled with atlas feature. Land parcels inside the land block have blue borders, the rest is yellowish, remember? It's a piece of cake with rule-based styling.</p>
+<p>With this simple expression, I get labels only for those land parcels that are part of the mapped land block. Even the <strong>layer style</strong> can be controlled with atlas feature. Land parcels inside the land block have blue borders, the rest is yellowish, remember? It&#8217;s a piece of cake with rule-based&nbsp;styling.</p>
 <p class='text-center'><a title="Layer style based on atlas feature" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
 
-<h3>Atlas generation</h3>
-<p>When you're set, atlas can be created with a single button. I used SVG as an output format to easily manipulate the map content afterwards. The resulting maps look like the one in <a href="#desired-map">the first picture</a> without the text in the red rectangle. A Python script appends this to each map afterwards.</p>
-<p>Roughly speaking, generating 300 maps takes an hour or so, I guess that depends on the map complexity and hardware though.</p>
-<h3>Adding textual content</h3>
-<p>SVG output is just plain old XML that you can edit by hand or by script. A simple Python script, part of map post-processing, loads SVG from the database and adds it to the left pane of each map.</p>
+<h3>Atlas&nbsp;generation</h3>
+<p>When you&#8217;re set, atlas can be created with a single button. I used <span class="caps">SVG</span> as an output format to easily manipulate the map content afterwards. The resulting maps look like the one in <a href="#desired-map">the first picture</a> without the text in the red rectangle. A Python script appends this to each map&nbsp;afterwards.</p>
+<p>Roughly speaking, generating 300 maps takes an hour or so, I guess that depends on the map complexity and hardware&nbsp;though.</p>
+<h3>Adding textual&nbsp;content</h3>
+<p><span class="caps">SVG</span> output is just plain old <span class="caps">XML</span> that you can edit by hand or by script. A simple Python script, part of map post-processing, loads <span class="caps">SVG</span> from the database and adds it to the left pane of each&nbsp;map.</p>
 <div class="highlight"><pre><span class="k">SELECT</span>
       <span class="n">ji</span><span class="p">,</span>
       <span class="n">kod_pb</span><span class="p">,</span>
@@ -170,49 +170,49 @@
 </pre></div>
 
 
-<p>Each column from the previous query is a result of <code>SELECT</code> similar to the one below.</p>
+<p>Each column from the previous query is a result of <code>SELECT</code> similar to the one&nbsp;below.</p>
 <div class="highlight"><pre><span class="k">SELECT</span> <span class="n">concat</span><span class="p">(</span><span class="s1">&#39;&lt;text fill=&quot;#000000&quot; fill-opacity=&quot;1&quot; stroke=&quot;none&quot;&gt;BrK: &#39;</span><span class="p">,</span> <span class="n">dv_brk</span><span class="p">,</span> <span class="s1">&#39; ha / &#39;</span><span class="p">,</span> <span class="ss">&quot;MV_BRK&quot;</span><span class="p">,</span> <span class="s1">&#39; ha;&#39;</span><span class="p">,</span> <span class="n">kod_dpz</span><span class="p">,</span> <span class="s1">&#39;&lt;/text&gt;&#39;</span><span class="p">)</span> <span class="n">vcs_brk</span>
 </pre></div>
 
 
-<p>The <code>transform="matrix(1.18081,0,0,1.18081,270.0,550.0)</code> part puts the text on the right spot. Great finding about SVG is that it places each <code>&lt;text&gt;</code> element on the new line, so you don't need to deal with calculating the position in your script.</p>
-<p>Scale adjustment is done with a dirty lambda function.</p>
+<p>The <code>transform="matrix(1.18081,0,0,1.18081,270.0,550.0)</code> part puts the text on the right spot. Great finding about <span class="caps">SVG</span> is that it places each <code>&lt;text&gt;</code> element on the new line, so you don&#8217;t need to deal with calculating the position in your&nbsp;script.</p>
+<p>Scale adjustment is done with a dirty lambda&nbsp;function.</p>
 <div class="highlight"><pre><span class="n">content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&quot;&gt;(\d{1,3}\.\d{3,5})&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span> <span class="p">:</span><span class="s">&quot;&gt;    &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))))</span> <span class="o">+</span> <span class="s">&quot;&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="n">old_map</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 </pre></div>
 
 
-<h3>SVG to JPEG conversion</h3>
-<p>We deliver maps as JPEG files with 150 DPI on A4 paper format. <a href="http://www.imagemagick.org/script/index.php">ImageMagick</a> converts the formats with a simple shell command:</p>
+<h3><span class="caps">SVG</span> to <span class="caps">JPEG</span>&nbsp;conversion</h3>
+<p>We deliver maps as <span class="caps">JPEG</span> files with 150 <span class="caps">DPI</span> on A4 paper format. <a href="http://www.imagemagick.org/script/index.php">ImageMagick</a> converts the formats with a simple shell&nbsp;command:</p>
 <div class="highlight"><pre>convert -density <span class="m">150</span> -resize 1753x1240 input.svg output.jpg
 </pre></div>
 
 
 <h2>Conclusion</h2>
-<p>I created pretty efficient semi-automated workflow using several open source technologies that saves me a lot of work. Although QGIS has some minor pet peeves (scale with decimal places, not showing the entire feature, not substituting variables at times), it definitely makes boring map creation quite amusing. The more I work with big data / on big tasks, the more I find Linux a must-have.</p>
-<p>The whole process was done with QGIS 2.10, PostGIS 2.1, PostgreSQL 9.3, Python 2.7, ImageMagick 6.7.</p>
+<p>I created pretty efficient semi-automated workflow using several open source technologies that saves me a lot of work. Although <span class="caps">QGIS</span> has some minor pet peeves (scale with decimal places, not showing the entire feature, not substituting variables at times), it definitely makes boring map creation quite amusing. The more I work with big data / on big tasks, the more I find Linux a&nbsp;must-have.</p>
+<p>The whole process was done with <span class="caps">QGIS</span> 2.10, PostGIS 2.1, PostgreSQL 9.3, Python 2.7, ImageMagick&nbsp;6.7.</p>
     </section>
     </div>
 <div class="neighbors">
     <h3>More reading</h3>
     <ul>
         <li>
-            <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/">
-                 QGIS Tips For Collaborative Mapping
+            <a href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/">
+                 Clip Raster With Vector Using <span class="caps">GDAL</span>
             </a>
         </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2015/how-to-use-queue-with-rsync/">
-                 How to Use Queue with Rsync
+                 How to Use Queue with&nbsp;Rsync
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/">
-                 Clip Raster With Vector Using GDAL
+                 Clip Raster With Vector Using <span class="caps">GDAL</span>
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2015/how-to-use-queue-with-rsync/">
-                 How to Use Queue with Rsync
+                 How to Use Queue with&nbsp;Rsync
              </a>
          </li>
         </li>

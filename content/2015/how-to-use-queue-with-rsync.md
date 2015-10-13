@@ -8,12 +8,12 @@ Having more than 120K 5MB+ images that should be moved to the server is a great 
     :::bash
     parallel --verbose convert {} -quality 40% {} ::: *.jpg
 
-The `parallel` modifies several images per second. Uploading these right away seems to be a good idea. But how do you tell `rsync` to check for modified files every now and then? Another for loop mixed with `sleep` would work, but it just doesn't feel right.
+The `parallel` modifies several images per second. Uploading these right away seems to be the next step. But how do you tell `rsync` to check for modified files every now and then? Another for loop mixed with `sleep` would work, but it just doesn't feel right.
 
 Luckily, there's a [`inotifywait`](http://linux.die.net/man/1/inotifywait) tool capable of watching changes to files and taking actions based on those changes.
 
     :::bash
-    inotifywait -e close_write -m --format '%f' . \|
+    inotifywait -e close_write -m --format '%f' . | \
     while read file
     do
         echo $file

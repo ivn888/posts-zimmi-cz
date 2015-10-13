@@ -19,6 +19,7 @@ CATEGORY_FEED_ATOM = None
 FEED_ALL_RSS = 'feed.xml'
 
 DELETE_OUTPUT_DIRECTORY = True
+TYPOGRIFY = True
 
 # Following items are often useful when publishing
 

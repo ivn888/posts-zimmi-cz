@@ -12,7 +12,8 @@ THEME = 'content/theme/simple'
 TIMEZONE = 'Europe/Prague'
 
 DEFAULT_LANG = u'en'
-DEFAULT_DATE = 'fs'
+DEFAULT_DATE = None
+TYPOGRIFY = True
 # Feed generation is usually not desired when developing
 FEED_DOMAIN = SITEURL
 FEED_ALL_ATOM = None

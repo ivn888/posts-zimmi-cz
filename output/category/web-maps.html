@@ -39,36 +39,36 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/animating-svg-maps-with-smil/" rel="bookmark" title="Permalink to Animating SVG Maps With SMIL">Animating SVG Maps With SMIL</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/animating-svg-maps-with-smil/" rel="bookmark" title="Permalink to Animating SVG Maps With SMIL">Animating <span class="caps">SVG</span> Maps With <span class="caps">SMIL</span></a></h2>
             <small>Written on Apr 29, 2015
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/smil.html">smil</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
-            <p>Using SVG to build web maps have both pros and cons and to be honest I don't know any <em>serious</em> map/GIS project built on top of SVG. However, as a part of my job at university, I was forced to use both SVG and SMIL to produce animated web map (see the small version below or the big one at <a href="https://zimmicz.github.io/svg-smil-airplanes/map.svg">GitHub</a>) and I'd like to share my findings.</p>
+            <p>Using <span class="caps">SVG</span> to build web maps have both pros and cons and to be honest I don&#8217;t know any <em>serious</em> map/<span class="caps">GIS</span> project built on top of <span class="caps">SVG</span>. However, as a part of my job at university, I was forced to use both <span class="caps">SVG</span> and <span class="caps">SMIL</span> to produce animated web map (see the small version below or the big one at <a href="https://zimmicz.github.io/svg-smil-airplanes/map.svg">GitHub</a>) and I&#8217;d like to share my&nbsp;findings.</p>
 <p><object width="400" data="https://zimmicz.github.io/svg-smil-airplanes/map.svg" type="image/svg+xml"></object></p>
-<h2>Data preprocessing</h2>
-<p>I chose <a href="http://www.naturalearthdata.com/">Natural Earth dataset</a> both for basemap and thematic layer:</p>
+<h2>Data&nbsp;preprocessing</h2>
+<p>I chose <a href="http://www.naturalearthdata.com/">Natural Earth dataset</a> both for basemap and thematic&nbsp;layer:</p>
 <ul>
-<li>countries polygon layer for basemap</li>
-<li>airports point layer for thematic layer</li>
+<li>countries polygon layer for&nbsp;basemap</li>
+<li>airports point layer for thematic&nbsp;layer</li>
 </ul>
-<p>I decided that animation should go like this:</p>
+<p>I decided that animation should go like&nbsp;this:</p>
 <ol>
-<li>Load basemap and Vaclav Havel airport (PRG).</li>
-<li>Animate destinations one by one. They are revealed in order of their distance from PRG.</li>
-<li>Animate airways.</li>
-<li>Once airways are animated, animate airplanes along their path from PRG to their destination in order of their time of departure.</li>
+<li>Load basemap and Vaclav Havel airport (<span class="caps">PRG</span>).</li>
+<li>Animate destinations one by one. They are revealed in order of their distance from <span class="caps">PRG</span>.</li>
+<li>Animate&nbsp;airways.</li>
+<li>Once airways are animated, animate airplanes along their path from <span class="caps">PRG</span> to their destination in order of their time of&nbsp;departure.</li>
 <li>Profit.</li>
 </ol>
-<p>My goal was to create an animation of all departures from Vaclav Havel airport during one day. These data can be obtained at <a href="http://www.flightstats.com/">FlightStats</a>, I didn't find a way make this process automatic though. <a href="http://openflights.org/">OpenFlights</a> might be better source then.</p>
-<h2>SVG creation</h2>
-<p><a href="http://kartograph.org/">Kartograph</a> is a great tool both for SVG generation and scripting. What a pity it's probably a dead project according to the last commit date. After installing Python part of library used to create SVG files out of vector geometries, it can be run with something like this:</p>
+<p>My goal was to create an animation of all departures from Vaclav Havel airport during one day. These data can be obtained at <a href="http://www.flightstats.com/">FlightStats</a>, I didn&#8217;t find a way make this process automatic though. <a href="http://openflights.org/">OpenFlights</a> might be better source&nbsp;then.</p>
+<h2><span class="caps">SVG</span>&nbsp;creation</h2>
+<p><a href="http://kartograph.org/">Kartograph</a> is a great tool both for <span class="caps">SVG</span> generation and scripting. What a pity it&#8217;s probably a dead project according to the last commit date. After installing Python part of library used to create <span class="caps">SVG</span> files out of vector geometries, it can be run with something like&nbsp;this:</p>
 <div class="highlight"><pre>kartograph --output map.svg --pretty-print --style style.css config.json
 </pre></div>
 
 
-<p>Pretty self-explanatory, let's have a look at config file:</p>
+<p>Pretty self-explanatory, let&#8217;s have a look at config&nbsp;file:</p>
 <div class="highlight"><pre><span class="p">{</span>
     <span class="s2">&quot;layers&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;countries&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -110,15 +110,15 @@
 </pre></div>
 
 
-<p>It is possible to adjust map settings in many different ways. The most important/interesting:</p>
+<p>It is possible to adjust map settings in many different ways. The most&nbsp;important/interesting:</p>
 <ul>
-<li>Choose what attributes you want to have exported from source file with <code>attributes</code> key for every layer. They'll be available as <code>data-</code> attribute of SVG elements.</li>
-<li>It comes with Grid generation packed in! Really great. Sea generation works for some projections only.</li>
-<li>Set the projections you want to use with additional settings.</li>
-<li><code>bounds</code> settings should - according to the docs - use layer extent as well, I couldn't make it work though. Use <code>[-180, -90, 180, 90]</code> as a workaround to get the whole world. Don't forget to set <code>padding</code>, so your map doesn't get clipped on edges.</li>
-<li><code>export</code>ing coordinates rounded to one decimal place makes your SVG a lot smaller.</li>
+<li>Choose what attributes you want to have exported from source file with <code>attributes</code> key for every layer. They&#8217;ll be available as <code>data-</code> attribute of <span class="caps">SVG</span>&nbsp;elements.</li>
+<li>It comes with Grid generation packed in! Really great. Sea generation works for some projections&nbsp;only.</li>
+<li>Set the projections you want to use with additional&nbsp;settings.</li>
+<li><code>bounds</code> settings should - according to the docs - use layer extent as well, I couldn&#8217;t make it work though. Use <code>[-180, -90, 180, 90]</code> as a workaround to get the whole world. Don&#8217;t forget to set <code>padding</code>, so your map doesn&#8217;t get clipped on&nbsp;edges.</li>
+<li><code>export</code>ing coordinates rounded to one decimal place makes your <span class="caps">SVG</span> a lot&nbsp;smaller.</li>
 </ul>
-<p>You can change SVG look with simple CSS, just be sure to use layer names as CSS ids:</p>
+<p>You can change <span class="caps">SVG</span> look with simple <span class="caps">CSS</span>, just be sure to use layer names as <span class="caps">CSS</span>&nbsp;ids:</p>
 <div class="highlight"><pre><span class="nf">#airports</span> <span class="p">{</span>
     <span class="n">fill</span><span class="o">:</span> <span class="m">#CC0000</span><span class="p">;</span>
     <span class="n">fill</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
@@ -144,14 +144,14 @@
 </pre></div>
 
 
-<h2>Data adjustment &amp; animation</h2>
-<p><strong>SMIL</strong> is a XML based language for multimedia representation. It comes ready for timing, animation, visual transitions etc. I guess it might be considered easier to read for a web development beginner. Once you start using it, you immediately realize it suffers from the same disease like XML does: it is so wordy!</p>
-<p>Let's get back to my example. To animate airports one by one, let's give them unique ids, so they look something like:</p>
+<h2>Data adjustment <span class="amp">&amp;</span>&nbsp;animation</h2>
+<p><strong><span class="caps">SMIL</span></strong> is a <span class="caps">XML</span> based language for multimedia representation. It comes ready for timing, animation, visual transitions etc. I guess it might be considered easier to read for a web development beginner. Once you start using it, you immediately realize it suffers from the same disease like <span class="caps">XML</span> does: it is so&nbsp;wordy!</p>
+<p>Let&#8217;s get back to my example. To animate airports one by one, let&#8217;s give them unique ids, so they look something&nbsp;like:</p>
 <div class="highlight"><pre><span class="nt">&lt;circle</span> <span class="na">id=</span><span class="s">&quot;brs&quot;</span> <span class="na">stroke-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">fill-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">cx=</span><span class="s">&quot;476.597304864&quot;</span> <span class="na">cy=</span><span class="s">&quot;539.487783171&quot;</span> <span class="na">data-abbrev=</span><span class="s">&quot;BRS&quot;</span> <span class="na">data-name=</span><span class="s">&quot;Bristol Int&#39;l&quot;</span> <span class="na">r=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
 </pre></div>
 
 
-<p>That's something you do by hand as kartograph doesn't give ids to SVG elements. Once you're done with that, you can run SMIL animation. If you look closer at the final map, you'll notice there are three properties animated for each airport: fill opacity, stroke opacity and radius. Each property needs to use separate SMIL <code>&lt;animate /&gt;</code>, which might look like the one below:</p>
+<p>That&#8217;s something you do by hand as kartograph doesn&#8217;t give ids to <span class="caps">SVG</span> elements. Once you&#8217;re done with that, you can run <span class="caps">SMIL</span> animation. If you look closer at the final map, you&#8217;ll notice there are three properties animated for each airport: fill opacity, stroke opacity and radius. Each property needs to use separate <span class="caps">SMIL</span> <code>&lt;animate /&gt;</code>, which might look like the one&nbsp;below:</p>
 <div class="highlight"><pre><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;fill-opacity&quot;</span>
     <span class="na">id=</span><span class="s">&quot;kos_ani_fo&quot;</span>
     <span class="na">from=</span><span class="s">&quot;0&quot;</span>
@@ -181,13 +181,13 @@
 </pre></div>
 
 
-<p>I guess you get the idea how long this would take for more airports. Make sure to notice that SMIL can start animation based on another animation's end (<code>osr_ani.end</code>) - that's pretty neat.</p>
-<p>Airways animation works almost the same. First, add unique id to each airway:</p>
+<p>I guess you get the idea how long this would take for more airports. Make sure to notice that <span class="caps">SMIL</span> can start animation based on another animation&#8217;s end (<code>osr_ani.end</code>) - that&#8217;s pretty&nbsp;neat.</p>
+<p>Airways animation works almost the same. First, add unique id to each&nbsp;airway:</p>
 <div class="highlight"><pre><span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">&quot;M550.9,562.9L568.0,495.0 &quot;</span> <span class="na">id=</span><span class="s">&quot;travel-arn&quot;</span><span class="nt">/&gt;</span>
 </pre></div>
 
 
-<p>Second, start animation after all the airports are visible on the map. Notice the initial definition of <code>d</code> attribute - it's a line with zero length.</p>
+<p>Second, start animation after all the airports are visible on the map. Notice the initial definition of <code>d</code> attribute - it&#8217;s a line with zero&nbsp;length.</p>
 <div class="highlight"><pre><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;d&quot;</span>
     <span class="na">id=</span><span class="s">&quot;path_ani&quot;</span>
     <span class="na">from=</span><span class="s">&quot;M550.9,562.9L550.9,562.9&quot;</span>
@@ -199,7 +199,7 @@
 </pre></div>
 
 
-<p>Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript function:</p>
+<p>Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript&nbsp;function:</p>
 <div class="highlight"><pre><span class="cm">/**</span>
 <span class="cm"> * @param  number coef  scale radius by number of flights to the given destination</span>
 <span class="cm"> * @param  string flight_id</span>
@@ -238,23 +238,23 @@
 </pre></div>
 
 
-<p>SMIL with SVG seems to be interesting option for web map animation, a bit lengthy though. Syncing animations can easily become pain in the ass (<a href="https://stackoverflow.com/questions/29897355/svg-smil-animatemotion-only-triggers-once/">see StackOverflow thread</a>). Never call your function <code>animate</code> - there is namesake function defined in <a href="https://w3c.github.io/web-animations/">Web Animations API</a> that makes animation crash in Chrome. <code>&lt;animateMotion /&gt;</code> is a great tool to animate elements along path.</p>
+<p><span class="caps">SMIL</span> with <span class="caps">SVG</span> seems to be interesting option for web map animation, a bit lengthy though. Syncing animations can easily become pain in the ass (<a href="https://stackoverflow.com/questions/29897355/svg-smil-animatemotion-only-triggers-once/">see StackOverflow thread</a>). Never call your function <code>animate</code> - there is namesake function defined in <a href="https://w3c.github.io/web-animations/">Web Animations <span class="caps">API</span></a> that makes animation crash in Chrome. <code>&lt;animateMotion /&gt;</code> is a great tool to animate elements along&nbsp;path.</p>
         </section>
         </div>
     </div>
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/connecting-to-secured-arcgis-server-layer-with-openlayers-3/" rel="bookmark" title="Permalink to Connecting To Secured ArcGIS Server Layer With OpenLayers 3">Connecting To Secured ArcGIS Server Layer With OpenLayers 3</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2014/connecting-to-secured-arcgis-server-layer-with-openlayers-3/" rel="bookmark" title="Permalink to Connecting To Secured ArcGIS Server Layer With OpenLayers 3">Connecting To Secured ArcGIS Server Layer With OpenLayers&nbsp;3</a></h2>
             <small>Written on Sep 12, 2014
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>,         <a href="http://www.zimmi.cz/posts/tag/openlayers.html">openlayers</a>,         <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
-            <p>I was made to use ArcGIS Server with <a href="http://openlayers.org">Openlayers 3</a> just recently as one of the projects I've been working on demands such different tools to work together.</p>
-<p><strong>tl;dr: I hate Esri.</strong></p>
-<p>I found myself in need to access secured layers published via WMS on ArcGIS Server using username and password I was given, so here's a little how-to for anyone who would have to do the same.</p>
-<p>Let's start with a simple ol.layer.Image and pretend this is the secured layer we're looking for:</p>
+            <p>I was made to use ArcGIS Server with <a href="http://openlayers.org">Openlayers 3</a> just recently as one of the projects I&#8217;ve been working on demands such different tools to work&nbsp;together.</p>
+<p><strong>tl;dr: I hate&nbsp;Esri.</strong></p>
+<p>I found myself in need to access secured layers published via <span class="caps">WMS</span> on ArcGIS Server using username and password I was given, so here&#8217;s a little how-to for anyone who would have to do the&nbsp;same.</p>
+<p>Let&#8217;s start with a simple ol.layer.Image and pretend this is the secured layer we&#8217;re looking&nbsp;for:</p>
 <div class="highlight"><pre>var layer = new ol.layer.Image({
     extent: extent,
     source: new ol.source.ImageWMS(/** @type {olx.source.ImageWMSOptions} */ ({
@@ -268,7 +268,7 @@
 </pre></div>
 
 
-<p>We need to retrieve the token, so we define a function:</p>
+<p>We need to retrieve the token, so we define a&nbsp;function:</p>
 <div class="highlight"><pre><span class="kd">function</span> <span class="nx">retrieveToken</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">req</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">;</span>
 
@@ -285,7 +285,7 @@
 </pre></div>
 
 
-<p>I pass a parameter called <code>callback</code> - that's a very important step, otherwise you would not be able to retrieve the token when you actually need it (AJAX stands for asynchronous). Now you just pass the token to the layer params like this:</p>
+<p>I pass a parameter called <code>callback</code> - that&#8217;s a very important step, otherwise you would not be able to retrieve the token when you actually need it (<span class="caps">AJAX</span> stands for asynchronous). Now you just pass the token to the layer params like&nbsp;this:</p>
 <div class="highlight"><pre><span class="nx">retrieveToken</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">layer</span><span class="p">.</span><span class="nx">getSource</span><span class="p">().</span><span class="nx">updateParams</span><span class="p">({</span>
         <span class="nx">token</span><span class="o">:</span> <span class="nx">token</span>
@@ -294,12 +294,12 @@
 </pre></div>
 
 
-<p>When you open Firebug and inspect Network tab, you should find <code>token</code> URL parameter passed along with WMS <code>GetMap</code> request.</p>
-<p>Few sidenotes:</p>
+<p>When you open Firebug and inspect Network tab, you should find <code>token</code> <span class="caps">URL</span> parameter passed along with <span class="caps">WMS</span> <code>GetMap</code> request.</p>
+<p>Few&nbsp;sidenotes:</p>
 <ol>
-<li>Although you might be logged in ArcGIS Server via web interface, you might need to pass the <code>token</code>  URL param when trying to access Capabilities document. Don't know why though.</li>
-<li>You should probably take care of calling the <code>retrieveToken()</code> in shorter interval than the token expiration is set to. Otherwise you might end up with invalid token.</li>
-<li>You need to hide the username and password from anonymous users (I guess that's only possible with server side implementation of selective JavaScript loading).</li>
+<li>Although you might be logged in ArcGIS Server via web interface, you might need to pass the <code>token</code>  <span class="caps">URL</span> param when trying to access Capabilities document. Don&#8217;t know why&nbsp;though.</li>
+<li>You should probably take care of calling the <code>retrieveToken()</code> in shorter interval than the token expiration is set to. Otherwise you might end up with invalid&nbsp;token.</li>
+<li>You need to hide the username and password from anonymous users (I guess that&#8217;s only possible with server side implementation of selective JavaScript&nbsp;loading).</li>
 </ol>
         </section>
         </div>
@@ -307,37 +307,37 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/wmts-few-things-i-want-to-remember/" rel="bookmark" title="Permalink to WMTS: Few Things I Want To Remember">WMTS: Few Things I Want To Remember</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2014/wmts-few-things-i-want-to-remember/" rel="bookmark" title="Permalink to WMTS: Few Things I Want To Remember"><span class="caps">WMTS</span>: Few Things I Want To&nbsp;Remember</a></h2>
             <small>Written on Sep 10, 2014
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>,         <a href="http://www.zimmi.cz/posts/tag/wmts.html">wmts</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
             <ul>
-<li>Used to serve prepared rectangular tiles; this means you are limited by web server speed rather than map server speed</li>
-<li>Several ways to retrieve tiles are defined: KVP and REST are mandatory, SOAP is optional</li>
-<li>Does not allow layer combination; additional tile matrix would have to be created</li>
-<li>GetCapabilities, GetTile and GetFeatureInfo requests are defined</li>
+<li>Used to serve prepared rectangular tiles; this means you are limited by web server speed rather than map server&nbsp;speed</li>
+<li>Several ways to retrieve tiles are defined: <span class="caps">KVP</span> and <span class="caps">REST</span> are mandatory, <span class="caps">SOAP</span> is&nbsp;optional</li>
+<li>Does not allow layer combination; additional tile matrix would have to be&nbsp;created</li>
+<li>GetCapabilities, GetTile and GetFeatureInfo requests are&nbsp;defined</li>
 <li><strong>tile</strong></li>
-<li>rectangular representation of space</li>
-<li>defined by tile and row indices</li>
-<li><strong>tile matrix</strong></li>
-<li>set of tiles for a given scale</li>
+<li>rectangular representation of&nbsp;space</li>
+<li>defined by tile and row&nbsp;indices</li>
+<li><strong>tile&nbsp;matrix</strong></li>
+<li>set of tiles for a given&nbsp;scale</li>
 <li><em>defined with:</em><ul>
-<li>tile size derived from standardized pixel size (0.28 &times; 0.28 mm)</li>
-<li>tile width and tile height (px)</li>
-<li>left upper corner coordinates</li>
-<li>matrix width and height as number of tiles</li>
+<li>tile size derived from standardized pixel size (0.28 &times; 0.28&nbsp;mm)</li>
+<li>tile width and tile height&nbsp;(px)</li>
+<li>left upper corner&nbsp;coordinates</li>
+<li>matrix width and height as number of&nbsp;tiles</li>
 </ul>
 </li>
-<li><strong>tile matrix set</strong></li>
-<li>set of tile matrices for different scales</li>
+<li><strong>tile matrix&nbsp;set</strong></li>
+<li>set of tile matrices for different&nbsp;scales</li>
 </ul>
-<h3>Total count of tile matrices</h3>
+<h3>Total count of tile&nbsp;matrices</h3>
 <p><em><code>nTileMatrices × nTiledStyles × nTiledFormats (if no dimensions are defined)</code></em></p>
-<h3>Total count of tiles in a tile matrix</h3>
+<h3>Total count of tiles in a tile&nbsp;matrix</h3>
 <p><em><code>matrixWidth × matrixHeight</code></em></p>
-<h3>Other equations</h3>
+<h3>Other&nbsp;equations</h3>
 <ul>
 <li><code>pixelSpan = scaleDenominator × 0.28 10<sup>3</sup> / metersPerUnit(crs);</code></li>
 <li><code>tileSpanX = tileWidth × pixelSpan;</code></li>

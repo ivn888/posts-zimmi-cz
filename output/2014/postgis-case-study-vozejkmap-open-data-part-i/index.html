@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-          <title>Michal Zimmermann | PostGIS Case Study: VozejkMap Open Data (Part I)</title>
+          <title>Michal Zimmermann | PostGIS Case Study: VozejkMap Open Data (Part&nbsp;I)</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
@@ -43,49 +43,49 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h1><a href="http://www.zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/" rel="bookmark" title="Permalink to PostGIS Case Study: VozejkMap Open Data (Part I)">PostGIS Case Study: VozejkMap Open Data (Part I)</a></h1>
+        <h1><a href="http://www.zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/" rel="bookmark" title="Permalink to PostGIS Case Study: VozejkMap Open Data (Part I)">PostGIS Case Study: VozejkMap Open Data (Part&nbsp;I)</a></h1>
         <small>Written on Dec 2, 2014
     and marked as
     <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,     <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>    | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
     </small>
     <section>
-        <p><a href="http://www.vozejkmap.cz">VozejkMap.cz</a> is a Czech <strong>open data</strong> iniatitive that collects data about wheelchair accessible places, e.g. pubs, toilets, cafes etc. As part of being open, they offer a <a href="http://www.vozejkmap.cz/opendata/">JSON data download</a>. JSON is a great text format, not so great spatial format (leaving GeoJSON aside) though. Anyway, nothing that <a href="http://posts.zimmi.cz/tag/postgis/">PostGIS</a> wouldn't be able to take care of.</p>
-<h3>Let's get some data</h3>
-<p>Using curl or wget, let's download the JSON file:</p>
+        <p><a href="http://www.vozejkmap.cz">VozejkMap.cz</a> is a Czech <strong>open data</strong> iniatitive that collects data about wheelchair accessible places, e.g. pubs, toilets, cafes etc. As part of being open, they offer a <a href="http://www.vozejkmap.cz/opendata/"><span class="caps">JSON</span> data download</a>. <span class="caps">JSON</span> is a great text format, not so great spatial format (leaving GeoJSON aside) though. Anyway, nothing that <a href="http://posts.zimmi.cz/tag/postgis/">PostGIS</a> wouldn&#8217;t be able to take care&nbsp;of.</p>
+<h3>Let&#8217;s get some&nbsp;data</h3>
+<p>Using curl or wget, let&#8217;s download the <span class="caps">JSON</span>&nbsp;file:</p>
 <div class="highlight"><pre>wget -O /tmp/locations.json http://www.vozejkmap.cz/opendata/locations.json
 </pre></div>
 
 
-<p>We need to split them into rows to load each point into one row:</p>
+<p>We need to split them into rows to load each point into one&nbsp;row:</p>
 <div class="highlight"><pre>sed -i &#39;s/\},{/\n},{/g&#39; /tmp/locations.json
 </pre></div>
 
 
-<p>If you peep into the file, you'll see lots of unicode characters we don't want to have in our pretty little table. Here's how we get rid of them:</p>
+<p>If you peep into the file, you&#8217;ll see lots of unicode characters we don&#8217;t want to have in our pretty little table. Here&#8217;s how we get rid of&nbsp;them:</p>
 <div class="highlight"><pre>echo -en &quot;$(cat /tmp/locations.json)&quot;
 </pre></div>
 
 
-<h3>Let's load the data</h3>
-<p>Let's just be nice and leave the public schema clean.</p>
+<h3>Let&#8217;s load the&nbsp;data</h3>
+<p>Let&#8217;s just be nice and leave the public schema&nbsp;clean.</p>
 <div class="highlight"><pre>CREATE SCHEMA vozejkmap;
 SET search_path=vozejkmap, public;
 </pre></div>
 
 
-<p>Load the data:</p>
+<p>Load the&nbsp;data:</p>
 <div class="highlight"><pre>CREATE TABLE vozejkmap_raw(id SERIAL PRIMARY KEY, raw text);
 COPY vozejkmap_raw(raw) FROM &#39;/tmp/locations.json&#39; DELIMITERS &#39;#&#39; ESCAPE &#39;\&#39; CSV;
 </pre></div>
 
 
-<p>A few notes:</p>
+<p>A few&nbsp;notes:</p>
 <ol>
-<li>I'm using <code>/tmp</code> folder to avoid any permission-denied issues when opening the file from <code>psql</code>.</li>
-<li>By setting <code>DELIMITERS</code> to <code>#</code> we tell PostgreSQL to load whole data into one column, because it is safe to assume there is no such character in our data.</li>
-<li><code>ESCAPE</code> needs to be set because there is one trailing quote in the dataset.</li>
+<li>I&#8217;m using <code>/tmp</code> folder to avoid any permission-denied issues when opening the file from <code>psql</code>.</li>
+<li>By setting <code>DELIMITERS</code> to <code>#</code> we tell PostgreSQL to load whole data into one column, because it is safe to assume there is no such character in our&nbsp;data.</li>
+<li><code>ESCAPE</code> needs to be set because there is one trailing quote in the&nbsp;dataset.</li>
 </ol>
-<h3>Let's get dirty with spatial data</h3>
+<h3>Let&#8217;s get dirty with spatial&nbsp;data</h3>
 <p>Great, now what? We loaded all the data into one column. That is not very useful, is it? How about splitting them into separate columns with this query? Shall we call it a <code>split_part</code> hell?</p>
 <div class="highlight"><pre>CREATE TABLE vozejkmap AS
 SELECT
@@ -175,7 +175,7 @@ FROM vozejkmap_raw;
 </pre></div>
 
 
-<p>It just splits the JSON data and creates table out of it according to the <a href="http://www.vozejkmap.cz/opendata/">VozejkMap.cz data specification</a>. Before going on we should create a table with location types to join their numeric codes to real names:</p>
+<p>It just splits the <span class="caps">JSON</span> data and creates table out of it according to the <a href="http://www.vozejkmap.cz/opendata/">VozejkMap.cz data specification</a>. Before going on we should create a table with location types to join their numeric codes to real&nbsp;names:</p>
 <div class="highlight"><pre>CREATE TABLE location_type (
     id integer PRIMARY KEY,
     description varchar(255)
@@ -198,7 +198,7 @@ INSERT INTO location_type VALUES(14, &#39;Prodejní a servisní místa Škoda Au
 </pre></div>
 
 
-<p>Let's build some geometry column, constraints and indexes. And don't forget to get rid of all the mess (the <code>vozejkmap_raw</code> table).</p>
+<p>Let&#8217;s build some geometry column, constraints and indexes. And don&#8217;t forget to get rid of all the mess (the <code>vozejkmap_raw</code> table).</p>
 <div class="highlight"><pre>DROP TABLE vozejkmap_raw;
 ALTER TABLE vozejkmap ADD PRIMARY KEY(id);
 -- 4326 geometry is not very useful for measurements, I might get to that next time
@@ -209,8 +209,8 @@ UPDATE vozejkmap SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326);
 </pre></div>
 
 
-<p><strong>And here we are, ready to use our spatial data!</strong></p>
-<p>Feel free to <a href="https://github.com/zimmicz/vozejkmap-to-postgis">grab the code</a> at GitHub.</p>
+<p><strong>And here we are, ready to use our spatial&nbsp;data!</strong></p>
+<p>Feel free to <a href="https://github.com/zimmicz/vozejkmap-to-postgis">grab the code</a> at&nbsp;GitHub.</p>
     </section>
     </div>
 <div class="neighbors">
@@ -218,22 +218,22 @@ UPDATE vozejkmap SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326);
     <ul>
         <li>
             <a href="http://www.zimmi.cz/posts/2014/postgis-spatial-indexing-with-st_intersects/">
-                 PostGIS Spatial Indexing With ST_Intersects
+                 PostGIS Spatial Indexing With&nbsp;ST_Intersects
             </a>
         </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2015/leaflet-with-custom-crs-epsg5514/">
-                 Leaflet With Custom CRS (EPSG:5514)
+                 Leaflet With Custom <span class="caps">CRS</span> (<span class="caps">EPSG</span>:5514)
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/postgis-spatial-indexing-with-st_intersects/">
-                 PostGIS Spatial Indexing With ST_Intersects
+                 PostGIS Spatial Indexing With&nbsp;ST_Intersects
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2015/using-postgresql-to-update-outdated-map-links/">
-                 Using PostgreSQL To Update Outdated Map Links
+                 Using PostgreSQL To Update Outdated Map&nbsp;Links
              </a>
          </li>
         </li>

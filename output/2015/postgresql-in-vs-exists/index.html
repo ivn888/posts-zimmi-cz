@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-          <title>Michal Zimmermann | PostgreSQL IN vs EXISTS</title>
+          <title>Michal Zimmermann | PostgreSQL <span class="caps">IN</span> vs <span class="caps">EXISTS</span></title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
@@ -42,14 +42,14 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h1><a href="http://www.zimmi.cz/posts/2015/postgresql-in-vs-exists/" rel="bookmark" title="Permalink to PostgreSQL IN vs EXISTS">PostgreSQL IN vs EXISTS</a></h1>
+        <h1><a href="http://www.zimmi.cz/posts/2015/postgresql-in-vs-exists/" rel="bookmark" title="Permalink to PostgreSQL IN vs EXISTS">PostgreSQL <span class="caps">IN</span> vs <span class="caps">EXISTS</span></a></h1>
         <small>Written on Oct 9, 2015
     and marked as
     <a href="http://www.zimmi.cz/posts/tag/sql.html">sql</a>    | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
     </small>
     <section>
-        <p>Until recently, SQL <code>IN</code> and <code>EXISTS</code> were almost exactly the same to me. There is a significant difference both in execution plans and time of execution though, as I found out after not being able to speed up my workmate's query.</p>
-<p>Assume two not-as-small-as-they-might-be tables:</p>
+        <p>Until recently, <span class="caps">SQL</span> <code>IN</code> and <code>EXISTS</code> were almost exactly the same to me. There is a significant difference both in execution plans and time of execution though, as I found out after not being able to speed up my workmate&#8217;s&nbsp;query.</p>
+<p>Assume two not-as-small-as-they-might-be&nbsp;tables:</p>
 <div class="highlight"><pre><span class="k">BEGIN</span><span class="p">;</span>
 
 <span class="k">CREATE</span> <span class="n">UNLOGGED</span> <span class="k">TABLE</span> <span class="n">test</span><span class="p">.</span><span class="n">small</span> <span class="k">AS</span>
@@ -63,7 +63,7 @@
 </pre></div>
 
 
-<p>To find out what rows from <code>test.big</code> is missing in <code>test.small</code>, you'll use one of these queries:</p>
+<p>To find out what rows from <code>test.big</code> is missing in <code>test.small</code>, you&#8217;ll use one of these&nbsp;queries:</p>
 <div class="highlight"><pre><span class="k">SELECT</span> <span class="n">id</span>
 <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">big</span>
 <span class="k">WHERE</span> <span class="n">id</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">id</span> <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">small</span><span class="p">);</span>
@@ -98,7 +98,7 @@
 </pre></div>
 
 
-<p>That's not a significant difference in time execution, is it?</p>
+<p>That&#8217;s not a significant difference in time execution, is&nbsp;it?</p>
 <p>What if you want to find out what rows from <code>test.small</code> is missing in <code>test.big</code>?</p>
 <div class="highlight"><pre><span class="k">SELECT</span> <span class="n">id</span>
 <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">small</span>
@@ -133,9 +133,9 @@
 </pre></div>
 
 
-<p>It took me ~750 ms to get the result with <code>EXISTS</code> expression. I kept <code>IN</code> running whole night with no result. I'm not really sure why <code>IN</code> is so much slower, it might be caused by checks for <code>NULL</code> values. The speed is also related to the size of the subquery, thus the difference when tables were switched.</p>
-<p><code>LEFT JOIN</code> can be used to achieve the same result, I find its syntax less obvious though.</p>
-<p>No indexes were built this time, I know they don't help the <code>IN</code> performance at all from my previous tests. Tested with PostgreSQL 9.3.9.</p>
+<p>It took me ~750 ms to get the result with <code>EXISTS</code> expression. I kept <code>IN</code> running whole night with no result. I&#8217;m not really sure why <code>IN</code> is so much slower, it might be caused by checks for <code>NULL</code> values. The speed is also related to the size of the subquery, thus the difference when tables were&nbsp;switched.</p>
+<p><code>LEFT JOIN</code> can be used to achieve the same result, I find its syntax less obvious&nbsp;though.</p>
+<p>No indexes were built this time, I know they don&#8217;t help the <code>IN</code> performance at all from my previous tests. Tested with PostgreSQL&nbsp;9.3.9.</p>
     </section>
     </div>
 <div class="neighbors">
@@ -143,12 +143,12 @@
     <ul>
         <li>
             <a href="http://www.zimmi.cz/posts/2015/how-to-use-queue-with-rsync/">
-                 How to Use Queue with Rsync
+                 How to Use Queue with&nbsp;Rsync
             </a>
         </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/">
-                 SSH GRASS Processing Status Check
+                 <span class="caps">SSH</span> <span class="caps">GRASS</span> Processing Status&nbsp;Check
              </a>
          </li>
         </li>

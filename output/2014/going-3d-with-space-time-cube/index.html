@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-          <title>Michal Zimmermann | Going 3D With Space Time Cube</title>
+          <title>Michal Zimmermann | Going 3D With Space Time&nbsp;Cube</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
@@ -43,30 +43,30 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h1><a href="http://www.zimmi.cz/posts/2014/going-3d-with-space-time-cube/" rel="bookmark" title="Permalink to Going 3D With Space Time Cube">Going 3D With Space Time Cube</a></h1>
+        <h1><a href="http://www.zimmi.cz/posts/2014/going-3d-with-space-time-cube/" rel="bookmark" title="Permalink to Going 3D With Space Time Cube">Going 3D With Space Time&nbsp;Cube</a></h1>
         <small>Written on Sep 2, 2014
     and marked as
     <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,     <a href="http://www.zimmi.cz/posts/tag/twitter.html">twitter</a>    | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
     </small>
     <section>
-        <p>Seeing <a href="http://anitagraser.com/2012/08/05/space-time-cubes-exploring-twitter-streams-3/">Anita&#8217;s space-time cube</a> back in 2013 was a moment of <em>woooow</em> for me. I&#8217;ve been interested in unusual ways of displaying data ever since I started studying GIS and this one was just great. <em>How the hell did she make it?!</em>, I thought back then.</p>
+        <p>Seeing <a href="http://anitagraser.com/2012/08/05/space-time-cubes-exploring-twitter-streams-3/">Anita&#8217;s space-time cube</a> back in 2013 was a moment of <em>woooow</em> for me. I&#8217;ve been interested in unusual ways of displaying data ever since I started studying <span class="caps">GIS</span> and this one was just great. <em>How the hell did she make it?!</em>, I thought back&nbsp;then.</p>
 
-<p>And I asked her, we had a little e-mail conversation and that was it. I got busy and had to postpone my attemps to create that viz until I dove into my diploma thesis. So&hellip;here you go.</p>
+<p>And I asked her, we had a little e-mail conversation and that was it. I got busy and had to postpone my attemps to create that viz until I dove into my diploma thesis. So&hellip;here you&nbsp;go.</p>
 
 <h3>Recipe</h3>
 
-<p>What you need is:</p>
+<p>What you need&nbsp;is:</p>
 
 <ul>
-<li><strong><a href="https://github.com/jdf/processing.py">processing.py</a></strong> which is a Python port of <a href="http://processing.org/">processing</a> environment.</li>
-<li>A <strong>basemap</strong> that fits the extent you are about to show in the viz. I recommend QGIS for obtaining an image.</li>
-<li>A <strong>JSON file</strong> with tweets you got via <a href="/2014/analyzing-twitter-languages-with-streaming-api/">Twitter REST API</a> (yes, the viz was made to display tweets).</li>
-<li>A <strong>python script</strong> I wrote.</li>
+<li><strong><a href="https://github.com/jdf/processing.py">processing.py</a></strong> which is a Python port of <a href="http://processing.org/">processing</a>&nbsp;environment.</li>
+<li>A <strong>basemap</strong> that fits the extent you are about to show in the viz. I recommend <span class="caps">QGIS</span> for obtaining an&nbsp;image.</li>
+<li>A <strong><span class="caps">JSON</span> file</strong> with tweets you got via <a href="/2014/analyzing-twitter-languages-with-streaming-api/">Twitter <span class="caps">REST</span> <span class="caps">API</span></a> (yes, the viz was made to display&nbsp;tweets).</li>
+<li>A <strong>python script</strong> I&nbsp;wrote.</li>
 </ul>
 
-<h3>How to make it delicious</h3>
+<h3>How to make it&nbsp;delicious</h3>
 
-<p>First things first, you need to add a <code>timestamp</code> property to tweets you want to show (with the following Python code). <code>created_at</code> param is a datetime string like <code>Sat Jun 22 21:30:42 +0000 2013</code> of every tweet in a loop. As a result you get a number of seconds since 1.1.1970. </p>
+<p>First things first, you need to add a <code>timestamp</code> property to tweets you want to show (with the following Python code). <code>created_at</code> param is a datetime string like <code>Sat Jun 22 21:30:42 +0000 2013</code> of every tweet in a loop. As a result you get a number of seconds since&nbsp;1.1.1970. </p>
 
 <pre><code>def string_to_timestamp(created_at):
     """Return the timestamp from created_at object."""
@@ -77,7 +77,7 @@
     return mktime(timestamp)
 </code></pre>
 
-<p>As you probably guess, the <code>timestamp</code> property is the one we&#8217;re gonna display on the vertical axis. <strong>You definitely want the tweets to be sorted chronologically in your JSON file!</strong></p>
+<p>As you probably guess, the <code>timestamp</code> property is the one we&#8217;re gonna display on the vertical axis. <strong>You definitely want the tweets to be sorted chronologically in your <span class="caps">JSON</span>&nbsp;file!</strong></p>
 
 <pre><code>#!/usr/bin/python
 # -*- coding: utf-8 -*-
@@ -172,18 +172,18 @@ def draw():
         saveFrame('screens/frame-####.png')"""
 </code></pre>
 
-<p>You should be most interested in these lines:</p>
+<p>You should be most interested in these&nbsp;lines:</p>
 
 <pre><code>x = map(lon, -19.68624620368202116, 58.92453879754536672, 0, width)
 y = map(time, first, last, 0, 500)
 z = map(lat, 16.59971950210866964, 63.68835804244784526, 0, height)
 </code></pre>
 
-<p><img src="http://www.processing.org/tutorials/p3d/imgs/coordinatesystem.png" title="Processing coordinate system" class="img-rounded pull-left">They define how coordinates inside the cube should be computed. As you see, <code>x</code> is the result of mapping longitudinal extent of our area to the width of cube, the same happens to <code>z</code> and latitude, and to <code>y</code> (but here we map time, not coordinates).</p>
+<p><img src="http://www.processing.org/tutorials/p3d/imgs/coordinatesystem.png" title="Processing coordinate system" class="img-rounded pull-left">They define how coordinates inside the cube should be computed. As you see, <code>x</code> is the result of mapping longitudinal extent of our area to the width of cube, the same happens to <code>z</code> and latitude, and to <code>y</code> (but here we map time, not&nbsp;coordinates).</p>
 
-<p>The bounding box used in those computations is the bounding box of the basemap. Interesting thing about Processing and its 3D environment is how it defines the beginning of the coordinate system. As you can see on the left, it might be slighty different from what you could expect. That&#8217;s what you need to be careful about.</p>
+<p>The bounding box used in those computations is the bounding box of the basemap. Interesting thing about Processing and its 3D environment is how it defines the beginning of the coordinate system. As you can see on the left, it might be slighty different from what you could expect. That&#8217;s what you need to be careful&nbsp;about.</p>
 
-<h3>How does it look</h3>
+<h3>How does it&nbsp;look</h3>
 
 <iframe width="420" height="315" src="//www.youtube.com/embed/4jl6-qOiSAE?rel=0" frameborder="0" allowfullscreen></iframe>
     </section>
@@ -193,22 +193,22 @@ z = map(lat, 16.59971950210866964, 63.68835804244784526, 0, height)
     <ul>
         <li>
             <a href="http://www.zimmi.cz/posts/2014/leaflet-coordinates-control/">
-                 Leaflet Coordinates Control
+                 Leaflet Coordinates&nbsp;Control
             </a>
         </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/analyzing-twitter-languages-with-streaming-api/">
-                 Analyzing Twitter Languages With Streaming API
+                 Analyzing Twitter Languages With Streaming <span class="caps">API</span>
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/leaflet-coordinates-control/">
-                 Leaflet Coordinates Control
+                 Leaflet Coordinates&nbsp;Control
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/analyzing-twitter-languages-with-streaming-api/">
-                 Analyzing Twitter Languages With Streaming API
+                 Analyzing Twitter Languages With Streaming <span class="caps">API</span>
              </a>
          </li>
         </li>

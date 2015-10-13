@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-          <title>Michal Zimmermann | PostGIS Spatial Indexing With ST_Intersects</title>
+          <title>Michal Zimmermann | PostGIS Spatial Indexing With&nbsp;ST_Intersects</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
@@ -42,25 +42,25 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h1><a href="http://www.zimmi.cz/posts/2014/postgis-spatial-indexing-with-st_intersects/" rel="bookmark" title="Permalink to PostGIS Spatial Indexing With ST_Intersects">PostGIS Spatial Indexing With ST_Intersects</a></h1>
+        <h1><a href="http://www.zimmi.cz/posts/2014/postgis-spatial-indexing-with-st_intersects/" rel="bookmark" title="Permalink to PostGIS Spatial Indexing With ST_Intersects">PostGIS Spatial Indexing With&nbsp;ST_Intersects</a></h1>
         <small>Written on Nov 23, 2014
     and marked as
     <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>    | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
     </small>
     <section>
         <p><a href="http://postgis.net/docs/ST_Intersects.html">PostGIS docs</a> clearly states that:
-    &gt; This function call will automatically include a bounding box comparison that will make use of any indexes that are available on the geometries.</p>
-<p>That means (or at least I think so) that you shouldn't bother with using <a href="http://postgis.net/docs/reference.html#Operators">operators</a> before calling this function.</p>
-<p><a href="http://slides.com/michalzimmermann">I was preparing</a> my second lecture on PostGIS and I was experimenting a bit and came up with an interesting thing on this matter:</p>
-<p>Let's have two SQL relations, <code>roads</code> and <code>regions</code>. I would like to retrieve every road that intersects a certain region. Spatial indexes were built beforehand on both tables.</p>
-<p>First try:</p>
+    &gt; This function call will automatically include a bounding box comparison that will make use of any indexes that are available on the&nbsp;geometries.</p>
+<p>That means (or at least I think so) that you shouldn&#8217;t bother with using <a href="http://postgis.net/docs/reference.html#Operators">operators</a> before calling this&nbsp;function.</p>
+<p><a href="http://slides.com/michalzimmermann">I was preparing</a> my second lecture on PostGIS and I was experimenting a bit and came up with an interesting thing on this&nbsp;matter:</p>
+<p>Let&#8217;s have two <span class="caps">SQL</span> relations, <code>roads</code> and <code>regions</code>. I would like to retrieve every road that intersects a certain region. Spatial indexes were built beforehand on both&nbsp;tables.</p>
+<p>First&nbsp;try:</p>
 <div class="highlight"><pre>EXPLAIN ANALYZE SELECT roads.* FROM roads
 JOIN regions ON ST_Intersects(roads.geom, regions.geom)
 WHERE regions.&quot;NAZEV&quot; = &#39;Jihomoravský&#39;;`
 </pre></div>
 
 
-<p>And here comes the result:</p>
+<p>And here comes the&nbsp;result:</p>
 <div class="highlight"><pre>Nested Loop  (cost=4.85..324.26 rows=249 width=214) (actual time=45.102..5101.472 rows=74253 loops=1)
 -&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.015..0.018 rows=1 loops=1)
      Filter: ((&quot;NAZEV&quot;)::text = &#39;Jihomoravský&#39;::text)
@@ -76,15 +76,15 @@ Total runtime: 5181.459 ms
 </pre></div>
 
 
-<p>I was pretty satisfied with the result, I kept digging deeper though.</p>
-<p>Second try:</p>
+<p>I was pretty satisfied with the result, I kept digging deeper&nbsp;though.</p>
+<p>Second&nbsp;try:</p>
 <div class="highlight"><pre>EXPLAIN ANALYZE SELECT roads.* FROM roads
 JOIN regions ON roads.geom &amp;&amp; regions.geom
 WHERE regions.&quot;NAZEV&quot; = &#39;Jihomoravský&#39; AND ST_Intersects(roads.geom, regions.geom);
 </pre></div>
 
 
-<p>And the result:</p>
+<p>And the&nbsp;result:</p>
 <div class="highlight"><pre>Nested Loop  (cost=0.29..21.19 rows=1 width=214) (actual time=3.041..3850.302 rows=74253 loops=1)
 -&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.021..0.024 rows=1 loops=1)
      Filter: ((&quot;NAZEV&quot;)::text = &#39;Jihomoravský&#39;::text)
@@ -97,8 +97,8 @@ Total runtime: 3930.270 ms
 </pre></div>
 
 
-<p>Now there's a significant difference between total runtimes of both queries and - more important - also a difference between their query plans. The latter is like <strong>20 % faster</strong>.</p>
-<p>I'm puzzled about this behavior and would appreciate any thoughts on this. Reach me at <a href="http://twitter.com/zimmicz">Twitter</a>, <a href="https://www.linkedin.com/pub/michal-zimmermann/29/8/b30">LinkedIn</a> or e-mail (zimmicz[at]gmail.com).</p>
+<p>Now there&#8217;s a significant difference between total runtimes of both queries and - more important - also a difference between their query plans. The latter is like <strong>20 % faster</strong>.</p>
+<p>I&#8217;m puzzled about this behavior and would appreciate any thoughts on this. Reach me at <a href="http://twitter.com/zimmicz">Twitter</a>, <a href="https://www.linkedin.com/pub/michal-zimmermann/29/8/b30">LinkedIn</a> or e-mail&nbsp;(zimmicz[at]gmail.com).</p>
     </section>
     </div>
 <div class="neighbors">
@@ -106,17 +106,17 @@ Total runtime: 3930.270 ms
     <ul>
         <li>
             <a href="http://www.zimmi.cz/posts/2014/bash-prepend-to-filename/">
-                 Bash: Prepend To Filename
+                 Bash: Prepend To&nbsp;Filename
             </a>
         </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/">
-                 PostGIS Case Study: VozejkMap Open Data (Part I)
+                 PostGIS Case Study: VozejkMap Open Data (Part&nbsp;I)
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/">
-                 PostGIS Case Study: VozejkMap Open Data (Part I)
+                 PostGIS Case Study: VozejkMap Open Data (Part&nbsp;I)
              </a>
          </li>
         </li>

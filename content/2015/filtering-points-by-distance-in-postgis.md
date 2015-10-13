@@ -1,4 +1,5 @@
 Title: Filtering points by distance in PostGIS
+Date: 2015-07-21 07:51
 Category: SQL
 Tags: postgis
 

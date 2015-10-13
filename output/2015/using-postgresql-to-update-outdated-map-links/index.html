@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-          <title>Michal Zimmermann | Using PostgreSQL To Update Outdated Map Links</title>
+          <title>Michal Zimmermann | Using PostgreSQL To Update Outdated Map&nbsp;Links</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
@@ -43,14 +43,14 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h1><a href="http://www.zimmi.cz/posts/2015/using-postgresql-to-update-outdated-map-links/" rel="bookmark" title="Permalink to Using PostgreSQL To Update Outdated Map Links">Using PostgreSQL To Update Outdated Map Links</a></h1>
+        <h1><a href="http://www.zimmi.cz/posts/2015/using-postgresql-to-update-outdated-map-links/" rel="bookmark" title="Permalink to Using PostgreSQL To Update Outdated Map Links">Using PostgreSQL To Update Outdated Map&nbsp;Links</a></h1>
         <small>Written on Feb 16, 2015
     and marked as
     <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,     <a href="http://www.zimmi.cz/posts/tag/regex.html">regex</a>    | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
     </small>
     <section>
-        <p><a href="http://www.edpp.cz/pdb_mapa-povodnoveho-planu-mesta/">We've rolled out</a> completely new map GUI at <a href="http://edpp.cz">edpp.cz</a> built on top of <a href="http://ol3js.org">OpenLayers 3</a>. It looks great and has lots of functions both for BFU and power users. The only pitfall that came with moving away from OpenLayers 2 were remarkable differences in zoom levels between the old map and the new one.</p>
-<p>Each of our maps is defined by our admins (center, zoom level, layers) at the map creation. Lots of links calling different views of map are created as well. They take form of <code>http://edpp.cz/some-map?0=0&amp;1=0...zoom=5</code>. That <code>zoom=&lt;Number&gt;</code> started causing troubles immediately after the map switch. No way my workmates would update them one by one as there were ~4,500 of them. Sounds like a task for little bit of regular expressions and some SQL updates.</p>
+        <p><a href="http://www.edpp.cz/pdb_mapa-povodnoveho-planu-mesta/">We&#8217;ve rolled out</a> completely new map <span class="caps">GUI</span> at <a href="http://edpp.cz">edpp.cz</a> built on top of <a href="http://ol3js.org">OpenLayers 3</a>. It looks great and has lots of functions both for <span class="caps">BFU</span> and power users. The only pitfall that came with moving away from OpenLayers 2 were remarkable differences in zoom levels between the old map and the new&nbsp;one.</p>
+<p>Each of our maps is defined by our admins (center, zoom level, layers) at the map creation. Lots of links calling different views of map are created as well. They take form of <code>http://edpp.cz/some-map?0=0&amp;1=0...zoom=5</code>. That <code>zoom=&lt;Number&gt;</code> started causing troubles immediately after the map switch. No way my workmates would update them one by one as there were ~4,500 of them. Sounds like a task for little bit of regular expressions and some <span class="caps">SQL</span>&nbsp;updates.</p>
 <div class="highlight"><pre>UPDATE table
     SET column = regexp_replace(column, &#39;zoom=\d&#39;, &#39;zoom=&#39; || subquery.zoom, &#39;g&#39;)
     FROM (
@@ -65,7 +65,7 @@
 </pre></div>
 
 
-<p>That's what I've come up with. It basically extracts the zoom level from the link, adds number two to its value and writes it back to the string.</p>
+<p>That&#8217;s what I&#8217;ve come up with. It basically extracts the zoom level from the link, adds number two to its value and writes it back to the&nbsp;string.</p>
     </section>
     </div>
 <div class="neighbors">
@@ -73,22 +73,22 @@
     <ul>
         <li>
             <a href="http://www.zimmi.cz/posts/2015/leaflet-with-custom-crs-epsg5514/">
-                 Leaflet With Custom CRS (EPSG:5514)
+                 Leaflet With Custom <span class="caps">CRS</span> (<span class="caps">EPSG</span>:5514)
             </a>
         </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/">
-                 PostGIS Case Study: Vozejkmap Open Data (Part II)
+                 PostGIS Case Study: Vozejkmap Open Data (Part <span class="caps">II</span>)
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/">
-                 PostGIS Case Study: VozejkMap Open Data (Part I)
+                 PostGIS Case Study: VozejkMap Open Data (Part&nbsp;I)
              </a>
          </li>
          <li>
              <a href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/">
-                 PostGIS Case Study: Vozejkmap Open Data (Part II)
+                 PostGIS Case Study: Vozejkmap Open Data (Part <span class="caps">II</span>)
              </a>
          </li>
         </li>

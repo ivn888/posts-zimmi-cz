@@ -39,16 +39,16 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/connecting-to-secured-arcgis-server-layer-with-openlayers-3/" rel="bookmark" title="Permalink to Connecting To Secured ArcGIS Server Layer With OpenLayers 3">Connecting To Secured ArcGIS Server Layer With OpenLayers 3</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2014/connecting-to-secured-arcgis-server-layer-with-openlayers-3/" rel="bookmark" title="Permalink to Connecting To Secured ArcGIS Server Layer With OpenLayers 3">Connecting To Secured ArcGIS Server Layer With OpenLayers&nbsp;3</a></h2>
             <small>Written on Sep 12, 2014
         and marked as
         <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>,         <a href="http://www.zimmi.cz/posts/tag/openlayers.html">openlayers</a>,         <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
-            <p>I was made to use ArcGIS Server with <a href="http://openlayers.org">Openlayers 3</a> just recently as one of the projects I've been working on demands such different tools to work together.</p>
-<p><strong>tl;dr: I hate Esri.</strong></p>
-<p>I found myself in need to access secured layers published via WMS on ArcGIS Server using username and password I was given, so here's a little how-to for anyone who would have to do the same.</p>
-<p>Let's start with a simple ol.layer.Image and pretend this is the secured layer we're looking for:</p>
+            <p>I was made to use ArcGIS Server with <a href="http://openlayers.org">Openlayers 3</a> just recently as one of the projects I&#8217;ve been working on demands such different tools to work&nbsp;together.</p>
+<p><strong>tl;dr: I hate&nbsp;Esri.</strong></p>
+<p>I found myself in need to access secured layers published via <span class="caps">WMS</span> on ArcGIS Server using username and password I was given, so here&#8217;s a little how-to for anyone who would have to do the&nbsp;same.</p>
+<p>Let&#8217;s start with a simple ol.layer.Image and pretend this is the secured layer we&#8217;re looking&nbsp;for:</p>
 <div class="highlight"><pre>var layer = new ol.layer.Image({
     extent: extent,
     source: new ol.source.ImageWMS(/** @type {olx.source.ImageWMSOptions} */ ({
@@ -62,7 +62,7 @@
 </pre></div>
 
 
-<p>We need to retrieve the token, so we define a function:</p>
+<p>We need to retrieve the token, so we define a&nbsp;function:</p>
 <div class="highlight"><pre><span class="kd">function</span> <span class="nx">retrieveToken</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">req</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">;</span>
 
@@ -79,7 +79,7 @@
 </pre></div>
 
 
-<p>I pass a parameter called <code>callback</code> - that's a very important step, otherwise you would not be able to retrieve the token when you actually need it (AJAX stands for asynchronous). Now you just pass the token to the layer params like this:</p>
+<p>I pass a parameter called <code>callback</code> - that&#8217;s a very important step, otherwise you would not be able to retrieve the token when you actually need it (<span class="caps">AJAX</span> stands for asynchronous). Now you just pass the token to the layer params like&nbsp;this:</p>
 <div class="highlight"><pre><span class="nx">retrieveToken</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">layer</span><span class="p">.</span><span class="nx">getSource</span><span class="p">().</span><span class="nx">updateParams</span><span class="p">({</span>
         <span class="nx">token</span><span class="o">:</span> <span class="nx">token</span>
@@ -88,12 +88,12 @@
 </pre></div>
 
 
-<p>When you open Firebug and inspect Network tab, you should find <code>token</code> URL parameter passed along with WMS <code>GetMap</code> request.</p>
-<p>Few sidenotes:</p>
+<p>When you open Firebug and inspect Network tab, you should find <code>token</code> <span class="caps">URL</span> parameter passed along with <span class="caps">WMS</span> <code>GetMap</code> request.</p>
+<p>Few&nbsp;sidenotes:</p>
 <ol>
-<li>Although you might be logged in ArcGIS Server via web interface, you might need to pass the <code>token</code>  URL param when trying to access Capabilities document. Don't know why though.</li>
-<li>You should probably take care of calling the <code>retrieveToken()</code> in shorter interval than the token expiration is set to. Otherwise you might end up with invalid token.</li>
-<li>You need to hide the username and password from anonymous users (I guess that's only possible with server side implementation of selective JavaScript loading).</li>
+<li>Although you might be logged in ArcGIS Server via web interface, you might need to pass the <code>token</code>  <span class="caps">URL</span> param when trying to access Capabilities document. Don&#8217;t know why&nbsp;though.</li>
+<li>You should probably take care of calling the <code>retrieveToken()</code> in shorter interval than the token expiration is set to. Otherwise you might end up with invalid&nbsp;token.</li>
+<li>You need to hide the username and password from anonymous users (I guess that&#8217;s only possible with server side implementation of selective JavaScript&nbsp;loading).</li>
 </ol>
         </section>
         </div>
