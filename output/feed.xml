@@ -1,5 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Michal Zimmermann</title><link>http://www.zimmi.cz/posts/</link><description>Pieces of knowledge from the world of GIS.</description><atom:link href="http://www.zimmi.cz/posts/feed.xml" rel="self"></atom:link><lastBuildDate>Fri, 09 Oct 2015 09:00:00 +0200</lastBuildDate><item><title>PostgreSQL IN vs EXISTS</title><link>http://www.zimmi.cz/posts/2015/postgresql-in-vs-exists/</link><description>&lt;p&gt;Until recently, &lt;span class="caps"&gt;SQL&lt;/span&gt; &lt;code&gt;IN&lt;/code&gt; and &lt;code&gt;EXISTS&lt;/code&gt; were almost exactly the same to me. There is a significant difference both in execution plans and time of execution though, as I found out after not being able to speed up my workmate&amp;#8217;s&amp;nbsp;query.&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Michal Zimmermann</title><link>http://www.zimmi.cz/posts/</link><description>Pieces of knowledge from the world of GIS.</description><atom:link href="http://www.zimmi.cz/posts/feed.xml" rel="self"></atom:link><lastBuildDate>Sun, 25 Oct 2015 09:42:00 +0100</lastBuildDate><item><title>Color Relief Shaded Map Using Open Data with Open Source Software</title><link>http://www.zimmi.cz/posts/2015/color-relief-shaded-map-using-open-data-with-open-source-software/</link><description>&lt;p&gt;The Digital Elevation Model over Europe (&lt;span class="caps"&gt;EU&lt;/span&gt;-&lt;span class="caps"&gt;DEM&lt;/span&gt;) has been recently released for public usage at &lt;a href="http://land.copernicus.eu/in-situ/eu-dem"&gt;Copernicus Land Monitoring Services homepage&lt;/a&gt;. Strictly speaking, it is a &lt;strong&gt;digital surface model&lt;/strong&gt; coming from weighted average of &lt;span class="caps"&gt;SRTM&lt;/span&gt; and &lt;span class="caps"&gt;ASTER&lt;/span&gt; &lt;span class="caps"&gt;GDEM&lt;/span&gt; with geographic accuracy of 25 m. Data are provided as GeoTIFF files projected in 1 degree by 1 degree tiles (projected to &lt;span class="caps"&gt;EPSG&lt;/span&gt;:3035), so they correspond to the &lt;span class="caps"&gt;SRTM&lt;/span&gt; naming&amp;nbsp;convention.&lt;/p&gt;
+&lt;p&gt;If you can&amp;#8217;t see the map to choose the data to download, make sure you&amp;#8217;re not using &lt;span class="caps"&gt;HTTPS&lt;/span&gt; Everywhere or similar browser&amp;nbsp;plugin.&lt;/p&gt;
+&lt;p&gt;I chose &lt;strong&gt;Austria&lt;/strong&gt; to play with the&amp;nbsp;data.&lt;/p&gt;
+&lt;h2&gt;Obtaining the&amp;nbsp;data&lt;/h2&gt;
+&lt;p&gt;It&amp;#8217;s so easy I doubt it&amp;#8217;s even worth a word. Get zipped data with &lt;code&gt;wget&lt;/code&gt;, extract them to a&amp;nbsp;directory.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;wget https://cws-download.eea.europa.eu/in-situ/eudem/EUD_CP-DEMS_4500025000-AA.zip -O dem.zip
+unzip dem.zip -d copernicus
+&lt;span class="nb"&gt;cd &lt;/span&gt;copernicus
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Hillshade and color&amp;nbsp;relief&lt;/h2&gt;
+&lt;p&gt;Use &lt;span class="caps"&gt;GDAL&lt;/span&gt; to create hillshade with a simple command. No need to use &lt;code&gt;-s&lt;/code&gt; flag to convert units, it already comes in meters. Exaggerate heights a bit with &lt;code&gt;-z&lt;/code&gt; flag.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gdaldem hillshade EUD_CP-DEMS_4500025000-AA.tif hillshade.tif -z 3
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And here comes the&amp;nbsp;Alps.&lt;/p&gt;
+&lt;p class="text-center"&gt;&lt;img title="Hillshade" src="http://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/hillshade.png" class="center"&gt;&lt;/p&gt;
+
+&lt;p&gt;To create a color relief you need a ramp of heights with colors. &lt;a href="http://cartographicperspectives.org/index.php/journal/article/viewFile/20/70"&gt;&amp;#8220;The Development and Rationale of Cross-blended Hypsometric Tints&amp;#8221;&lt;/a&gt; by T. Patterson and B. Jenny is a great read on &lt;strong&gt;hypsometric tints&lt;/strong&gt;. They also give advice on what colors to choose in different environments (see the table at the last page of the article). I settled for warm humid color&amp;nbsp;values.&lt;/p&gt;
+&lt;table class="center"&gt;
+&lt;thead&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Elevation [m]&lt;/th&gt;
+        &lt;th&gt;Red&lt;/th&gt;
+        &lt;th&gt;Green&lt;/th&gt;
+        &lt;th&gt;Blue&lt;/th&gt;
+    &lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr style="background: rgb(220, 220, 220)"&gt;
+&lt;td&gt;5000&lt;/td&gt;
+&lt;td&gt;220&lt;/td&gt;
+&lt;td&gt;220&lt;/td&gt;
+&lt;td&gt;220&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="background: rgb(212, 207, 204)"&gt;
+&lt;td&gt;4000&lt;/td&gt;
+&lt;td&gt;212&lt;/td&gt;
+&lt;td&gt;207&lt;/td&gt;
+&lt;td&gt;204&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="background: rgb(212, 193, 179)"&gt;
+&lt;td&gt;3000&lt;/td&gt;
+&lt;td&gt;212&lt;/td&gt;
+&lt;td&gt;193&lt;/td&gt;
+&lt;td&gt;179&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="background: rgb(212, 184, 163)"&gt;
+&lt;td&gt;2000&lt;/td&gt;
+&lt;td&gt;212&lt;/td&gt;
+&lt;td&gt;184&lt;/td&gt;
+&lt;td&gt;163&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="background: rgb(212, 201, 180)"&gt;
+&lt;td&gt;1000&lt;/td&gt;
+&lt;td&gt;212&lt;/td&gt;
+&lt;td&gt;201&lt;/td&gt;
+&lt;td&gt;180&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="background: rgb(196, 192, 166)"&gt;
+&lt;td&gt;600&lt;/td&gt;
+&lt;td&gt;169&lt;/td&gt;
+&lt;td&gt;192&lt;/td&gt;
+&lt;td&gt;166&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="background: rgb(134, 184, 159)"&gt;
+&lt;td&gt;200&lt;/td&gt;
+&lt;td&gt;134&lt;/td&gt;
+&lt;td&gt;184&lt;/td&gt;
+&lt;td&gt;159&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="background: rgb(120, 172, 149)"&gt;
+&lt;td&gt;50&lt;/td&gt;
+&lt;td&gt;120&lt;/td&gt;
+&lt;td&gt;172&lt;/td&gt;
+&lt;td&gt;149&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="background: rgb(114, 164, 141)"&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;114&lt;/td&gt;
+&lt;td&gt;164&lt;/td&gt;
+&lt;td&gt;141&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;I created a color relief with another &lt;span class="caps"&gt;GDAL&lt;/span&gt;&amp;nbsp;command.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gdaldem color-relief EUD_CP-DEMS_4500025000-AA.tif ramp_humid.txt color_relief.tif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And here comes hypsometric&amp;nbsp;tints.&lt;/p&gt;
+&lt;p class="text-center"&gt;&lt;img title="Color relief" src="http://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/color_relief.png" class="center"&gt;&lt;/p&gt;
+
+&lt;h2&gt;Map&amp;nbsp;composition&lt;/h2&gt;
+&lt;p&gt;I chose Austria for its excessive amount of freely available datasets. What I didn&amp;#8217;t take into consideration was my lack of knowledge when it comes to German (#fail). States come from &lt;a href="http://data.gv.at"&gt;data.gv.at&lt;/a&gt; and was dissolved from smaller administrative units. State capitals were downloaded from &lt;a href="http://naturalearth.com"&gt;naturalearth.com&lt;/a&gt;.&lt;/p&gt;
+&lt;p class="text-center"&gt;&lt;a href="http://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/map.pdf" title="Click for PDF version"&gt;&lt;img title="Austria" src="http://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/map.png" class="center"&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;d like to add some more thematic layers in the future. And translate the map to&amp;nbsp;English.&lt;/p&gt;
+&lt;h2&gt;Few words on &lt;span class="caps"&gt;INSPIRE&lt;/span&gt;&amp;nbsp;Geoportal&lt;/h2&gt;
+&lt;p&gt;&lt;a href="http://inspire-geoportal.ec.europa.eu/"&gt;&lt;span class="caps"&gt;INSPIRE&lt;/span&gt; Geoportal&lt;/a&gt; should be the first place you go to search for European spatial data (at last &lt;span class="caps"&gt;EU&lt;/span&gt; thinks so). I used it to find data for this map and it was a very frustrating experience. It was actually more frustrating than using Austrian open data portal in German. Last news are from May 21, 2015, but the whole site looks and feels like deep 90s or early 2000 at&amp;nbsp;least.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Michal Zimmermann</dc:creator><pubDate>Sun, 25 Oct 2015 09:42:00 +0100</pubDate><guid>tag:www.zimmi.cz,2015-10-25:posts/2015/color-relief-shaded-map-using-open-data-with-open-source-software/</guid><category>bash</category><category>gdal</category><category>linux</category><category>qgis</category></item><item><title>PostgreSQL IN vs EXISTS</title><link>http://www.zimmi.cz/posts/2015/postgresql-in-vs-exists/</link><description>&lt;p&gt;Until recently, &lt;span class="caps"&gt;SQL&lt;/span&gt; &lt;code&gt;IN&lt;/code&gt; and &lt;code&gt;EXISTS&lt;/code&gt; were almost exactly the same to me. There is a significant difference both in execution plans and time of execution though, as I found out after not being able to speed up my workmate&amp;#8217;s&amp;nbsp;query.&lt;/p&gt;
 &lt;p&gt;Assume two not-as-small-as-they-might-be&amp;nbsp;tables:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;BEGIN&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 
