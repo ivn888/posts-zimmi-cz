@@ -1,5 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-10-25T09:42:00+01:00</updated><entry><title>Color Relief Shaded Map Using Open Data with Open Source Software</title><link href="http://www.zimmi.cz/posts/2015/color-relief-shaded-map-using-open-data-with-open-source-software/" rel="alternate"></link><updated>2015-10-25T09:42:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-10-25:posts/2015/color-relief-shaded-map-using-open-data-with-open-source-software/</id><summary type="html">&lt;p&gt;The Digital Elevation Model over Europe (&lt;span class="caps"&gt;EU&lt;/span&gt;-&lt;span class="caps"&gt;DEM&lt;/span&gt;) has been recently released for public usage at &lt;a href="http://land.copernicus.eu/in-situ/eu-dem"&gt;Copernicus Land Monitoring Services homepage&lt;/a&gt;. Strictly speaking, it is a &lt;strong&gt;digital surface model&lt;/strong&gt; coming from weighted average of &lt;span class="caps"&gt;SRTM&lt;/span&gt; and &lt;span class="caps"&gt;ASTER&lt;/span&gt; &lt;span class="caps"&gt;GDEM&lt;/span&gt; with geographic accuracy of 25 m. Data are provided as GeoTIFF files projected in 1 degree by 1 degree tiles (projected to &lt;span class="caps"&gt;EPSG&lt;/span&gt;:3035), so they correspond to the &lt;span class="caps"&gt;SRTM&lt;/span&gt; naming&amp;nbsp;convention.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-10-29T22:00:00+01:00</updated><entry><title>Installing PostGIS 2.2 with SFCGAL on Ubuntu-based OS</title><link href="http://www.zimmi.cz/posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/" rel="alternate"></link><updated>2015-10-29T22:00:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-10-29:posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/</id><summary type="html">&lt;p&gt;I&amp;#8217;ve seen a bunch of questions on &lt;span class="caps"&gt;GIS&lt;/span&gt; StackExchange recently related to &lt;a href="http://sfcgal.org/"&gt;&lt;span class="caps"&gt;SFCGAL&lt;/span&gt;&lt;/a&gt; extension for &lt;a href="http://postgis.net"&gt;PostGIS 2.2&lt;/a&gt;. Great news are it can be installed with one simple query &lt;code&gt;CREATE EXTENSION postgis_sfcgal&lt;/code&gt;. Not so great news are you have to compile it from source for Ubuntu-based &lt;span class="caps"&gt;OS&lt;/span&gt; (14.04) as recent versions of required packages are not available in the&amp;nbsp;repositories.&lt;/p&gt;
+&lt;p&gt;I tested my solution on elementary &lt;span class="caps"&gt;OS&lt;/span&gt; 0.3.1 based on Ubuntu 14.04. &lt;strong&gt;And it works!&lt;/strong&gt; It installs PostgreSQL 9.4 from repositories together with &lt;span class="caps"&gt;GDAL&lt;/span&gt; and &lt;span class="caps"&gt;GEOS&lt;/span&gt; and some other libs PostGIS depends on. PostGIS itself, &lt;span class="caps"&gt;CGAL&lt;/span&gt;, Boost, &lt;span class="caps"&gt;MPFR&lt;/span&gt; and &lt;span class="caps"&gt;GMP&lt;/span&gt; are built from&amp;nbsp;source.&lt;/p&gt;
+&lt;p&gt;Here comes the code (commented where&amp;nbsp;needed).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sudo -i
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; tee -a /etc/apt/sources.list
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc &lt;span class="p"&gt;|&lt;/span&gt; sudo apt-key add -
+apt-get update
+apt-get install -y postgresql-9.4 &lt;span class="se"&gt;\&lt;/span&gt;
+    postgresql-client-9.4 &lt;span class="se"&gt;\&lt;/span&gt;
+    postgresql-contrib-9.4 &lt;span class="se"&gt;\&lt;/span&gt;
+    libpq-dev &lt;span class="se"&gt;\&lt;/span&gt;
+    postgresql-server-dev-9.4 &lt;span class="se"&gt;\&lt;/span&gt;
+    build-essential &lt;span class="se"&gt;\&lt;/span&gt;
+    libgeos-c1 &lt;span class="se"&gt;\&lt;/span&gt;
+    libgdal-dev &lt;span class="se"&gt;\&lt;/span&gt;
+    libproj-dev &lt;span class="se"&gt;\&lt;/span&gt;
+    libjson0-dev &lt;span class="se"&gt;\&lt;/span&gt;
+    libxml2-dev &lt;span class="se"&gt;\&lt;/span&gt;
+    libxml2-utils &lt;span class="se"&gt;\&lt;/span&gt;
+    xsltproc &lt;span class="se"&gt;\&lt;/span&gt;
+    docbook-xsl &lt;span class="se"&gt;\&lt;/span&gt;
+    docbook-mathml &lt;span class="se"&gt;\&lt;/span&gt;
+    cmake &lt;span class="se"&gt;\&lt;/span&gt;
+    gcc &lt;span class="se"&gt;\&lt;/span&gt;
+    m4 &lt;span class="se"&gt;\&lt;/span&gt;
+    icu-devtools
+
+&lt;span class="nb"&gt;exit&lt;/span&gt; &lt;span class="c"&gt;# leave root otherwise postgis will choke&lt;/span&gt;
+
+&lt;span class="nb"&gt;cd&lt;/span&gt; /tmp
+touch download.txt
+cat &lt;span class="s"&gt;&amp;lt;&amp;lt;EOT &amp;gt;&amp;gt; download.txt&lt;/span&gt;
+&lt;span class="s"&gt;https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2&lt;/span&gt;
+&lt;span class="s"&gt;https://github.com/Oslandia/SFCGAL/archive/v1.2.0.tar.gz&lt;/span&gt;
+&lt;span class="s"&gt;http://www.mpfr.org/mpfr-current/mpfr-3.1.3.tar.gz&lt;/span&gt;
+&lt;span class="s"&gt;http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz&lt;/span&gt;
+&lt;span class="s"&gt;https://github.com/CGAL/cgal/archive/releases/CGAL-4.6.3.tar.gz&lt;/span&gt;
+&lt;span class="s"&gt;http://download.osgeo.org/postgis/source/postgis-2.2.0.tar.gz&lt;/span&gt;
+
+&lt;span class="s"&gt;EOT&lt;/span&gt;
+
+cat download.txt &lt;span class="p"&gt;|&lt;/span&gt; xargs -n &lt;span class="m"&gt;1&lt;/span&gt; -P &lt;span class="m"&gt;8&lt;/span&gt; wget &lt;span class="c"&gt;# make wget a little bit faster&lt;/span&gt;
+
+tar xjf gmp-6.0.0a.tar.bz2
+tar xzf mpfr-3.1.3.tar.gz
+tar xzf v1.2.0.tar.gz
+tar xzf boost_1_59_0.tar.gz
+tar xzf CGAL-4.6.3.tar.gz
+tar xzf postgis-2.2.0.tar.gz
+
+&lt;span class="nv"&gt;CORES&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;nproc&lt;span class="k"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[[&lt;/span&gt; &lt;span class="nv"&gt;$CORES&lt;/span&gt; &amp;gt; &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="nv"&gt;CORES&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;expr &lt;span class="nv"&gt;$CORES&lt;/span&gt; - 1&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# be nice to your PC&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
+
+&lt;span class="nb"&gt;cd &lt;/span&gt;gmp-6.0.0
+./configure &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; make -j &lt;span class="nv"&gt;$CORES&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo make -j &lt;span class="nv"&gt;$CORES&lt;/span&gt; install
+
+&lt;span class="nb"&gt;cd&lt;/span&gt; ..
+&lt;span class="nb"&gt;cd &lt;/span&gt;mpfr-3.1.3
+./configure &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; make -j &lt;span class="nv"&gt;$CORES&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo make -j &lt;span class="nv"&gt;$CORES&lt;/span&gt; install
+
+&lt;span class="nb"&gt;cd&lt;/span&gt; ..
+&lt;span class="nb"&gt;cd &lt;/span&gt;boost_1_59_0
+./bootstrap.sh --prefix&lt;span class="o"&gt;=&lt;/span&gt;/usr/local --with-libraries&lt;span class="o"&gt;=&lt;/span&gt;all &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo ./b2 install &lt;span class="c"&gt;# there might be some warnings along the way, don&amp;#39;t panic&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/usr/local/lib&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee /etc/ld.so.conf.d/boost.conf
+sudo ldconfig
+
+&lt;span class="nb"&gt;cd&lt;/span&gt; ..
+&lt;span class="nb"&gt;cd &lt;/span&gt;cgal-releases-CGAL-4.6.3
+cmake . &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; make -j &lt;span class="nv"&gt;$CORES&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo make -j &lt;span class="nv"&gt;$CORES&lt;/span&gt; install
+
+&lt;span class="nb"&gt;cd&lt;/span&gt; ..
+&lt;span class="nb"&gt;cd &lt;/span&gt;SFCGAL-1.2.0/
+cmake . &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; make -j &lt;span class="nv"&gt;$CORES&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo make -j &lt;span class="nv"&gt;$CORES&lt;/span&gt; install
+
+&lt;span class="nb"&gt;cd&lt;/span&gt; ..
+&lt;span class="nb"&gt;cd &lt;/span&gt;postgis-2.2.0
+./configure &lt;span class="se"&gt;\&lt;/span&gt;
+    --with-geosconfig&lt;span class="o"&gt;=&lt;/span&gt;/usr/bin/geos-config &lt;span class="se"&gt;\&lt;/span&gt;
+    --with-xml2config&lt;span class="o"&gt;=&lt;/span&gt;/usr/bin/xml2-config &lt;span class="se"&gt;\&lt;/span&gt;
+    --with-projdir&lt;span class="o"&gt;=&lt;/span&gt;/usr/share/proj &lt;span class="se"&gt;\&lt;/span&gt;
+    --with-libiconv&lt;span class="o"&gt;=&lt;/span&gt;/usr/bin &lt;span class="se"&gt;\&lt;/span&gt;
+    --with-jsondir&lt;span class="o"&gt;=&lt;/span&gt;/usr/include/json &lt;span class="se"&gt;\&lt;/span&gt;
+    --with-gdalconfig&lt;span class="o"&gt;=&lt;/span&gt;/usr/bin/gdal-config &lt;span class="se"&gt;\&lt;/span&gt;
+    --with-raster &lt;span class="se"&gt;\&lt;/span&gt;
+    --with-topology &lt;span class="se"&gt;\&lt;/span&gt;
+    --with-sfcgal&lt;span class="o"&gt;=&lt;/span&gt;/usr/local/bin/sfcgal-config &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+make &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; make cheatsheets &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo make install &lt;span class="c"&gt;# deliberately one CPU only&lt;/span&gt;
+
+sudo -u postgres psql
+sudo -u postgres createdb spatial_template
+sudo -u postgres psql -d spatial_template -c &lt;span class="s2"&gt;&amp;quot;CREATE EXTENSION postgis;&amp;quot;&lt;/span&gt;
+sudo -u postgres psql -d spatial_template -c &lt;span class="s2"&gt;&amp;quot;CREATE EXTENSION postgis_topology;&amp;quot;&lt;/span&gt;
+sudo -u postgres psql -d spatial_template -c &lt;span class="s2"&gt;&amp;quot;CREATE EXTENSION postgis_sfcgal;&amp;quot;&lt;/span&gt;
+sudo -u postgres psql -d spatial_template -c &lt;span class="s2"&gt;&amp;quot;SELECT postgis_full_version();&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="postgresql"></category><category term="postgis"></category><category term="linux"></category></entry><entry><title>Color Relief Shaded Map Using Open Data with Open Source Software</title><link href="http://www.zimmi.cz/posts/2015/color-relief-shaded-map-using-open-data-with-open-source-software/" rel="alternate"></link><updated>2015-10-25T09:42:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-10-25:posts/2015/color-relief-shaded-map-using-open-data-with-open-source-software/</id><summary type="html">&lt;p&gt;The Digital Elevation Model over Europe (&lt;span class="caps"&gt;EU&lt;/span&gt;-&lt;span class="caps"&gt;DEM&lt;/span&gt;) has been recently released for public usage at &lt;a href="http://land.copernicus.eu/in-situ/eu-dem"&gt;Copernicus Land Monitoring Services homepage&lt;/a&gt;. Strictly speaking, it is a &lt;strong&gt;digital surface model&lt;/strong&gt; coming from weighted average of &lt;span class="caps"&gt;SRTM&lt;/span&gt; and &lt;span class="caps"&gt;ASTER&lt;/span&gt; &lt;span class="caps"&gt;GDEM&lt;/span&gt; with geographic accuracy of 25 m. Data are provided as GeoTIFF files projected in 1 degree by 1 degree tiles (projected to &lt;span class="caps"&gt;EPSG&lt;/span&gt;:3035), so they correspond to the &lt;span class="caps"&gt;SRTM&lt;/span&gt; naming&amp;nbsp;convention.&lt;/p&gt;
 &lt;p&gt;If you can&amp;#8217;t see the map to choose the data to download, make sure you&amp;#8217;re not using &lt;span class="caps"&gt;HTTPS&lt;/span&gt; Everywhere or similar browser&amp;nbsp;plugin.&lt;/p&gt;
 &lt;p&gt;I chose &lt;strong&gt;Austria&lt;/strong&gt; to play with the&amp;nbsp;data.&lt;/p&gt;
 &lt;h2&gt;Obtaining the&amp;nbsp;data&lt;/h2&gt;

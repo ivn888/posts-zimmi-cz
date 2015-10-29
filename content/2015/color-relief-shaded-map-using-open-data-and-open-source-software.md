@@ -1,7 +1,7 @@
 Title: Color Relief Shaded Map Using Open Data with Open Source Software
 Date: 2015-10-25 09:42
 Tags: bash, gdal, linux, qgis
-Category: automation, maps
+Category: automation
 
 The Digital Elevation Model over Europe (EU-DEM) has been recently released for public usage at [Copernicus Land Monitoring Services homepage](http://land.copernicus.eu/in-situ/eu-dem). Strictly speaking, it is a **digital surface model** coming from weighted average of SRTM and ASTER GDEM with geographic accuracy of 25 m. Data are provided as GeoTIFF files projected in 1 degree by 1 degree tiles (projected to EPSG:3035), so they correspond to the SRTM naming convention.
 
