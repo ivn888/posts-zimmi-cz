@@ -5,6 +5,7 @@ Tags: javascript
 
 I have found a nice way to get decimal value from degrees of longitude and latitude recently:
 
+	:::javascript
 	function format(coords) {
 	    var decimal = 0,
 	        output  = [],
@@ -14,7 +15,7 @@ I have found a nice way to get decimal value from degrees of longitude and latit
 	        var c = coords[i].split(' ');
 
 	        for (var j = 0; j < c.length; j += 1) {
-	            decimal += c[j].slice(0, -1) / Math.pow(60, j);
+	            decimal += c[j] / Math.pow(60, j);
 	        }
 
 	        output.push(parseFloat(decimal).toFixed(5));

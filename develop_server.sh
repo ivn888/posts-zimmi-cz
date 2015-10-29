@@ -62,7 +62,12 @@ function start_up(){
   $PELICAN --debug --autoreload -r $INPUTDIR -o $OUTPUTDIR -s $CONFFILE $PELICANOPTS &
   echo $! > $PELICAN_PID
   cd $OUTPUTDIR
-  python -m http.server &
+  PYV=`python -c "import sys;t='{v[0]}.{v[1]}'.format(v=list(sys.version_info[:2]));sys.stdout.write(t)";`
+  if [[ $PYV = '2.7' ]]; then
+    python -m SimpleHTTPServer
+  else
+    python -m http.server &
+  fi
   echo $! > $SRV_PID
   cd $BASEDIR
 }
