@@ -39,6 +39,83 @@
 
     <div class="panel">
         <div class="post-name">
+            <h2><a href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/" rel="bookmark" title="Permalink to Twitter REST API Data Mining on OpenShift Part I">Twitter <span class="caps">REST</span> <span class="caps">API</span> Data Mining on OpenShift Part&nbsp;I</a></h2>
+            <small>Written on Nov 6, 2015
+        and marked as
+        <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>,         <a href="http://www.zimmi.cz/posts/tag/openshift.html">openshift</a>,         <a href="http://www.zimmi.cz/posts/tag/twitter.html">twitter</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p>More than a year ago I wrote about <a href="http://www.zimmi.cz/posts/2014/analyzing-twitter-languages-with-streaming-api/">analyzing Twitter languages with Streaming <span class="caps">API</span></a>. Back then I kept my laptop running for a week to download data. Not a comfortable way, especially if you decide to get more data. One year uptime doesn&#8217;t sound like anything you want to be part of. <a href="https://www.openshift.com/">OpenShift</a> by Red Hat seems to be almost perfect replacement.&nbsp;Almost.</p>
+<h2>OpenShift&nbsp;setup</h2>
+<p>I started with Node.js application running on one small gear. Once running, you can easily <code>git push</code> the code to your OpenShift repo and login via <span class="caps">SSH</span>. I quickly found simple copy-pasting my local solution wasn&#8217;t going to work. and fixed it with some minor tweaks. That&#8217;s where the fun&nbsp;begins&#8230;</p>
+<blockquote>
+<p>I based the downloader on Node.js a year ago. Until now I still don&#8217;t get how that piece of software works. Frankly, I don&#8217;t really care as long as it&nbsp;works.</p>
+</blockquote>
+<h3>Pitfalls</h3>
+<p>If your application doesn&#8217;t generate any traffic, <strong>OpenShift turns it off</strong>. It wakes up once someone visits again. I had no idea about that and spent some time trying to stop that behavior. Obviously, I could have scheduled a cron job on my laptop pinging it every now and then. Luckily, OpenShift can run cron jobs itself. All you need is to embed a cron cartridge into the running application (and install a bunch of ruby dependencies&nbsp;beforehand).</p>
+<div class="highlight"><pre>rhc cartridge add cron-1.4 -a app-name
+</pre></div>
+
+
+<p>Then create <code>.openshift/cron/{hourly,daily,weekly,monthly}</code> folder in the git repository and put your script running a simple curl command into one of&nbsp;those.</p>
+<div class="highlight"><pre>curl http://social-zimmi.rhcloud.com &gt; /dev/null
+</pre></div>
+
+
+<p>Another problem was just around the corner. Once in a while, the app stopped writing data to the database without saying a word. What helped was restarting it - the only automatic way to do so being a <code>git push</code> command. Sadly, I haven&#8217;t found a way to restart the app from within itself; it probably can&#8217;t be&nbsp;done.</p>
+<p>When you <code>git push</code>, the gear stops, builds, deploys and restarts the app. By using hot deployment you can minimize the downtime. Just put the <code>hot_deploy</code> file into <code>.openshift/markers</code> folder.</p>
+<div class="highlight"><pre>git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push
+</pre></div>
+
+
+<p>This solved the problem until I realize that <strong>every restart deleted all the data</strong> collected so far. If your data are to stay safe and sound, <strong>save them in <code>process.env.OPENSHIFT_DATA_DIR</code></strong> (which is <code>app-root/data</code>).</p>
+<h3>Anacron to the&nbsp;rescue</h3>
+<p>How do you push an empty commit once a day? With cron of course. Even better, <strong>anacron</strong>.</p>
+<div class="highlight"><pre>mkdir ~/.anacron
+<span class="nb">cd</span> ~/.anacron
+mkdir cron.daily cron.weekly cron.monthly spool etc
+
+cat <span class="s">&lt;&lt;EOT &gt; ~/.anacron/etc/anacrontab</span>
+
+<span class="s">SHELL=/bin/sh</span>
+<span class="s">PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/$HOME/bin</span>
+<span class="s">HOME=$HOME</span>
+<span class="s">LOGNAME=$USER</span>
+
+<span class="s">1 5  daily-cron nice run-parts --report $HOME/.anacron/cron.daily</span>
+<span class="s">7 10 weekly-cron nice run-parts --report $HOME/.anacron/cron.weekly</span>
+<span class="s">@monthly 15 monthly-cron nice run-parts --report $HOME/.anacron/cron.monthly</span>
+
+<span class="s">EOT</span>
+
+cat <span class="s">&lt;&lt;EOT &gt;&gt; ~/.zprofile # I use zsh shell</span>
+<span class="s">rm -f $HOME/.anacron/anacron.log</span>
+<span class="s">/usr/sbin/anacron -t /home/zimmi/.anacron/etc/anacrontab -S /home/zimmi/.anacron/spool &amp;&gt; /home/zimmi/.anacron/anacron.log</span>
+
+<span class="s">EOT</span>
+</pre></div>
+
+
+<p>Anacron is to laptop what cron is to 24/7 running server. It just runs automatic jobs when the laptop is running. If it&#8217;s not and the job should be run, it runs it once the <span class="caps">OS</span> boots. Brilliant&nbsp;idea.</p>
+<p>It runs the following code for me to keep the app writing data to the&nbsp;database.</p>
+<div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="nv">workdir</span><span class="o">=</span><span class="s1">&#39;/home/zimmi/documents/zimmi/dizertace/social&#39;</span>
+<span class="nv">logfile</span><span class="o">=</span><span class="nv">$workdir</span>/restart-gear.log
+date &gt;&gt; <span class="nv">$logfile</span>
+
+<span class="o">{</span> <span class="nb">cd</span> <span class="nv">$workdir</span> <span class="o">&amp;&amp;</span> git merge origin/master <span class="o">&amp;&amp;</span> git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;Success&quot;</span> <span class="p">;</span> <span class="o">}</span> &gt;&gt; <span class="nv">$logfile</span> 2&gt;<span class="p">&amp;</span>1
+</pre></div>
+
+
+<p>I&#8217;ve been harvesting Twitter for a month with about 10-15K tweets a day (only interested in the Czech Republic). 
+<sup>1</sup>&frasl;<sub>6</sub> to <sup>1</sup>&frasl;<sub>5</sub> of them is located with latitude and longitude. More on this next&nbsp;time.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
             <h2><a href="http://www.zimmi.cz/posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/" rel="bookmark" title="Permalink to Installing PostGIS 2.2 with SFCGAL on Ubuntu-based OS">Installing PostGIS 2.2 with <span class="caps">SFCGAL</span> on Ubuntu-based <span class="caps">OS</span></a></h2>
             <small>Written on Oct 29, 2015
         and marked as
@@ -446,31 +523,6 @@ www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
 
 <p>I made a simple benchmark with <a href="http://php.net/manual/en/function.microtime.php"><code>microtime()</code></a> and found out that my solution (ran 100k times) took about ~12.3 seconds while Dave&#8217;s took only ~7.4 seconds to finish. That makes his code almost twice faster than&nbsp;mine.</p>
 <p><strong>Lesson learned: do not stop&nbsp;learning!</strong></p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2014/postgresql-remote-access/" rel="bookmark" title="Permalink to PostgreSQL Remote Access">PostgreSQL Remote&nbsp;Access</a></h2>
-            <small>Written on Sep 17, 2014
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>PostgreSQL is set to listen only to connections coming from localhost by default. I guess that&#8217;s fine as far as you don&#8217;t need access to the database from anywhere else (like your work network). If you do, you need to log via <span class="caps">SSH</span> or use some online database management tool (go for <a href="http://adminer.org">Adminer</a> and forget about anything called php[pg|my]admin). Or you can set it up to access connections from other&nbsp;locations.</p>
-<p>You need&nbsp;to:</p>
-<ol>
-<li>set <code>listen_addresses</code> to <code>*</code> in your postgres.conf. That does not mean anyone can connect to your database, that means that the server will listen to connections coming from any available <span class="caps">IP</span>&nbsp;interface.</li>
-<li>insert new entry into pg_hba.conf looking like this: <code>host database user xxx.xxx.xxx.xxx md5</code>. Now we&#8217;re saying we only want connections coming from <span class="caps">IP</span> <code>xxx.xxx.xxx.xxx</code> accepted.</li>
-<li>
-<p>Add rule allowing the database server access to iptables. Number 5 says it will be the fifth rule in the order. It must come before the final <span class="caps">REJECT</span> <span class="caps">ALL</span> rule if&nbsp;present.</p>
-<p><code>iptables -I INPUT 5 -p tcp --dport 5432 -s xxx.xxx.xxx.xxx -j ACCEPT</code>
-4. Just to be sure noone else is able to connect, reject all on port&nbsp;5432.</p>
-<p><code>iptables -I INPUT 6 -p tcp --dport 5432 -j REJECT</code></p>
-</li>
-</ol>
-<p>You&#8217;re set to remotely connect to your database&nbsp;server.</p>
         </section>
         </div>
     </div>

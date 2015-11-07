@@ -1,5 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-10-29T22:00:00+01:00</updated><entry><title>Installing PostGIS 2.2 with SFCGAL on Ubuntu-based OS</title><link href="http://www.zimmi.cz/posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/" rel="alternate"></link><updated>2015-10-29T22:00:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-10-29:posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/</id><summary type="html">&lt;p&gt;I&amp;#8217;ve seen a bunch of questions on &lt;span class="caps"&gt;GIS&lt;/span&gt; StackExchange recently related to &lt;a href="http://sfcgal.org/"&gt;&lt;span class="caps"&gt;SFCGAL&lt;/span&gt;&lt;/a&gt; extension for &lt;a href="http://postgis.net"&gt;PostGIS 2.2&lt;/a&gt;. Great news are it can be installed with one simple query &lt;code&gt;CREATE EXTENSION postgis_sfcgal&lt;/code&gt;. Not so great news are you have to compile it from source for Ubuntu-based &lt;span class="caps"&gt;OS&lt;/span&gt; (14.04) as recent versions of required packages are not available in the&amp;nbsp;repositories.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-11-06T22:00:00+01:00</updated><entry><title>Twitter REST API Data Mining on OpenShift Part I</title><link href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/" rel="alternate"></link><updated>2015-11-06T22:00:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-11-06:posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/</id><summary type="html">&lt;p&gt;More than a year ago I wrote about &lt;a href="http://www.zimmi.cz/posts/2014/analyzing-twitter-languages-with-streaming-api/"&gt;analyzing Twitter languages with Streaming &lt;span class="caps"&gt;API&lt;/span&gt;&lt;/a&gt;. Back then I kept my laptop running for a week to download data. Not a comfortable way, especially if you decide to get more data. One year uptime doesn&amp;#8217;t sound like anything you want to be part of. &lt;a href="https://www.openshift.com/"&gt;OpenShift&lt;/a&gt; by Red Hat seems to be almost perfect replacement.&amp;nbsp;Almost.&lt;/p&gt;
+&lt;h2&gt;OpenShift&amp;nbsp;setup&lt;/h2&gt;
+&lt;p&gt;I started with Node.js application running on one small gear. Once running, you can easily &lt;code&gt;git push&lt;/code&gt; the code to your OpenShift repo and login via &lt;span class="caps"&gt;SSH&lt;/span&gt;. I quickly found simple copy-pasting my local solution wasn&amp;#8217;t going to work. and fixed it with some minor tweaks. That&amp;#8217;s where the fun&amp;nbsp;begins&amp;#8230;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I based the downloader on Node.js a year ago. Until now I still don&amp;#8217;t get how that piece of software works. Frankly, I don&amp;#8217;t really care as long as it&amp;nbsp;works.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3&gt;Pitfalls&lt;/h3&gt;
+&lt;p&gt;If your application doesn&amp;#8217;t generate any traffic, &lt;strong&gt;OpenShift turns it off&lt;/strong&gt;. It wakes up once someone visits again. I had no idea about that and spent some time trying to stop that behavior. Obviously, I could have scheduled a cron job on my laptop pinging it every now and then. Luckily, OpenShift can run cron jobs itself. All you need is to embed a cron cartridge into the running application (and install a bunch of ruby dependencies&amp;nbsp;beforehand).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;rhc cartridge add cron-1.4 -a app-name
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Then create &lt;code&gt;.openshift/cron/{hourly,daily,weekly,monthly}&lt;/code&gt; folder in the git repository and put your script running a simple curl command into one of&amp;nbsp;those.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;curl http://social-zimmi.rhcloud.com &amp;gt; /dev/null
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Another problem was just around the corner. Once in a while, the app stopped writing data to the database without saying a word. What helped was restarting it - the only automatic way to do so being a &lt;code&gt;git push&lt;/code&gt; command. Sadly, I haven&amp;#8217;t found a way to restart the app from within itself; it probably can&amp;#8217;t be&amp;nbsp;done.&lt;/p&gt;
+&lt;p&gt;When you &lt;code&gt;git push&lt;/code&gt;, the gear stops, builds, deploys and restarts the app. By using hot deployment you can minimize the downtime. Just put the &lt;code&gt;hot_deploy&lt;/code&gt; file into &lt;code&gt;.openshift/markers&lt;/code&gt; folder.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;git commit --allow-empty -m &lt;span class="s2"&gt;&amp;quot;Restart gear&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; git push
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This solved the problem until I realize that &lt;strong&gt;every restart deleted all the data&lt;/strong&gt; collected so far. If your data are to stay safe and sound, &lt;strong&gt;save them in &lt;code&gt;process.env.OPENSHIFT_DATA_DIR&lt;/code&gt;&lt;/strong&gt; (which is &lt;code&gt;app-root/data&lt;/code&gt;).&lt;/p&gt;
+&lt;h3&gt;Anacron to the&amp;nbsp;rescue&lt;/h3&gt;
+&lt;p&gt;How do you push an empty commit once a day? With cron of course. Even better, &lt;strong&gt;anacron&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;mkdir ~/.anacron
+&lt;span class="nb"&gt;cd&lt;/span&gt; ~/.anacron
+mkdir cron.daily cron.weekly cron.monthly spool etc
+
+cat &lt;span class="s"&gt;&amp;lt;&amp;lt;EOT &amp;gt; ~/.anacron/etc/anacrontab&lt;/span&gt;
+
+&lt;span class="s"&gt;SHELL=/bin/sh&lt;/span&gt;
+&lt;span class="s"&gt;PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/$HOME/bin&lt;/span&gt;
+&lt;span class="s"&gt;HOME=$HOME&lt;/span&gt;
+&lt;span class="s"&gt;LOGNAME=$USER&lt;/span&gt;
+
+&lt;span class="s"&gt;1 5  daily-cron nice run-parts --report $HOME/.anacron/cron.daily&lt;/span&gt;
+&lt;span class="s"&gt;7 10 weekly-cron nice run-parts --report $HOME/.anacron/cron.weekly&lt;/span&gt;
+&lt;span class="s"&gt;@monthly 15 monthly-cron nice run-parts --report $HOME/.anacron/cron.monthly&lt;/span&gt;
+
+&lt;span class="s"&gt;EOT&lt;/span&gt;
+
+cat &lt;span class="s"&gt;&amp;lt;&amp;lt;EOT &amp;gt;&amp;gt; ~/.zprofile # I use zsh shell&lt;/span&gt;
+&lt;span class="s"&gt;rm -f $HOME/.anacron/anacron.log&lt;/span&gt;
+&lt;span class="s"&gt;/usr/sbin/anacron -t /home/zimmi/.anacron/etc/anacrontab -S /home/zimmi/.anacron/spool &amp;amp;&amp;gt; /home/zimmi/.anacron/anacron.log&lt;/span&gt;
+
+&lt;span class="s"&gt;EOT&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Anacron is to laptop what cron is to 24/7 running server. It just runs automatic jobs when the laptop is running. If it&amp;#8217;s not and the job should be run, it runs it once the &lt;span class="caps"&gt;OS&lt;/span&gt; boots. Brilliant&amp;nbsp;idea.&lt;/p&gt;
+&lt;p&gt;It runs the following code for me to keep the app writing data to the&amp;nbsp;database.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nv"&gt;workdir&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/home/zimmi/documents/zimmi/dizertace/social&amp;#39;&lt;/span&gt;
+&lt;span class="nv"&gt;logfile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$workdir&lt;/span&gt;/restart-gear.log
+date &amp;gt;&amp;gt; &lt;span class="nv"&gt;$logfile&lt;/span&gt;
+
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="nb"&gt;cd&lt;/span&gt; &lt;span class="nv"&gt;$workdir&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; git merge origin/master &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; git commit --allow-empty -m &lt;span class="s2"&gt;&amp;quot;Restart gear&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; git push &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Success&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class="nv"&gt;$logfile&lt;/span&gt; 2&amp;gt;&lt;span class="p"&gt;&amp;amp;&lt;/span&gt;1
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I&amp;#8217;ve been harvesting Twitter for a month with about 10-15K tweets a day (only interested in the Czech Republic). 
+&lt;sup&gt;1&lt;/sup&gt;&amp;frasl;&lt;sub&gt;6&lt;/sub&gt; to &lt;sup&gt;1&lt;/sup&gt;&amp;frasl;&lt;sub&gt;5&lt;/sub&gt; of them is located with latitude and longitude. More on this next&amp;nbsp;time.&lt;/p&gt;</summary><category term="javascript"></category><category term="openshift"></category><category term="twitter"></category></entry><entry><title>Installing PostGIS 2.2 with SFCGAL on Ubuntu-based OS</title><link href="http://www.zimmi.cz/posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/" rel="alternate"></link><updated>2015-10-29T22:00:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-10-29:posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/</id><summary type="html">&lt;p&gt;I&amp;#8217;ve seen a bunch of questions on &lt;span class="caps"&gt;GIS&lt;/span&gt; StackExchange recently related to &lt;a href="http://sfcgal.org/"&gt;&lt;span class="caps"&gt;SFCGAL&lt;/span&gt;&lt;/a&gt; extension for &lt;a href="http://postgis.net"&gt;PostGIS 2.2&lt;/a&gt;. Great news are it can be installed with one simple query &lt;code&gt;CREATE EXTENSION postgis_sfcgal&lt;/code&gt;. Not so great news are you have to compile it from source for Ubuntu-based &lt;span class="caps"&gt;OS&lt;/span&gt; (14.04) as recent versions of required packages are not available in the&amp;nbsp;repositories.&lt;/p&gt;
 &lt;p&gt;I tested my solution on elementary &lt;span class="caps"&gt;OS&lt;/span&gt; 0.3.1 based on Ubuntu 14.04. &lt;strong&gt;And it works!&lt;/strong&gt; It installs PostgreSQL 9.4 from repositories together with &lt;span class="caps"&gt;GDAL&lt;/span&gt; and &lt;span class="caps"&gt;GEOS&lt;/span&gt; and some other libs PostGIS depends on. PostGIS itself, &lt;span class="caps"&gt;CGAL&lt;/span&gt;, Boost, &lt;span class="caps"&gt;MPFR&lt;/span&gt; and &lt;span class="caps"&gt;GMP&lt;/span&gt; are built from&amp;nbsp;source.&lt;/p&gt;
 &lt;p&gt;Here comes the code (commented where&amp;nbsp;needed).&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;sudo -i

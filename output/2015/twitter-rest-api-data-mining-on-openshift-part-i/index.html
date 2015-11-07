@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>Michal Zimmermann | tag: openshift</title>
+          <title>Michal Zimmermann | Twitter <span class="caps">REST</span> <span class="caps">API</span> Data Mining on OpenShift Part&nbsp;I</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
         <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+
+
+
+    <meta name="tags" contents="javascript" />
+    <meta name="tags" contents="openshift" />
+    <meta name="tags" contents="twitter" />
+
         <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9a0407ed">
 
 </head>
@@ -35,17 +42,15 @@
         </div>
         <div class="row">
             <div class="large-12 columns">
-<h2 class="text-center">Articles tagged with openshift tag</h2>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/" rel="bookmark" title="Permalink to Twitter REST API Data Mining on OpenShift Part I">Twitter <span class="caps">REST</span> <span class="caps">API</span> Data Mining on OpenShift Part&nbsp;I</a></h2>
-            <small>Written on Nov 6, 2015
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>,         <a href="http://www.zimmi.cz/posts/tag/openshift.html">openshift</a>,         <a href="http://www.zimmi.cz/posts/tag/twitter.html">twitter</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>More than a year ago I wrote about <a href="http://www.zimmi.cz/posts/2014/analyzing-twitter-languages-with-streaming-api/">analyzing Twitter languages with Streaming <span class="caps">API</span></a>. Back then I kept my laptop running for a week to download data. Not a comfortable way, especially if you decide to get more data. One year uptime doesn&#8217;t sound like anything you want to be part of. <a href="https://www.openshift.com/">OpenShift</a> by Red Hat seems to be almost perfect replacement.&nbsp;Almost.</p>
+<div class="panel">
+    <div class="post-name">
+        <h1><a href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/" rel="bookmark" title="Permalink to Twitter REST API Data Mining on OpenShift Part I">Twitter <span class="caps">REST</span> <span class="caps">API</span> Data Mining on OpenShift Part&nbsp;I</a></h1>
+        <small>Written on Nov 6, 2015
+    and marked as
+    <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>,     <a href="http://www.zimmi.cz/posts/tag/openshift.html">openshift</a>,     <a href="http://www.zimmi.cz/posts/tag/twitter.html">twitter</a>    | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+    </small>
+    <section>
+        <p>More than a year ago I wrote about <a href="http://www.zimmi.cz/posts/2014/analyzing-twitter-languages-with-streaming-api/">analyzing Twitter languages with Streaming <span class="caps">API</span></a>. Back then I kept my laptop running for a week to download data. Not a comfortable way, especially if you decide to get more data. One year uptime doesn&#8217;t sound like anything you want to be part of. <a href="https://www.openshift.com/">OpenShift</a> by Red Hat seems to be almost perfect replacement.&nbsp;Almost.</p>
 <h2>OpenShift&nbsp;setup</h2>
 <p>I started with Node.js application running on one small gear. Once running, you can easily <code>git push</code> the code to your OpenShift repo and login via <span class="caps">SSH</span>. I quickly found simple copy-pasting my local solution wasn&#8217;t going to work. and fixed it with some minor tweaks. That&#8217;s where the fun&nbsp;begins&#8230;</p>
 <blockquote>
@@ -110,47 +115,25 @@ date &gt;&gt; <span class="nv">$logfile</span>
 
 <p>I&#8217;ve been harvesting Twitter for a month with about 10-15K tweets a day (only interested in the Czech Republic). 
 <sup>1</sup>&frasl;<sub>6</sub> to <sup>1</sup>&frasl;<sub>5</sub> of them is located with latitude and longitude. More on this next&nbsp;time.</p>
-        </section>
-        </div>
+    </section>
     </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/hosting-website-on-openshift/" rel="bookmark" title="Permalink to Hosting Website On Openshift">Hosting Website On&nbsp;Openshift</a></h2>
-            <small>Written on Feb 23, 2015
-        and marked as
-        <a href="http://www.zimmi.cz/posts/tag/openshift.html">openshift</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got it working&nbsp;eventually.</p>
-<h2>Things to know before taking the&nbsp;leap</h2>
-<p>Some domain providers don&#8217;t support <span class="caps">CNAME</span> changes for root domains (zimmi.cz in my case). This means you can&#8217;t simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do&nbsp;so:</p>
-<div class="highlight"><pre>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
-</pre></div>
-
-
-<p>Which is great until you realize you&#8217;ve just created two different websites. That&#8217;s where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
-<div class="highlight"><pre>zimmi.cz A 174.129.25.170
-</pre></div>
-
-
-<p>Now everything works fine and you have your <code>www.domain.tld</code> up and&nbsp;running.</p>
-<h2>OpenShift&nbsp;subdomains</h2>
-<p>I wasn&#8217;t successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing <span class="caps">DNS</span> to&nbsp;it:</p>
-<div class="highlight"><pre>posts.zimmi.cz A 174.179.25.170
-www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
-</pre></div>
-
-
-<p>Just don&#8217;t forget to handle both naked and <code>www</code> version. When Google reindexes new URLs (http://www.zimmi.cz/posts instead of http://posts.zimmi.cz) subdomain application might be&nbsp;deleted.</p>
-        </section>
-        </div>
-    </div>
-
-<div class="pagination">
-    <p class="paginator">
-    </p>
-</div>            </div>
+<div class="neighbors">
+    <h3>More reading</h3>
+    <ul>
+        <li>
+            <a href="http://www.zimmi.cz/posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/">
+                 Installing PostGIS 2.2 with <span class="caps">SFCGAL</span> on Ubuntu-based <span class="caps">OS</span>
+            </a>
+        </li>
+         <li>
+             <a href="http://www.zimmi.cz/posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/">
+                 Installing PostGIS 2.2 with <span class="caps">SFCGAL</span> on Ubuntu-based <span class="caps">OS</span>
+             </a>
+         </li>
+        </li>
+    </ul>
+</div></div>
+            </div>
         </div>
         <div class="row">
             <div class="large-12 columns footer">
