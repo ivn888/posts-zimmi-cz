@@ -1,0 +1,147 @@
+body {
+    background: white url('../img/crossword.png');
+}
+
+code {
+    background-color: #f0f0f0;
+}
+
+img.left {
+  padding-bottom: .5rem;
+  padding-right: .5rem;
+  padding-top: .5rem;
+}
+
+img.right {
+  padding-bottom: .5rem;
+  padding-left: .5rem;
+  padding-top: .5rem;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header h1 {
+    font-family: 'Roboto Condensed', 'Trebuchet MS', Verdana, sans-serif;
+    font-size: 280%;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+    .header h1 a {
+        display: block;
+    }
+
+    .header h1 small {
+        border-top: 1px solid #d8d8d8;
+        color: #333333;
+        display: inline;
+        padding-top: .5rem;
+        text-transform: none;
+    }
+
+@media screen and (max-width: 590px) {
+  html, body {
+    font-size: 80%;
+  }
+  .header h1 {
+    font-size: 110%;
+    margin-bottom: .5rem;
+  }
+}
+
+.panel {
+    background: #f7f7f7;
+    border: 1px solid #d8d8d8;
+    margin-bottom: 1.25rem;
+    padding: 1.25rem;
+}
+
+.panel blockquote,
+.panel ol,
+.panel ul,
+.panel p {
+    font-size: 130%;
+}
+
+.panel li p {
+    font-size: inherit;
+}
+
+
+.panel h1 a {
+    border-bottom: 5px dotted #d8d8d8;
+    color: #333333;
+    display: inline;
+    line-height: 1.45;
+    padding-bottom: .20rem;
+    padding-top: 0rem;
+}
+
+.panel h1 a:hover {
+    border-bottom-color: #cc0000;
+    color: #cc0000;
+}
+
+.panel h2,
+.panel h3,
+.panel h4 {
+    border-bottom: 4px dotted #d8d8d8;
+    color: #cc0000;
+    padding-bottom: .5rem;
+}
+
+.panel h3 {
+  border-bottom: 3px dotted #d8d8d8
+}
+
+.panel h4 {
+  border-bottom: 2px dotted #d8d8d8
+}
+
+pre {
+    white-space: pre;
+    overflow: auto;
+}
+
+.highlight {
+    margin: 1rem;
+}
+
+.footer,
+.pagination {
+    text-align: center;
+}
+
+.footer {
+    margin-bottom: 1rem;
+}
+
+.neighbors li {
+  font-size: 1rem
+}
+
+.neighbors h3 {
+  border-bottom: 1px solid #d8d8d8;
+  border-top: 1px solid #d8d8d8;
+  color: #333;
+  padding-top: .6rem;
+}
+
+.name h1 {
+  background: #c00;
+  font-size: 16px;
+}
+
+.name h1 a {
+  font-size: 0.8125rem;
+}
+
+.name h1 a:hover {
+  background: #AF0000;
+}
