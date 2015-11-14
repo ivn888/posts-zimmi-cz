@@ -4,10 +4,9 @@
         <title>Michal Zimmermann | tag: python</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
-        <link rel="stylesheet" href="/theme/webassets-external/51f6d10d6d7b972e72c633cdadf65306_foundation.min.css">
-        <link rel="stylesheet" href="/theme/webassets-external/f8c76b8fadad6790f713cf1a3ee1ab20_pygment.css">
-        <link rel="stylesheet" href="/theme/webassets-external/852031a1b55a4450770e95aa75e5cf77_screen.css">
+        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9a0407ed">
 
 </head>
 
@@ -23,9 +22,9 @@
         <section class="top-bar-section">
     <!-- Right Nav Section -->
             <ul class="right">
-                <li><a href="/categories">Categories</a></li>
-                <li><a href="/tags">Tags</a></li>
-                <li><a href="/feed.xml">RSS feed</a></li>
+                <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
+                <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
+                <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS feed</a></li>
             </ul>
         </section>
     </nav>
@@ -40,13 +39,13 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With <span class="caps">QGIS</span>, PostGIS, Python, <span class="caps">SVG</span> and&nbsp;ImageMagick</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With <span class="caps">QGIS</span>, PostGIS, Python, <span class="caps">SVG</span> and&nbsp;ImageMagick</a></h2>
             <small>Written on Aug 9, 2015
         and marked as
-        <a href="/tag/qgis.html">qgis</a>,         <a href="/tag/postgis.html">postgis</a>,         <a href="/tag/python.html">python</a>,         <a href="/tag/svg.html">svg</a>,         <a href="/tag/linux.html">linux</a>        | <a href="/category/automation.html">automation</a>
+        <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
         </small>
         <section>
-            <p>As mentioned in <a href="/posts/2015/qgis-tips-for-collaborative-mapping/"><span class="caps">QGIS</span> Tips For Collaborative Mapping</a> we&#8217;re in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
+            <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/"><span class="caps">QGIS</span> Tips For Collaborative Mapping</a> we&#8217;re in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
 <p>With the <span class="caps">QGIS</span> workflow up and running, I&#8217;ve been focused on different <span class="caps">QGIS</span> related task: <strong>automatic map generation</strong> for land blocks that meet certain conditions. The logic behind identifying such land blocks is as&nbsp;follows:</p>
 <ul>
 <li>if the original area and the measured one differ more than 0.5 %&nbsp;or</li>
@@ -63,7 +62,7 @@
 <li><span class="caps">HR</span>, <span class="caps">VHR</span>, <span class="caps">NIR</span> imagery, orthophoto - served via <span class="caps">WMS</span></li>
 </ul>
 <p>Labels should be visible only for the featured land block (both for the land parcels and the land block itself. The whole map scales dynamically, showing small land blocks zoomed in and the large ones zoomed&nbsp;out.</p>
-<p class='text-center'><a id="desired-map" title="Desired map" href="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a id="desired-map" title="Desired map" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
 
 <p>Every map features additional&nbsp;items:</p>
 <ul>
@@ -106,7 +105,7 @@
 <li>fixed scale: sets the scale the same for all the&nbsp;maps</li>
 </ul>
 <p>With these settings, I get a map similar to the one below. Notice two interesting&nbsp;things:</p>
-<p class='text-center'><a title="QGIS map skeleton" href="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a title="QGIS map skeleton" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
 
 <ul>
 <li>Scale uses decimal places, which I find <em>a huge failure</em>. Has anyone ever seen a map with such scale? The worst is there is no easy way to hide these, or at least I didn&#8217;t find&nbsp;one.</li>
@@ -130,7 +129,7 @@
 
 
 <p>With this simple expression, I get labels only for those land parcels that are part of the mapped land block. Even the <strong>layer style</strong> can be controlled with atlas feature. Land parcels inside the land block have blue borders, the rest is yellowish, remember? It&#8217;s a piece of cake with rule-based&nbsp;styling.</p>
-<p class='text-center'><a title="Layer style based on atlas feature" href="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a title="Layer style based on atlas feature" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
 
 <h3>Atlas&nbsp;generation</h3>
 <p>When you&#8217;re set, atlas can be created with a single button. I used <span class="caps">SVG</span> as an output format to easily manipulate the map content afterwards. The resulting maps look like the one in <a href="#desired-map">the first picture</a> without the text in the red rectangle. A Python script appends this to each map&nbsp;afterwards.</p>
@@ -190,10 +189,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2015/wms-download-for-future-offline-use/" rel="bookmark" title="Permalink to WMS Download For Future Offline Use"><span class="caps">WMS</span> Download For Future Offline&nbsp;Use</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/wms-download-for-future-offline-use/" rel="bookmark" title="Permalink to WMS Download For Future Offline Use"><span class="caps">WMS</span> Download For Future Offline&nbsp;Use</a></h2>
             <small>Written on Mar 15, 2015
         and marked as
-        <a href="/tag/ogc.html">ogc</a>,         <a href="/tag/python.html">python</a>,         <a href="/tag/wms.html">wms</a>        | <a href="/category/automation.html">automation</a>
+        <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/wms.html">wms</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
         </small>
         <section>
             <p>Using <span class="caps">WMS</span> in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with <span class="caps">WMS</span>&nbsp;layers.</p>
@@ -296,10 +295,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2014/migrating-geoserver-and-checking-for-missing-data/" rel="bookmark" title="Permalink to Migrating Geoserver And Checking For Missing Data">Migrating Geoserver And Checking For Missing&nbsp;Data</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2014/migrating-geoserver-and-checking-for-missing-data/" rel="bookmark" title="Permalink to Migrating Geoserver And Checking For Missing Data">Migrating Geoserver And Checking For Missing&nbsp;Data</a></h2>
             <small>Written on Oct 29, 2014
         and marked as
-        <a href="/tag/geoserver.html">geoserver</a>,         <a href="/tag/python.html">python</a>        | <a href="/category/development.html">development</a>
+        <a href="http://www.zimmi.cz/posts/tag/geoserver.html">geoserver</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
         </small>
         <section>
             <p>I&#8217;ve upgraded a handful of Geoserver installations and it has never been flawless. If you&#8217;re lucky you end up with just <em>some</em> layers missing, if you&#8217;re not, you&#8217;ll miss a bunch of them (together with layergroups, some stores, workspaces might screw up&nbsp;etc.).</p>
@@ -333,10 +332,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2014/going-3d-with-space-time-cube/" rel="bookmark" title="Permalink to Going 3D With Space Time Cube">Going 3D With Space Time&nbsp;Cube</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2014/going-3d-with-space-time-cube/" rel="bookmark" title="Permalink to Going 3D With Space Time Cube">Going 3D With Space Time&nbsp;Cube</a></h2>
             <small>Written on Sep 2, 2014
         and marked as
-        <a href="/tag/python.html">python</a>,         <a href="/tag/twitter.html">twitter</a>        | <a href="/category/development.html">development</a>
+        <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/twitter.html">twitter</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
         </small>
         <section>
             <p>Seeing <a href="http://anitagraser.com/2012/08/05/space-time-cubes-exploring-twitter-streams-3/">Anita&#8217;s space-time cube</a> back in 2013 was a moment of <em>woooow</em> for me. I&#8217;ve been interested in unusual ways of displaying data ever since I started studying <span class="caps">GIS</span> and this one was just great. <em>How the hell did she make it?!</em>, I thought back&nbsp;then.</p>
@@ -496,8 +495,17 @@ z = map(lat, 16.59971950210866964, 63.68835804244784526, 0, height)
                 </footer><!-- /#contentinfo -->
             </div>
         </div>
-<script src="/theme/webassets-external/633f060ebe664637871acbe7f7239dc4_jquery.js"></script>
-<script src="/theme/webassets-external/4dac46d0971ad87d95db9a138607198c_foundation.min.js"></script>
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-43432739-2']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+<script src="http://www.zimmi.cz/posts/theme/js/packed.js?8bee1467"></script>
 <script>
 $(document).foundation();
 </script>

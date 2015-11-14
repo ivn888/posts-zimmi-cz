@@ -4,10 +4,9 @@
         <title>Michal Zimmermann | category: web maps</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
-        <link rel="stylesheet" href="/theme/webassets-external/51f6d10d6d7b972e72c633cdadf65306_foundation.min.css">
-        <link rel="stylesheet" href="/theme/webassets-external/f8c76b8fadad6790f713cf1a3ee1ab20_pygment.css">
-        <link rel="stylesheet" href="/theme/webassets-external/852031a1b55a4450770e95aa75e5cf77_screen.css">
+        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9a0407ed">
 
 </head>
 
@@ -23,9 +22,9 @@
         <section class="top-bar-section">
     <!-- Right Nav Section -->
             <ul class="right">
-                <li><a href="/categories">Categories</a></li>
-                <li><a href="/tags">Tags</a></li>
-                <li><a href="/feed.xml">RSS feed</a></li>
+                <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
+                <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
+                <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS feed</a></li>
             </ul>
         </section>
     </nav>
@@ -40,13 +39,13 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2015/postgis-case-study-vozejkmap-open-data-part-iii/" rel="bookmark" title="Permalink to PostGIS Case Study: Vozejkmap Open Data (Part III)">PostGIS Case Study: Vozejkmap Open Data (Part <span class="caps">III</span>)</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-iii/" rel="bookmark" title="Permalink to PostGIS Case Study: Vozejkmap Open Data (Part III)">PostGIS Case Study: Vozejkmap Open Data (Part <span class="caps">III</span>)</a></h2>
             <small>Written on Nov 14, 2015
         and marked as
-        <a href="/tag/postgresql.html">postgresql</a>,         <a href="/tag/postgis.html">postgis</a>,         <a href="/tag/leaflet.html">leaflet</a>,         <a href="/tag/javascript.html">javascript</a>        | <a href="/category/web-maps.html">web maps</a>
+        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="http://www.zimmi.cz/posts/tag/leaflet.html">leaflet</a>,         <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
-            <p>After a while I got back to my <a href="/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/">PostGIS open data</a> <a href="/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/">case study</a>. Last time I left it with clustering implemented, looking forward to incorporate <a href="http://turfjs.org">Turf.js</a> in the future. <em>And the future is now.</em> <a href="https://github.com/zimmicz/vozejkmap-to-postgis">The code is still available on&nbsp;GitHub.</a></p>
+            <p>After a while I got back to my <a href="http://www.zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/">PostGIS open data</a> <a href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/">case study</a>. Last time I left it with clustering implemented, looking forward to incorporate <a href="http://turfjs.org">Turf.js</a> in the future. <em>And the future is now.</em> <a href="https://github.com/zimmicz/vozejkmap-to-postgis">The code is still available on&nbsp;GitHub.</a></p>
 <h2>Subgroup&nbsp;clustering</h2>
 <p>Vozejkmap data is categorized based on the place type (banks, parking lots, pubs, &hellip;). One of the core features of map showing such data should be the easy way to turn these categories on and&nbsp;off.</p>
 <p>As far as I know, it&#8217;s not trivial to do this with the standard Leaflet library. Extending <code>L.control.layers</code> and implement its <code>addOverlay</code>, <code>removeOverlay</code> methods on your own might be the way to add needed behavior. Fortunately, there&#8217;s an easier option thanks to <a href="https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup">Leaflet.FeatureGroup.SubGroup</a> that can handle such use case and is really straightforward. See the code&nbsp;below.</p>
@@ -69,7 +68,7 @@
 
 
 <p>With this piece of code you get a map key with checkboxes for all the categories, yet they&#8217;re still kept in the single cluster on the map.&nbsp;Brilliant!</p>
-<p><img src="/assets/postgis-case-study-vozejkmap-open-data-part-iii/map.png" title="vozejkmap.cz data map" class="img-responsive centered"></p>
+<p><img src="http://www.zimmi.cz/posts/assets/postgis-case-study-vozejkmap-open-data-part-iii/map.png" title="vozejkmap.cz data map" class="img-responsive centered"></p>
 <h2>Using Turf.js for&nbsp;analysis</h2>
 <p>Turf is one of those libraries I get amazed easily with, spending a week trying to find a use case, finally putting it aside with <em>&#8220;I&#8217;ll get back to it later&#8221;</em>. I usually don&#8217;t. This time it&#8217;s&nbsp;different.</p>
 <p>I use Turf to get the nearest neighbor for any marker on click. My first try ended up with the same marker being the result as it was a member of a feature collection passed to <code>turf.nearest()</code> method. After snooping around the docs I found <code>turf.remove()</code> method that can filter GeoJSON based on key-value&nbsp;pair.</p>
@@ -104,10 +103,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2015/animating-svg-maps-with-smil/" rel="bookmark" title="Permalink to Animating SVG Maps With SMIL">Animating <span class="caps">SVG</span> Maps With <span class="caps">SMIL</span></a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2015/animating-svg-maps-with-smil/" rel="bookmark" title="Permalink to Animating SVG Maps With SMIL">Animating <span class="caps">SVG</span> Maps With <span class="caps">SMIL</span></a></h2>
             <small>Written on Apr 29, 2015
         and marked as
-        <a href="/tag/svg.html">svg</a>,         <a href="/tag/smil.html">smil</a>        | <a href="/category/web-maps.html">web maps</a>
+        <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/smil.html">smil</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
             <p>Using <span class="caps">SVG</span> to build web maps have both pros and cons and to be honest I don&#8217;t know any <em>serious</em> map/<span class="caps">GIS</span> project built on top of <span class="caps">SVG</span>. However, as a part of my job at university, I was forced to use both <span class="caps">SVG</span> and <span class="caps">SMIL</span> to produce animated web map (see the small version below or the big one at <a href="https://zimmicz.github.io/svg-smil-airplanes/map.svg">GitHub</a>) and I&#8217;d like to share my&nbsp;findings.</p>
@@ -310,10 +309,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2014/connecting-to-secured-arcgis-server-layer-with-openlayers-3/" rel="bookmark" title="Permalink to Connecting To Secured ArcGIS Server Layer With OpenLayers 3">Connecting To Secured ArcGIS Server Layer With OpenLayers&nbsp;3</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2014/connecting-to-secured-arcgis-server-layer-with-openlayers-3/" rel="bookmark" title="Permalink to Connecting To Secured ArcGIS Server Layer With OpenLayers 3">Connecting To Secured ArcGIS Server Layer With OpenLayers&nbsp;3</a></h2>
             <small>Written on Sep 12, 2014
         and marked as
-        <a href="/tag/javascript.html">javascript</a>,         <a href="/tag/openlayers.html">openlayers</a>,         <a href="/tag/ogc.html">ogc</a>        | <a href="/category/web-maps.html">web maps</a>
+        <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>,         <a href="http://www.zimmi.cz/posts/tag/openlayers.html">openlayers</a>,         <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
             <p>I was made to use ArcGIS Server with <a href="http://openlayers.org">Openlayers 3</a> just recently as one of the projects I&#8217;ve been working on demands such different tools to work&nbsp;together.</p>
@@ -372,10 +371,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="/posts/2014/wmts-few-things-i-want-to-remember/" rel="bookmark" title="Permalink to WMTS: Few Things I Want To Remember"><span class="caps">WMTS</span>: Few Things I Want To&nbsp;Remember</a></h2>
+            <h2><a href="http://www.zimmi.cz/posts/2014/wmts-few-things-i-want-to-remember/" rel="bookmark" title="Permalink to WMTS: Few Things I Want To Remember"><span class="caps">WMTS</span>: Few Things I Want To&nbsp;Remember</a></h2>
             <small>Written on Sep 10, 2014
         and marked as
-        <a href="/tag/ogc.html">ogc</a>,         <a href="/tag/wmts.html">wmts</a>        | <a href="/category/web-maps.html">web maps</a>
+        <a href="http://www.zimmi.cz/posts/tag/ogc.html">ogc</a>,         <a href="http://www.zimmi.cz/posts/tag/wmts.html">wmts</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
             <ul>
@@ -410,7 +409,7 @@
 <li><code>tileMatrixMaxX = tileMatrixMinX + tileSpanX × matrixWidth;</code></li>
 <li><code>tileMatrixMinY = tileMatrixMaxY - tileSpanY × matrixHeight;</code></li>
 </ul>
-<p><img src="/assets/wmts-few-things-i-want-to-remember/wmts.png" title="WMTS tiling schema" class="img-responsive centered"></p>
+<p><img src="http://www.zimmi.cz/posts/assets/wmts-few-things-i-want-to-remember/wmts.png" title="WMTS tiling schema" class="img-responsive centered"></p>
         </section>
         </div>
     </div>
@@ -431,8 +430,17 @@
                 </footer><!-- /#contentinfo -->
             </div>
         </div>
-<script src="/theme/webassets-external/633f060ebe664637871acbe7f7239dc4_jquery.js"></script>
-<script src="/theme/webassets-external/4dac46d0971ad87d95db9a138607198c_foundation.min.js"></script>
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-43432739-2']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+<script src="http://www.zimmi.cz/posts/theme/js/packed.js?8bee1467"></script>
 <script>
 $(document).foundation();
 </script>
