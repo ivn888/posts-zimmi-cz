@@ -114,12 +114,25 @@ cat &lt;span class="s"&gt;&amp;lt;&amp;lt;EOT &amp;gt;&amp;gt; ~/.zprofile # I u
 
 &lt;span class="nv"&gt;workdir&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/home/zimmi/documents/zimmi/dizertace/social&amp;#39;&lt;/span&gt;
 &lt;span class="nv"&gt;logfile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$workdir&lt;/span&gt;/restart-gear.log
-date &amp;gt;&amp;gt; &lt;span class="nv"&gt;$logfile&lt;/span&gt;
+date &amp;gt; &lt;span class="nv"&gt;$logfile&lt;/span&gt;
 
-&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="nb"&gt;cd&lt;/span&gt; &lt;span class="nv"&gt;$workdir&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; git merge origin/master &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; git commit --allow-empty -m &lt;span class="s2"&gt;&amp;quot;Restart gear&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; git push &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Success&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class="nv"&gt;$logfile&lt;/span&gt; 2&amp;gt;&lt;span class="p"&gt;&amp;amp;&lt;/span&gt;1
+&lt;span class="o"&gt;{&lt;/span&gt; 
+&lt;span class="nv"&gt;HOME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/home/zimmi
+&lt;span class="nb"&gt;cd&lt;/span&gt; &lt;span class="nv"&gt;$workdir&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+git merge origin/master &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+git commit --allow-empty -m &lt;span class="s2"&gt;&amp;quot;Restart gear&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+git push &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Success&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt; 
+&lt;span class="o"&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class="nv"&gt;$logfile&lt;/span&gt; 2&amp;gt;&lt;span class="p"&gt;&amp;amp;&lt;/span&gt;1
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;strong&gt;&lt;span class="caps"&gt;UPDATE&lt;/span&gt;:&lt;/strong&gt; Spent a long time debugging the &amp;#8220;Permission denied (publickey).&amp;#8221;-like errors. What seems to help&amp;nbsp;is:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Use id_rsa instead of any other &lt;span class="caps"&gt;SSH&lt;/span&gt;&amp;nbsp;key&lt;/li&gt;
+&lt;li&gt;Put a new entry into the &lt;code&gt;~/.ssh/config&lt;/code&gt; file&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I don&amp;#8217;t know which one did the magic&amp;nbsp;though.&lt;/p&gt;
 &lt;p&gt;I&amp;#8217;ve been harvesting Twitter for a month with about 10-15K tweets a day (only interested in the Czech Republic). 
 &lt;sup&gt;1&lt;/sup&gt;&amp;frasl;&lt;sub&gt;6&lt;/sub&gt; to &lt;sup&gt;1&lt;/sup&gt;&amp;frasl;&lt;sub&gt;5&lt;/sub&gt; of them is located with latitude and longitude. More on this next&amp;nbsp;time.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Michal Zimmermann</dc:creator><pubDate>Fri, 06 Nov 2015 22:00:00 +0100</pubDate><guid>tag:www.zimmi.cz,2015-11-06:posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/</guid><category>javascript</category><category>openshift</category><category>twitter</category></item><item><title>Installing PostGIS 2.2 with SFCGAL on Ubuntu-based OS</title><link>http://www.zimmi.cz/posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/</link><description>&lt;p&gt;I&amp;#8217;ve seen a bunch of questions on &lt;span class="caps"&gt;GIS&lt;/span&gt; StackExchange recently related to &lt;a href="http://sfcgal.org/"&gt;&lt;span class="caps"&gt;SFCGAL&lt;/span&gt;&lt;/a&gt; extension for &lt;a href="http://postgis.net"&gt;PostGIS 2.2&lt;/a&gt;. Great news are it can be installed with one simple query &lt;code&gt;CREATE EXTENSION postgis_sfcgal&lt;/code&gt;. Not so great news are you have to compile it from source for Ubuntu-based &lt;span class="caps"&gt;OS&lt;/span&gt; (14.04) as recent versions of required packages are not available in the&amp;nbsp;repositories.&lt;/p&gt;
 &lt;p&gt;I tested my solution on elementary &lt;span class="caps"&gt;OS&lt;/span&gt; 0.3.1 based on Ubuntu 14.04. &lt;strong&gt;And it works!&lt;/strong&gt; It installs PostgreSQL 9.4 from repositories together with &lt;span class="caps"&gt;GDAL&lt;/span&gt; and &lt;span class="caps"&gt;GEOS&lt;/span&gt; and some other libs PostGIS depends on. PostGIS itself, &lt;span class="caps"&gt;CGAL&lt;/span&gt;, Boost, &lt;span class="caps"&gt;MPFR&lt;/span&gt; and &lt;span class="caps"&gt;GMP&lt;/span&gt; are built from&amp;nbsp;source.&lt;/p&gt;

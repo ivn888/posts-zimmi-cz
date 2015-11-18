@@ -69,9 +69,23 @@ It runs the following code for me to keep the app writing data to the database.
 
     workdir='/home/zimmi/documents/zimmi/dizertace/social'
     logfile=$workdir/restart-gear.log
-    date >> $logfile
+    date > $logfile
 
-    { cd $workdir && git merge origin/master && git commit --allow-empty -m "Restart gear" && git push && echo "Success" ; } >> $logfile 2>&1
+    { 
+    HOME=/home/zimmi
+    cd $workdir && \
+    git merge origin/master && \
+    git commit --allow-empty -m "Restart gear" && \
+    git push && \
+    echo "Success" ; 
+    } >> $logfile 2>&1
+
+**UPDATE:** Spent a long time debugging the "Permission denied (publickey)."-like errors. What seems to help is:
+
+1. Use id_rsa instead of any other SSH key
+2. Put a new entry into the `~/.ssh/config` file
+
+I don't know which one did the magic though.
 
 I've been harvesting Twitter for a month with about 10-15K tweets a day (only interested in the Czech Republic). 
 <sup>1</sup>&frasl;<sub>6</sub> to <sup>1</sup>&frasl;<sub>5</sub> of them is located with latitude and longitude. More on this next time.

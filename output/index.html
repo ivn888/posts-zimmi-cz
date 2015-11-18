@@ -172,12 +172,25 @@ cat <span class="s">&lt;&lt;EOT &gt;&gt; ~/.zprofile # I use zsh shell</span>
 
 <span class="nv">workdir</span><span class="o">=</span><span class="s1">&#39;/home/zimmi/documents/zimmi/dizertace/social&#39;</span>
 <span class="nv">logfile</span><span class="o">=</span><span class="nv">$workdir</span>/restart-gear.log
-date &gt;&gt; <span class="nv">$logfile</span>
+date &gt; <span class="nv">$logfile</span>
 
-<span class="o">{</span> <span class="nb">cd</span> <span class="nv">$workdir</span> <span class="o">&amp;&amp;</span> git merge origin/master <span class="o">&amp;&amp;</span> git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;Success&quot;</span> <span class="p">;</span> <span class="o">}</span> &gt;&gt; <span class="nv">$logfile</span> 2&gt;<span class="p">&amp;</span>1
+<span class="o">{</span> 
+<span class="nv">HOME</span><span class="o">=</span>/home/zimmi
+<span class="nb">cd</span> <span class="nv">$workdir</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git merge origin/master <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<span class="nb">echo</span> <span class="s2">&quot;Success&quot;</span> <span class="p">;</span> 
+<span class="o">}</span> &gt;&gt; <span class="nv">$logfile</span> 2&gt;<span class="p">&amp;</span>1
 </pre></div>
 
 
+<p><strong><span class="caps">UPDATE</span>:</strong> Spent a long time debugging the &#8220;Permission denied (publickey).&#8221;-like errors. What seems to help&nbsp;is:</p>
+<ol>
+<li>Use id_rsa instead of any other <span class="caps">SSH</span>&nbsp;key</li>
+<li>Put a new entry into the <code>~/.ssh/config</code> file</li>
+</ol>
+<p>I don&#8217;t know which one did the magic&nbsp;though.</p>
 <p>I&#8217;ve been harvesting Twitter for a month with about 10-15K tweets a day (only interested in the Czech Republic). 
 <sup>1</sup>&frasl;<sub>6</sub> to <sup>1</sup>&frasl;<sub>5</sub> of them is located with latitude and longitude. More on this next&nbsp;time.</p>
         </section>
