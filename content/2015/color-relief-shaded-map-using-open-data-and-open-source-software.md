@@ -14,8 +14,8 @@ I chose **Austria** to play with the data.
 It's so easy I doubt it's even worth a word. Get zipped data with `wget`, extract them to a directory.
 
     :::bash
-    wget https://cws-download.eea.europa.eu/in-situ/eudem/EUD_CP-DEMS_4500025000-AA.zip -O dem.zip
-    unzip dem.zip -d copernicus
+    wget https://cws-download.eea.europa.eu/in-situ/eudem/eu-dem/EUD_CP-DEMS_4500025000-AA.rar -O dem.rar
+    unrar dem.rar -d copernicus
     cd copernicus
 
 ## Hillshade and color relief
@@ -106,6 +106,18 @@ I created a color relief with another GDAL command.
 And here comes hypsometric tints.
 
 <p class="text-center"><img title="Color relief" src="{filename}/assets/color-relief-shaded-map-using-open-data-and-open-source-software/color_relief.png" class="center"></p>
+
+Add a bit of compression and some overviews to make it smaller and load faster.
+
+    :::bash
+    gdal_translate -of GTiff -co TILED=YES -co COMPRESS=DEFLATE color_relief.tif color_relief.compress.tif
+    gdal_translate -of GTiff -co TILED=YES -co COMPRESS=DEFLATE hillshade.tif hillshade.compress.tif
+    rm color_relief.tif
+    rm hillshade.tif
+    mv color_relief.compress.tif color_relief.tif
+    mv hillshade.compress.tif hillshade.tif
+    gdaladdo color_relief.tif 2 4 8 16
+    gdaladdo hillshade.tif 2 4 8 16
 
 ## Map composition
 

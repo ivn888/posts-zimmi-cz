@@ -1,5 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-11-14T20:39:00+01:00</updated><entry><title>PostGIS Case Study: Vozejkmap Open Data (Part III)</title><link href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-iii/" rel="alternate"></link><updated>2015-11-14T20:39:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-11-14:posts/2015/postgis-case-study-vozejkmap-open-data-part-iii/</id><summary type="html">&lt;p&gt;After a while I got back to my &lt;a href="http://www.zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/"&gt;PostGIS open data&lt;/a&gt; &lt;a href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/"&gt;case study&lt;/a&gt;. Last time I left it with clustering implemented, looking forward to incorporate &lt;a href="http://turfjs.org"&gt;Turf.js&lt;/a&gt; in the future. &lt;em&gt;And the future is now.&lt;/em&gt; &lt;a href="https://github.com/zimmicz/vozejkmap-to-postgis"&gt;The code is still available on&amp;nbsp;GitHub.&lt;/a&gt;&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="http://www.zimmi.cz/posts/" rel="alternate"></link><link href="http://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>http://www.zimmi.cz/posts/</id><updated>2015-12-06T12:25:00+01:00</updated><entry><title>Twitter REST API Data Mining on OpenShift (Part II)</title><link href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-ii/" rel="alternate"></link><updated>2015-12-06T12:25:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-12-06:posts/2015/twitter-rest-api-data-mining-on-openshift-part-ii/</id><summary type="html">&lt;p&gt;Last time I described &lt;a href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/"&gt;the setup of my OpenShift Twitter crawler&lt;/a&gt; and let it running and downloading data. It&amp;#8217;s been more than two months since I started and I got interesting amount of data. I also made a simple &lt;span class="caps"&gt;ETL&lt;/span&gt; process to load it into my local PostGIS database, which I&amp;#8217;d like to cover in this&amp;nbsp;post.&lt;/p&gt;
+&lt;h2&gt;Extract&amp;nbsp;data&lt;/h2&gt;
+&lt;p&gt;Each day is written to the separate sqlite file with a name like &lt;code&gt;tw_day_D_M_YYYY&lt;/code&gt;. &lt;code&gt;Bash&lt;/code&gt; is used to gzip all the files before downloading them from&amp;nbsp;OpenShift.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
+
+ssh openshift &lt;span class="s"&gt;&amp;lt;&amp;lt; EOF&lt;/span&gt;
+&lt;span class="s"&gt;    cd app-root/data&lt;/span&gt;
+&lt;span class="s"&gt;    tar czf twitter.tar.gz *.db&lt;/span&gt;
+&lt;span class="s"&gt;EOF&lt;/span&gt;
+
+scp openshift:/var/lib/openshift/55e487587628e1280b0000a9/app-root/data/twitter.tar.gz ./data
+&lt;span class="nb"&gt;cd &lt;/span&gt;data &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+tar -xzf twitter.tar.gz &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+&lt;span class="nb"&gt;cd&lt;/span&gt; -
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Extract done&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Transform&amp;nbsp;data&lt;/h2&gt;
+&lt;p&gt;The transformation part operates on downloaded files and merges them into one big &lt;span class="caps"&gt;CSV&lt;/span&gt; file. That&amp;#8217;s pretty straightforward. Note that&amp;#8217;s quite simple with sqlite flags, some &lt;code&gt;sed&lt;/code&gt; and &lt;code&gt;tail&lt;/code&gt; commands.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
+
+rm -rf ./data/csv
+mkdir ./data/csv
+
+&lt;span class="k"&gt;for&lt;/span&gt; db in ./data/*.db&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="nv"&gt;FILENAME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;basename &lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
+    &lt;span class="nv"&gt;DBNAME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;FILENAME&lt;/span&gt;&lt;span class="p"&gt;%%.db&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+    &lt;span class="nv"&gt;CSVNAME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$DBNAME&lt;/span&gt;.csv
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$DBNAME&lt;/span&gt;&lt;span class="s2"&gt; to csv...&amp;quot;&lt;/span&gt;
+    sqlite3 -header -csv &lt;span class="nv"&gt;$db&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;select * from &lt;/span&gt;&lt;span class="nv"&gt;$DBNAME&lt;/span&gt;&lt;span class="s2"&gt;;&amp;quot;&lt;/span&gt; &amp;gt; ./data/csv/&lt;span class="nv"&gt;$CSVNAME&lt;/span&gt;
+&lt;span class="k"&gt;done&lt;/span&gt;
+
+&lt;span class="nb"&gt;cd&lt;/span&gt; ./data/csv
+touch tweets.csv
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="k"&gt;$(&lt;/span&gt;sed -n 1p &lt;span class="k"&gt;$(&lt;/span&gt;ls -d -1 *.csv &lt;span class="p"&gt;|&lt;/span&gt; head -n 1&lt;span class="k"&gt;))&lt;/span&gt; &amp;gt; tweets.csv &lt;span class="c"&gt;# get column names&lt;/span&gt;
+
+&lt;span class="k"&gt;for&lt;/span&gt; csv in tw_*.csv&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$csv&lt;/span&gt;
+    tail -n +2 &lt;span class="nv"&gt;$csv&lt;/span&gt; &amp;gt;&amp;gt; tweets.csv &lt;span class="c"&gt;# get all lines without the first one&lt;/span&gt;
+&lt;span class="k"&gt;done&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Load&amp;nbsp;data&lt;/h2&gt;
+&lt;p&gt;In the last step, the data is loaded with &lt;span class="caps"&gt;SQL&lt;/span&gt; &lt;code&gt;\copy&lt;/code&gt; command.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nb"&gt;export &lt;/span&gt;&lt;span class="nv"&gt;PG_USE_COPY&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;YES
+
+&lt;span class="nv"&gt;DATABASE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;mzi_dizertace
+&lt;span class="nv"&gt;SCHEMA&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;dizertace
+&lt;span class="nv"&gt;TABLE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;tweets
+
+psql &lt;span class="nv"&gt;$DATABASE&lt;/span&gt; &lt;span class="s"&gt;&amp;lt;&amp;lt; EOF&lt;/span&gt;
+&lt;span class="s"&gt;    DROP TABLE IF EXISTS $SCHEMA.$TABLE;&lt;/span&gt;
+&lt;span class="s"&gt;    CREATE UNLOGGED TABLE $SCHEMA.$TABLE (id text, author text, author_id text, tweet text, created_at text, lon float, lat float, lang text);&lt;/span&gt;
+&lt;span class="s"&gt;    \copy $SCHEMA.$TABLE FROM &amp;#39;data/csv/tweets.csv&amp;#39; CSV HEADER DELIMITER &amp;#39;,&amp;#39;&lt;/span&gt;
+&lt;span class="s"&gt;    ALTER TABLE $SCHEMA.$TABLE ADD COLUMN wkb_geometry geometry(POINT, 4326);&lt;/span&gt;
+&lt;span class="s"&gt;    UPDATE $SCHEMA.$TABLE SET wkb_geometry = ST_SetSRID(ST_MakePoint(lon, lat), 4326);&lt;/span&gt;
+&lt;span class="s"&gt;    CREATE INDEX ${TABLE}_geom_idx ON $SCHEMA.$TABLE USING gist(wkb_geometry);&lt;/span&gt;
+&lt;span class="s"&gt;    COMMIT;&lt;/span&gt;
+&lt;span class="s"&gt;EOF&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;First&amp;nbsp;statistics&lt;/h2&gt;
+&lt;p&gt;Some interesting charts and numbers&amp;nbsp;follow.&lt;/p&gt;
+&lt;p class="text-center"&gt;&lt;img title="Top 100 Twitter users in the Czech Republic" src="http://www.zimmi.cz/posts/assets/twitter-rest-api-data-mining-on-openshift-part-ii/authors.png" class="img-responsive centered"&gt;&lt;/p&gt;
+
+&lt;p class="text-center"&gt;&lt;img title="When people tweet in the Czech Republic" src="http://www.zimmi.cz/posts/assets/twitter-rest-api-data-mining-on-openshift-part-ii/hours.png" class="img-responsive centered"&gt;&lt;/p&gt;
+
+&lt;p class="text-center"&gt;&lt;img title="Languages on Twitter in the Czech Republic" src="http://www.zimmi.cz/posts/assets/twitter-rest-api-data-mining-on-openshift-part-ii/languages.png" class="img-responsive centered"&gt;&lt;/p&gt;</summary><category term="javascript"></category><category term="openshift"></category><category term="twitter"></category></entry><entry><title>PostGIS Case Study: Vozejkmap Open Data (Part III)</title><link href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-iii/" rel="alternate"></link><updated>2015-11-14T20:39:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-11-14:posts/2015/postgis-case-study-vozejkmap-open-data-part-iii/</id><summary type="html">&lt;p&gt;After a while I got back to my &lt;a href="http://www.zimmi.cz/posts/2014/postgis-case-study-vozejkmap-open-data-part-i/"&gt;PostGIS open data&lt;/a&gt; &lt;a href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-ii/"&gt;case study&lt;/a&gt;. Last time I left it with clustering implemented, looking forward to incorporate &lt;a href="http://turfjs.org"&gt;Turf.js&lt;/a&gt; in the future. &lt;em&gt;And the future is now.&lt;/em&gt; &lt;a href="https://github.com/zimmicz/vozejkmap-to-postgis"&gt;The code is still available on&amp;nbsp;GitHub.&lt;/a&gt;&lt;/p&gt;
 &lt;h2&gt;Subgroup&amp;nbsp;clustering&lt;/h2&gt;
 &lt;p&gt;Vozejkmap data is categorized based on the place type (banks, parking lots, pubs, &amp;hellip;). One of the core features of map showing such data should be the easy way to turn these categories on and&amp;nbsp;off.&lt;/p&gt;
 &lt;p&gt;As far as I know, it&amp;#8217;s not trivial to do this with the standard Leaflet library. Extending &lt;code&gt;L.control.layers&lt;/code&gt; and implement its &lt;code&gt;addOverlay&lt;/code&gt;, &lt;code&gt;removeOverlay&lt;/code&gt; methods on your own might be the way to add needed behavior. Fortunately, there&amp;#8217;s an easier option thanks to &lt;a href="https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup"&gt;Leaflet.FeatureGroup.SubGroup&lt;/a&gt; that can handle such use case and is really straightforward. See the code&amp;nbsp;below.&lt;/p&gt;
@@ -57,7 +130,7 @@
 
 &lt;p&gt;&lt;img src="http://www.zimmi.cz/posts/assets/postgis-case-study-vozejkmap-open-data-part-iii/screen2.png" title="vozejkmap.cz data map" class="img-responsive centered"&gt; You can hide the&amp;nbsp;infobox.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src="http://www.zimmi.cz/posts/assets/postgis-case-study-vozejkmap-open-data-part-iii/screen3.png" title="vozejkmap.cz data map" class="img-responsive centered"&gt;You can jump to any of the nearest&amp;nbsp;places.&lt;/p&gt;</summary><category term="postgresql"></category><category term="postgis"></category><category term="leaflet"></category><category term="javascript"></category></entry><entry><title>Twitter REST API Data Mining on OpenShift Part I</title><link href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/" rel="alternate"></link><updated>2015-11-06T22:00:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-11-06:posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/</id><summary type="html">&lt;p&gt;More than a year ago I wrote about &lt;a href="http://www.zimmi.cz/posts/2014/analyzing-twitter-languages-with-streaming-api/"&gt;analyzing Twitter languages with Streaming &lt;span class="caps"&gt;API&lt;/span&gt;&lt;/a&gt;. Back then I kept my laptop running for a week to download data. Not a comfortable way, especially if you decide to get more data. One year uptime doesn&amp;#8217;t sound like anything you want to be part of. &lt;a href="https://www.openshift.com/"&gt;OpenShift&lt;/a&gt; by Red Hat seems to be almost perfect replacement.&amp;nbsp;Almost.&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://www.zimmi.cz/posts/assets/postgis-case-study-vozejkmap-open-data-part-iii/screen3.png" title="vozejkmap.cz data map" class="img-responsive centered"&gt;You can jump to any of the nearest&amp;nbsp;places.&lt;/p&gt;</summary><category term="postgresql"></category><category term="postgis"></category><category term="leaflet"></category><category term="javascript"></category></entry><entry><title>Twitter REST API Data Mining on OpenShift (Part I)</title><link href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/" rel="alternate"></link><updated>2015-11-06T22:00:00+01:00</updated><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2015-11-06:posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/</id><summary type="html">&lt;p&gt;More than a year ago I wrote about &lt;a href="http://www.zimmi.cz/posts/2014/analyzing-twitter-languages-with-streaming-api/"&gt;analyzing Twitter languages with Streaming &lt;span class="caps"&gt;API&lt;/span&gt;&lt;/a&gt;. Back then I kept my laptop running for a week to download data. Not a comfortable way, especially if you decide to get more data. One year uptime doesn&amp;#8217;t sound like anything you want to be part of. &lt;a href="https://www.openshift.com/"&gt;OpenShift&lt;/a&gt; by Red Hat seems to be almost perfect replacement.&amp;nbsp;Almost.&lt;/p&gt;
 &lt;h2&gt;OpenShift&amp;nbsp;setup&lt;/h2&gt;
 &lt;p&gt;I started with Node.js application running on one small gear. Once running, you can easily &lt;code&gt;git push&lt;/code&gt; the code to your OpenShift repo and login via &lt;span class="caps"&gt;SSH&lt;/span&gt;. I quickly found simple copy-pasting my local solution wasn&amp;#8217;t going to work. and fixed it with some minor tweaks. That&amp;#8217;s where the fun&amp;nbsp;begins&amp;#8230;&lt;/p&gt;
 &lt;blockquote&gt;
@@ -236,8 +309,8 @@ sudo -u postgres psql -d spatial_template -c &lt;span class="s2"&gt;&amp;quot;SE
 &lt;p&gt;I chose &lt;strong&gt;Austria&lt;/strong&gt; to play with the&amp;nbsp;data.&lt;/p&gt;
 &lt;h2&gt;Obtaining the&amp;nbsp;data&lt;/h2&gt;
 &lt;p&gt;It&amp;#8217;s so easy I doubt it&amp;#8217;s even worth a word. Get zipped data with &lt;code&gt;wget&lt;/code&gt;, extract them to a&amp;nbsp;directory.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;wget https://cws-download.eea.europa.eu/in-situ/eudem/EUD_CP-DEMS_4500025000-AA.zip -O dem.zip
-unzip dem.zip -d copernicus
+&lt;div class="highlight"&gt;&lt;pre&gt;wget https://cws-download.eea.europa.eu/in-situ/eudem/eu-dem/EUD_CP-DEMS_4500025000-AA.rar -O dem.rar
+unrar dem.rar -d copernicus
 &lt;span class="nb"&gt;cd &lt;/span&gt;copernicus
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -326,6 +399,18 @@ unzip dem.zip -d copernicus
 
 &lt;p&gt;And here comes hypsometric&amp;nbsp;tints.&lt;/p&gt;
 &lt;p class="text-center"&gt;&lt;img title="Color relief" src="http://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/color_relief.png" class="center"&gt;&lt;/p&gt;
+
+&lt;p&gt;Add a bit of compression and some overviews to make it smaller and load&amp;nbsp;faster.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gdal_translate -of GTiff -co &lt;span class="nv"&gt;TILED&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;YES -co &lt;span class="nv"&gt;COMPRESS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;DEFLATE color_relief.tif color_relief.compress.tif
+gdal_translate -of GTiff -co &lt;span class="nv"&gt;TILED&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;YES -co &lt;span class="nv"&gt;COMPRESS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;DEFLATE hillshade.tif hillshade.compress.tif
+rm color_relief.tif
+rm hillshade.tif
+mv color_relief.compress.tif color_relief.tif
+mv hillshade.compress.tif hillshade.tif
+gdaladdo color_relief.tif &lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="m"&gt;8&lt;/span&gt; 16
+gdaladdo hillshade.tif &lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="m"&gt;8&lt;/span&gt; 16
+&lt;/pre&gt;&lt;/div&gt;
+
 
 &lt;h2&gt;Map&amp;nbsp;composition&lt;/h2&gt;
 &lt;p&gt;I chose Austria for its excessive amount of freely available datasets. What I didn&amp;#8217;t take into consideration was my lack of knowledge when it comes to German (#fail). States come from &lt;a href="http://data.gv.at"&gt;data.gv.at&lt;/a&gt; and was dissolved from smaller administrative units. State capitals were downloaded from &lt;a href="http://naturalearth.com"&gt;naturalearth.com&lt;/a&gt;.&lt;/p&gt;

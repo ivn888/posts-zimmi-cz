@@ -1,4 +1,4 @@
-Title: Twitter REST API Data Mining on OpenShift Part I
+Title: Twitter REST API Data Mining on OpenShift (Part I)
 Date: 2015-11-6 22:00
 Tags: javascript, openshift, twitter
 Category: development
