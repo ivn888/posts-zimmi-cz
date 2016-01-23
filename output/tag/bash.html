@@ -52,7 +52,7 @@
 <p>It&#8217;s so easy I doubt it&#8217;s even worth a word. Get zipped data with <code>wget</code>, extract them to a&nbsp;directory.</p>
 <div class="highlight"><pre>wget https://cws-download.eea.europa.eu/in-situ/eudem/eu-dem/EUD_CP-DEMS_4500025000-AA.rar -O dem.rar
 unrar dem.rar -d copernicus
-<span class="nb">cd </span>copernicus
+<span class="nb">cd</span> copernicus
 </pre></div>
 
 
@@ -180,10 +180,10 @@ gdaladdo hillshade.tif <span class="m">2</span> <span class="m">4</span> <span c
 <p>The <code>parallel</code> modifies several images per second. Uploading these right away seems to be the next step. But how do you tell <code>rsync</code> to check for modified files every now and then? Another for loop mixed with <code>sleep</code> would work, but it just doesn&#8217;t feel&nbsp;right.</p>
 <p>Luckily, there&#8217;s a <a href="http://linux.die.net/man/1/inotifywait"><code>inotifywait</code></a> tool capable of watching changes to files and taking actions based on those&nbsp;changes.</p>
 <div class="highlight"><pre>inotifywait -e close_write -m --format <span class="s1">&#39;%f&#39;</span> . <span class="p">|</span> <span class="se">\</span>
-<span class="k">while</span> <span class="nb">read </span>file
+<span class="k">while</span> <span class="nb">read</span> file
 <span class="k">do</span>
-    <span class="nb">echo</span> <span class="nv">$file</span>
-    rsync -OWRD0Pq --ignore-existing <span class="nv">$file</span> data@localhost
+    <span class="nb">echo</span> <span class="nv">$f</span>ile
+    rsync -OWRD0Pq --ignore-existing <span class="nv">$f</span>ile data@localhost
 <span class="k">done</span>
 </pre></div>
 
@@ -204,19 +204,19 @@ gdaladdo hillshade.tif <span class="m">2</span> <span class="m">4</span> <span c
         <section>
             <p>I&#8217;ve been running some <span class="caps">GRASS</span>/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten&nbsp;minutes.</p>
 <p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
-<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
+<div class="highlight"><pre><span class="ch">#!/usr/bin/env bash</span>
 <span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
 
-<span class="k">while</span> <span class="nb">true</span><span class="p">;</span> <span class="k">do</span>
+<span class="k">while</span> true<span class="p">;</span> <span class="k">do</span>
     <span class="nb">echo</span> <span class="s2">&quot;############ </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2"> ############&quot;</span>
     <span class="nv">x</span><span class="o">=</span><span class="k">$(</span>ssh user@remote.server <span class="s2">&quot;tail -n 30 path/to/my/log_</span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="k">)</span>
 
-    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
+    <span class="k">if</span> <span class="o">[[</span> $<span class="nv">x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
         <span class="k">then</span>
             notify-send -u critical <span class="s2">&quot;Finally </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">&quot;</span>
             mpg123 -n <span class="m">250</span> ~/Music/queen-we_are_the_champions.mp3
             <span class="nb">exit</span>
-<span class="nb">        </span><span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
+        <span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
     <span class="k">fi</span>
     sleep 60
 <span class="k">done</span>
