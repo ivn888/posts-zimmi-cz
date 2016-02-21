@@ -123,26 +123,26 @@
 <li><code>export</code>ing coordinates rounded to one decimal place makes your <span class="caps">SVG</span> a lot&nbsp;smaller.</li>
 </ul>
 <p>You can change <span class="caps">SVG</span> look with simple <span class="caps">CSS</span>, just be sure to use layer names as <span class="caps">CSS</span>&nbsp;ids:</p>
-<div class="highlight"><pre><span class="nn">#airports</span> <span class="p">{</span>
+<div class="highlight"><pre><span class="nf">#airports</span> <span class="p">{</span>
     <span class="n">fill</span><span class="o">:</span> <span class="m">#CC0000</span><span class="p">;</span>
-    <span class="n">fill</span><span class="o">-</span><span class="nb">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="n">fill</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
     <span class="n">stroke</span><span class="o">:</span> <span class="m">#660000</span><span class="p">;</span>
-    <span class="n">stroke</span><span class="o">-</span><span class="nb">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="nn">#countries</span> <span class="p">{</span>
+<span class="nf">#countries</span> <span class="p">{</span>
     <span class="n">fill</span><span class="o">:</span> <span class="m">#e6deb4</span><span class="p">;</span>
     <span class="n">stroke</span><span class="o">:</span> <span class="m">#a59f81</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="nn">#grid</span> <span class="p">{</span>
+<span class="nf">#grid</span> <span class="p">{</span>
     <span class="n">stroke</span><span class="o">:</span> <span class="m">#d0d0d0</span><span class="p">;</span>
-    <span class="n">stroke</span><span class="o">-</span><span class="nb">width</span><span class="o">:</span> <span class="m">.3px</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="k">width</span><span class="o">:</span> <span class="m">.3px</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="nn">#travels</span> <span class="p">{</span>
+<span class="nf">#travels</span> <span class="p">{</span>
     <span class="n">stroke</span><span class="o">:</span> <span class="m">#1f78b4</span><span class="p">;</span>
-    <span class="n">stroke</span><span class="o">-</span><span class="nb">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
     <span class="n">stroke</span><span class="o">-</span><span class="n">dasharray</span><span class="o">:</span> <span class="m">5</span><span class="o">,</span><span class="m">5</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
@@ -204,40 +204,40 @@
 
 
 <p>Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript&nbsp;function:</p>
-<div class="highlight"><pre><span class="c">/**</span>
-<span class="c"> * @param  number coef  scale radius by number of flights to the given destination</span>
-<span class="c"> * @param  string flight_id</span>
-<span class="c"> */</span>
-<span class="nt">var</span> <span class="nt">circle</span> <span class="o">=</span> <span class="nt">function</span><span class="o">(</span><span class="nt">coef</span><span class="o">,</span> <span class="nt">flight_id</span><span class="o">,</span> <span class="nt">timeshift</span><span class="o">)</span> <span class="p">{</span>
-    <span class="n">var</span> <span class="n">svgns</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/2000/svg&quot;</span><span class="p">;</span>
-    <span class="n">var</span> <span class="n">svgDocument</span> <span class="o">=</span><span class="n">document</span><span class="p">;</span>
-    <span class="n">var</span> <span class="n">motion</span> <span class="o">=</span> <span class="n">svgDocument</span><span class="o">.</span><span class="n">createElementNS</span><span class="p">(</span><span class="n">svgns</span><span class="o">,</span><span class="s2">&quot;animateMotion&quot;</span><span class="p">);</span>
-    <span class="n">var</span> <span class="n">animation</span> <span class="o">=</span> <span class="n">svgDocument</span><span class="o">.</span><span class="n">createElementNS</span><span class="p">(</span><span class="n">svgns</span><span class="o">,</span><span class="s2">&quot;animate&quot;</span><span class="p">);</span>
-    <span class="n">var</span> <span class="n">shape</span>  <span class="o">=</span> <span class="n">svgDocument</span><span class="o">.</span><span class="n">createElementNS</span><span class="p">(</span><span class="n">svgns</span><span class="o">,</span> <span class="s2">&quot;circle&quot;</span><span class="p">);</span>
-    <span class="n">var</span> <span class="n">time</span> <span class="o">=</span> <span class="m">15</span> <span class="o">+</span> <span class="n">timeshift</span><span class="p">;</span>
-    <span class="n">var</span> <span class="n">dur</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="n">flight_id</span><span class="p">)</span><span class="o">.</span><span class="n">getAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;data-dist&quot;</span><span class="p">)</span><span class="o">/</span><span class="m">100</span><span class="p">;</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="o">,</span> <span class="n">time</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="o">,</span> <span class="n">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="o">,</span> <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="n">flight_id</span><span class="p">)</span><span class="o">.</span><span class="n">getAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;d&quot;</span><span class="p">));</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;xlink:href&quot;</span><span class="o">,</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="n">flight_id</span><span class="p">);</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="o">,</span> <span class="n">flight_id</span> <span class="o">+</span> <span class="s2">&quot;_motion&quot;</span><span class="p">);</span>
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * @param  number coef  scale radius by number of flights to the given destination</span>
+<span class="cm"> * @param  string flight_id</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">coef</span><span class="p">,</span> <span class="nx">flight_id</span><span class="p">,</span> <span class="nx">timeshift</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">svgns</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/2000/svg&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">svgDocument</span> <span class="o">=</span><span class="nb">document</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">motion</span> <span class="o">=</span> <span class="nx">svgDocument</span><span class="p">.</span><span class="nx">createElementNS</span><span class="p">(</span><span class="nx">svgns</span><span class="p">,</span><span class="s2">&quot;animateMotion&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">animation</span> <span class="o">=</span> <span class="nx">svgDocument</span><span class="p">.</span><span class="nx">createElementNS</span><span class="p">(</span><span class="nx">svgns</span><span class="p">,</span><span class="s2">&quot;animate&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">shape</span>  <span class="o">=</span> <span class="nx">svgDocument</span><span class="p">.</span><span class="nx">createElementNS</span><span class="p">(</span><span class="nx">svgns</span><span class="p">,</span> <span class="s2">&quot;circle&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">+</span> <span class="nx">timeshift</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">dur</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">flight_id</span><span class="p">).</span><span class="nx">getAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;data-dist&quot;</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="p">;</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="p">,</span> <span class="nx">time</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="p">,</span> <span class="nx">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">flight_id</span><span class="p">).</span><span class="nx">getAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">));</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;xlink:href&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">flight_id</span><span class="p">);</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nx">flight_id</span> <span class="o">+</span> <span class="s2">&quot;_motion&quot;</span><span class="p">);</span>
 
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;attributeName&quot;</span><span class="o">,</span> <span class="s2">&quot;opacity&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;from&quot;</span><span class="o">,</span> <span class="s2">&quot;1&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;to&quot;</span><span class="o">,</span> <span class="s2">&quot;0&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="o">,</span> <span class="n">time</span> <span class="o">+</span> <span class="n">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="o">,</span> <span class="s2">&quot;0.1s&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="o">,</span> <span class="s2">&quot;freeze&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;attributeName&quot;</span><span class="p">,</span> <span class="s2">&quot;opacity&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;from&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="p">,</span> <span class="nx">time</span> <span class="o">+</span> <span class="nx">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="p">,</span> <span class="s2">&quot;0.1s&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">,</span> <span class="s2">&quot;freeze&quot;</span><span class="p">);</span>
 
 
-    <span class="n">shape</span><span class="o">.</span><span class="n">setAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;r&quot;</span><span class="o">,</span>  <span class="m">1</span><span class="o">*</span><span class="n">coef</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">setAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;fill&quot;</span><span class="o">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">setAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;stroke&quot;</span><span class="o">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="o">,</span> <span class="s2">&quot;airplane-&quot;</span> <span class="o">+</span> <span class="n">flight_id</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">motion</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">animation</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>  <span class="mi">1</span><span class="o">*</span><span class="nx">coef</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;fill&quot;</span><span class="p">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;stroke&quot;</span><span class="p">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;airplane-&quot;</span> <span class="o">+</span> <span class="nx">flight_id</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">motion</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">animation</span><span class="p">);</span>
 
-    <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="s2">&quot;airplanes&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">shape</span><span class="p">);</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;airplanes&quot;</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">shape</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 
