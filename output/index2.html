@@ -4,9 +4,9 @@
         <title>Michal Zimmermann | Pieces of knowledge from the world of GIS.</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
-        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
-        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9a0407ed">
+        <link href="/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="/posts/theme/css/style.min.css?9a0407ed">
 
 </head>
 
@@ -22,9 +22,9 @@
         <section class="top-bar-section">
     <!-- Right Nav Section -->
             <ul class="right">
-                <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
-                <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
-                <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS feed</a></li>
+                <li><a href="/posts/categories">Categories</a></li>
+                <li><a href="/posts/tags">Tags</a></li>
+                <li><a href="/posts/feed.xml">RSS feed</a></li>
             </ul>
         </section>
     </nav>
@@ -38,13 +38,13 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With <span class="caps">QGIS</span>, PostGIS, Python, <span class="caps">SVG</span> and&nbsp;ImageMagick</a></h2>
+            <h2><a href="/posts/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/" rel="bookmark" title="Permalink to Automated Map Creation With QGIS, PostGIS, Python, SVG and ImageMagick">Automated Map Creation With <span class="caps">QGIS</span>, PostGIS, Python, <span class="caps">SVG</span> and&nbsp;ImageMagick</a></h2>
             <small>Written on Aug 9, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="http://www.zimmi.cz/posts/tag/python.html">python</a>,         <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/posts/tag/qgis.html">qgis</a>,         <a href="/posts/tag/postgis.html">postgis</a>,         <a href="/posts/tag/python.html">python</a>,         <a href="/posts/tag/svg.html">svg</a>,         <a href="/posts/tag/linux.html">linux</a>        | <a href="/posts/category/automation.html">automation</a>
         </small>
         <section>
-            <p>As mentioned in <a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/"><span class="caps">QGIS</span> Tips For Collaborative Mapping</a> we&#8217;re in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
+            <p>As mentioned in <a href="/posts/2015/qgis-tips-for-collaborative-mapping/"><span class="caps">QGIS</span> Tips For Collaborative Mapping</a> we&#8217;re in the middle of crop evaluation project at <a href="http://www.clevermaps.cz/">CleverMaps</a>.</p>
 <p>With the <span class="caps">QGIS</span> workflow up and running, I&#8217;ve been focused on different <span class="caps">QGIS</span> related task: <strong>automatic map generation</strong> for land blocks that meet certain conditions. The logic behind identifying such land blocks is as&nbsp;follows:</p>
 <ul>
 <li>if the original area and the measured one differ more than 0.5 %&nbsp;or</li>
@@ -61,7 +61,7 @@
 <li><span class="caps">HR</span>, <span class="caps">VHR</span>, <span class="caps">NIR</span> imagery, orthophoto - served via <span class="caps">WMS</span></li>
 </ul>
 <p>Labels should be visible only for the featured land block (both for the land parcels and the land block itself. The whole map scales dynamically, showing small land blocks zoomed in and the large ones zoomed&nbsp;out.</p>
-<p class='text-center'><a id="desired-map" title="Desired map" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a id="desired-map" title="Desired map" href="/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg"><img title="Desired map" src="/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map.jpg" width=70% class="img-responsive centered"></a></p>
 
 <p>Every map features additional&nbsp;items:</p>
 <ul>
@@ -104,7 +104,7 @@
 <li>fixed scale: sets the scale the same for all the&nbsp;maps</li>
 </ul>
 <p>With these settings, I get a map similar to the one below. Notice two interesting&nbsp;things:</p>
-<p class='text-center'><a title="QGIS map skeleton" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a title="QGIS map skeleton" href="/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png"><img title="QGIS map skeleton" src="/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/map_skeleton.png" width=70% class="img-responsive centered"></a></p>
 
 <ul>
 <li>Scale uses decimal places, which I find <em>a huge failure</em>. Has anyone ever seen a map with such scale? The worst is there is no easy way to hide these, or at least I didn&#8217;t find&nbsp;one.</li>
@@ -128,7 +128,7 @@
 
 
 <p>With this simple expression, I get labels only for those land parcels that are part of the mapped land block. Even the <strong>layer style</strong> can be controlled with atlas feature. Land parcels inside the land block have blue borders, the rest is yellowish, remember? It&#8217;s a piece of cake with rule-based&nbsp;styling.</p>
-<p class='text-center'><a title="Layer style based on atlas feature" href="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="http://www.zimmi.cz/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
+<p class='text-center'><a title="Layer style based on atlas feature" href="/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png"><img title="Layer style based on atlas feature" src="/posts/assets/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick/atlas_feature_style.png" width=70% class="img-responsive centered"></a></p>
 
 <h3>Atlas&nbsp;generation</h3>
 <p>When you&#8217;re set, atlas can be created with a single button. I used <span class="caps">SVG</span> as an output format to easily manipulate the map content afterwards. The resulting maps look like the one in <a href="#desired-map">the first picture</a> without the text in the red rectangle. A Python script appends this to each map&nbsp;afterwards.</p>
@@ -188,10 +188,10 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using <span class="caps">GDAL</span></a></h2>
+            <h2><a href="/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using <span class="caps">GDAL</span></a></h2>
             <small>Written on Jul 21, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/gdal.html">gdal</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/posts/tag/linux.html">linux</a>,         <a href="/posts/tag/gdal.html">gdal</a>        | <a href="/posts/category/automation.html">automation</a>
         </small>
         <section>
             <p>Recently I needed to clip several raster files with polygonal layer of municipalities. A solution to this task is pretty straightforward using <a href="http://gdal.org/"><span class="caps">GDAL</span></a> and a bit of Bash and <span class="caps">QGIS</span> thrown&nbsp;in.</p>
@@ -235,10 +235,10 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/filtering-points-by-distance-in-postgis/" rel="bookmark" title="Permalink to Filtering points by distance in PostGIS">Filtering points by distance in&nbsp;PostGIS</a></h2>
+            <h2><a href="/posts/2015/filtering-points-by-distance-in-postgis/" rel="bookmark" title="Permalink to Filtering points by distance in PostGIS">Filtering points by distance in&nbsp;PostGIS</a></h2>
             <small>Written on Jul 21, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/posts/tag/postgis.html">postgis</a>        | <a href="/posts/category/sql.html">SQL</a>
         </small>
         <section>
             <p>Filtering really big (millions of rows) point datasets by distance might get catchy when solved with wrong PostGIS functions. Without spatial indexes PostGIS would take ages to finish such&nbsp;task.</p>
@@ -298,10 +298,10 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/" rel="bookmark" title="Permalink to QGIS Tips For Collaborative Mapping"><span class="caps">QGIS</span> Tips For Collaborative&nbsp;Mapping</a></h2>
+            <h2><a href="/posts/2015/qgis-tips-for-collaborative-mapping/" rel="bookmark" title="Permalink to QGIS Tips For Collaborative Mapping"><span class="caps">QGIS</span> Tips For Collaborative&nbsp;Mapping</a></h2>
             <small>Written on Jul 21, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>        | <a href="http://www.zimmi.cz/posts/category/tools.html">Tools</a>
+        <a href="/posts/tag/qgis.html">qgis</a>        | <a href="/posts/category/tools.html">Tools</a>
         </small>
         <section>
             <p>Right now I&#8217;m setting up a project aimed at crop evaluation over ortophotos, <span class="caps">HR</span> and <span class="caps">VHR</span> imagery. All the steps of evaluation will be done in <span class="caps">QGIS</span> with PostGIS used for data storage and&nbsp;post-processing.</p>
@@ -317,11 +317,11 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 <p>Using this multiple times for each user-specific layer is a great time&nbsp;saver.</p>
 <h2>Adjust attribute table to fit your&nbsp;needs</h2>
 <p><span class="caps">QGIS</span> attribute table has so many settings you probably don&#8217;t use on daily basis and yet they might be invaluable in such project. All of them are available from layer properties under the Fields&nbsp;tab.</p>
-<p class='text-center'><img src="http://www.zimmi.cz/posts/assets/qgis-tips-for-collaborative-mapping/hidden.png" width=50% class="img-responsive centered"></p>
+<p class='text-center'><img src="/posts/assets/qgis-tips-for-collaborative-mapping/hidden.png" width=50% class="img-responsive centered"></p>
 
 <p>Sadly, our PostGIS layers are very wide in terms of column count. Not all of the columns are to be edited or even seen by operators, so it might be a good idea to hide them by setting their Edit Widget to Hidden. Those that should be seen, but not edited, might be set as not editable by unchecking that&nbsp;option.</p>
 <p>Lots of our attributes use enumerations provided by our project partner as <span class="caps">CSV</span> files. We use them in <span class="caps">QGIS</span> as value maps, so operators don&#8217;t have to type them manually - we both make their work easier and eliminate mistakes they&nbsp;made.</p>
-<p class='text-center'><img src="http://www.zimmi.cz/posts/assets/qgis-tips-for-collaborative-mapping/valuemap.png" width=50% class="img-responsive centered"></p>
+<p class='text-center'><img src="/posts/assets/qgis-tips-for-collaborative-mapping/valuemap.png" width=50% class="img-responsive centered"></p>
 
 <p>Note <span class="caps">QGIS</span> swallows the first row of the given <span class="caps">CSV</span> file as if it was a header. Don&#8217;t forget about this when creating your own enumerations. Once set, operators will see a friendly combo box instead of a hostile blank input in the attribute&nbsp;table.</p>
 <p>These are just small adjustments that can make a big difference in your <span class="caps">QGIS</span>&nbsp;workflow.</p>
@@ -331,10 +331,10 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check"><span class="caps">SSH</span> <span class="caps">GRASS</span> Processing Status&nbsp;Check</a></h2>
+            <h2><a href="/posts/2015/ssh-grass-processing-status-check/" rel="bookmark" title="Permalink to SSH GRASS Processing Status Check"><span class="caps">SSH</span> <span class="caps">GRASS</span> Processing Status&nbsp;Check</a></h2>
             <small>Written on Jul 21, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+        <a href="/posts/tag/bash.html">bash</a>,         <a href="/posts/tag/linux.html">linux</a>        | <a href="/posts/category/development.html">development</a>
         </small>
         <section>
             <p>I&#8217;ve been running some <span class="caps">GRASS</span>/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten&nbsp;minutes.</p>
@@ -365,10 +365,10 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/animating-svg-maps-with-smil/" rel="bookmark" title="Permalink to Animating SVG Maps With SMIL">Animating <span class="caps">SVG</span> Maps With <span class="caps">SMIL</span></a></h2>
+            <h2><a href="/posts/2015/animating-svg-maps-with-smil/" rel="bookmark" title="Permalink to Animating SVG Maps With SMIL">Animating <span class="caps">SVG</span> Maps With <span class="caps">SMIL</span></a></h2>
             <small>Written on Apr 29, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/svg.html">svg</a>,         <a href="http://www.zimmi.cz/posts/tag/smil.html">smil</a>        | <a href="http://www.zimmi.cz/posts/category/web-maps.html">web maps</a>
+        <a href="/posts/tag/svg.html">svg</a>,         <a href="/posts/tag/smil.html">smil</a>        | <a href="/posts/category/web-maps.html">web maps</a>
         </small>
         <section>
             <p>Using <span class="caps">SVG</span> to build web maps have both pros and cons and to be honest I don&#8217;t know any <em>serious</em> map/<span class="caps">GIS</span> project built on top of <span class="caps">SVG</span>. However, as a part of my job at university, I was forced to use both <span class="caps">SVG</span> and <span class="caps">SMIL</span> to produce animated web map (see the small version below or the big one at <a href="https://zimmicz.github.io/svg-smil-airplanes/map.svg">GitHub</a>) and I&#8217;d like to share my&nbsp;findings.</p>
@@ -571,10 +571,10 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/grass-big-buffers-made-easy/" rel="bookmark" title="Permalink to GRASS: Big Buffers Made Easy"><span class="caps">GRASS</span>: Big Buffers Made&nbsp;Easy</a></h2>
+            <h2><a href="/posts/2015/grass-big-buffers-made-easy/" rel="bookmark" title="Permalink to GRASS: Big Buffers Made Easy"><span class="caps">GRASS</span>: Big Buffers Made&nbsp;Easy</a></h2>
             <small>Written on Apr 20, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/grass.html">grass</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/posts/tag/grass.html">grass</a>        | <a href="/posts/category/automation.html">automation</a>
         </small>
         <section>
             <p>Recently I&#8217;ve written about <a href="/2015/postgis-buffers-intersections-differences-and-collections/">struggling with fairly complex geometries in PostGIS</a>. Lesson learned from the last time was to use more smaller geometries instead of several really huge. You can obtain the small ones from the big by <a href="/2015/postgis-rectangular-grid-creation/">cutting it with a grid</a>.</p>
@@ -647,10 +647,10 @@ v.out.postgis <span class="nv">input</span><span class="o">=</span>buffer_050_gr
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-finding-biggest-land-users-nearby/" rel="bookmark" title="Permalink to PostGIS: Finding Biggest Land Users Nearby">PostGIS: Finding Biggest Land Users&nbsp;Nearby</a></h2>
+            <h2><a href="/posts/2015/postgis-finding-biggest-land-users-nearby/" rel="bookmark" title="Permalink to PostGIS: Finding Biggest Land Users Nearby">PostGIS: Finding Biggest Land Users&nbsp;Nearby</a></h2>
             <small>Written on Apr 3, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/posts/tag/postgresql.html">postgresql</a>,         <a href="/posts/tag/postgis.html">postgis</a>        | <a href="/posts/category/sql.html">SQL</a>
         </small>
         <section>
             <p>At <a href="http://clevermaps.cz">CleverMaps</a> we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird&nbsp;challenges.</p>
@@ -712,10 +712,10 @@ JOIN ints
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-count-line-self-intersections/" rel="bookmark" title="Permalink to PostGIS: Count Line Self-Intersections">PostGIS: Count Line&nbsp;Self-Intersections</a></h2>
+            <h2><a href="/posts/2015/postgis-count-line-self-intersections/" rel="bookmark" title="Permalink to PostGIS: Count Line Self-Intersections">PostGIS: Count Line&nbsp;Self-Intersections</a></h2>
             <small>Written on Mar 30, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/posts/tag/postgresql.html">postgresql</a>,         <a href="/posts/tag/postgis.html">postgis</a>        | <a href="/posts/category/sql.html">SQL</a>
         </small>
         <section>
             <p><a href="https://gis.stackexchange.com/questions/107927/counting-self-intersections-of-linestring-using-postgis/140674#140674">Is there a way of using PostgreSQL + PostGIS for finding the number of self intersections in a linestring?</a> was a question that made me think of this problem. I came up with a solution that takes just a few lines of&nbsp;code.</p>
@@ -731,7 +731,7 @@ COPY test2 (id, wkb_geometry) FROM stdin;
 </pre></div>
 
 
-<p><img src="http://www.zimmi.cz/posts/assets/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
+<p><img src="/posts/assets/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
 <p>Note that those geometries are valid while not being simple, thus, <code>ST_IsValidReason()</code> wouldn&#8217;t help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those&nbsp;two.</p>
 <div class="highlight"><pre>WITH noded AS (
 SELECT id, COUNT(id)
@@ -774,10 +774,10 @@ SELECT noded.id, noded.count - test.count cnt FROM noded JOIN test USING (id);
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/postgis-rectangular-grid-creation/" rel="bookmark" title="Permalink to PostGIS: Rectangular Grid Creation">PostGIS: Rectangular Grid&nbsp;Creation</a></h2>
+            <h2><a href="/posts/2015/postgis-rectangular-grid-creation/" rel="bookmark" title="Permalink to PostGIS: Rectangular Grid Creation">PostGIS: Rectangular Grid&nbsp;Creation</a></h2>
             <small>Written on Mar 24, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="http://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="http://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        <a href="/posts/tag/postgresql.html">postgresql</a>,         <a href="/posts/tag/postgis.html">postgis</a>        | <a href="/posts/category/sql.html">SQL</a>
         </small>
         <section>
             <p>Creating a rectangular grid to cover a given extent with same sized cells is one of the basic <span class="caps">GIS</span> tasks I&#8217;ve had to solve several times so far. I used <span class="caps">QGIS</span> or some Python to give me a bunch of <code>INSERT</code> statements to run in PostGIS database, now I&#8217;ve come with a final solution at&nbsp;last.</p>
@@ -881,8 +881,8 @@ FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
 
 <div class="pagination">
     <p class="paginator">
-            <a href="http://www.zimmi.cz/posts/index.html" class="button">&laquo; Previous page</a>
-            <a href="http://www.zimmi.cz/posts/index3.html" class="button">Next page &raquo;</a>
+            <a href="/posts/index.html" class="button">&laquo; Previous page</a>
+            <a href="/posts/index3.html" class="button">Next page &raquo;</a>
     </p>
 </div>            </div>
         </div>
@@ -907,7 +907,7 @@ FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
     </script>
-<script src="http://www.zimmi.cz/posts/theme/js/packed.js?8bee1467"></script>
+<script src="/posts/theme/js/packed.js?8bee1467"></script>
 <script>
 $(document).foundation();
 </script>

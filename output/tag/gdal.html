@@ -4,9 +4,9 @@
         <title>Michal Zimmermann | tag: gdal</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
-        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
-        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9a0407ed">
+        <link href="/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link rel="stylesheet" href="/posts/theme/css/style.min.css?9a0407ed">
 
 </head>
 
@@ -22,9 +22,9 @@
         <section class="top-bar-section">
     <!-- Right Nav Section -->
             <ul class="right">
-                <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
-                <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
-                <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS feed</a></li>
+                <li><a href="/posts/categories">Categories</a></li>
+                <li><a href="/posts/tags">Tags</a></li>
+                <li><a href="/posts/feed.xml">RSS feed</a></li>
             </ul>
         </section>
     </nav>
@@ -39,14 +39,14 @@
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2016/how-to-convert-dgn-to-tiff-with-gdal/" rel="bookmark" title="Permalink to How to convert DGN to Tiff with GDAL">How to convert <span class="caps">DGN</span> to Tiff with <span class="caps">GDAL</span></a></h2>
+            <h2><a href="/posts/2016/how-to-convert-dgn-to-tiff-with-gdal/" rel="bookmark" title="Permalink to How to convert DGN to Tiff with GDAL">How to convert <span class="caps">DGN</span> to Tiff with <span class="caps">GDAL</span></a></h2>
             <small>Written on Feb 21, 2016
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/gdal.html">gdal</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/posts/tag/gdal.html">gdal</a>        | <a href="/posts/category/automation.html">automation</a>
         </small>
         <section>
             <p>We have to deal with <span class="caps">DGN</span> drawings quite often at <a href="http://www.clevermaps.cz">CleverMaps</a> - heavily used for infrastructure projects (highways, roads, pipelines), they are a pure nightmare to the <span class="caps">GIS</span> person inside me. Right now, I&#8217;m only capable of converting it into a raster file and serve it with Geoserver. The transformation from <span class="caps">DGN</span> to <span class="caps">PDF</span> to <span class="caps">PNG</span> to Tiff is not something that makes me utterly happy&nbsp;though.</p>
-<p>All you need to do the same is <a href="http://www.zimmi.cz/posts/tag/gdal.html"><span class="caps">GDAL</span></a>, ImageMagick, some <span class="caps">PDF</span> documents created out of <span class="caps">DGN</span> files - something MicroStation can help you with - and their upper left and lower right corner&nbsp;coordinates.</p>
+<p>All you need to do the same is <a href="/posts/tag/gdal.html"><span class="caps">GDAL</span></a>, ImageMagick, some <span class="caps">PDF</span> documents created out of <span class="caps">DGN</span> files - something MicroStation can help you with - and their upper left and lower right corner&nbsp;coordinates.</p>
 <div class="highlight"><pre><span class="c"># I recommend putting some limits on ImageMagick - it tends to eat up all the resources and quit</span>
 <span class="nb">export </span><span class="nv">MAGICK_MEMORY_LIMIT</span><span class="o">=</span>1512
 <span class="nb">export </span><span class="nv">MAGICK_MAP_LIMIT</span><span class="o">=</span>512
@@ -92,10 +92,10 @@ gdaladdo <span class="si">${</span><span class="nv">OUTPUTPATH</span><span class
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/color-relief-shaded-map-using-open-data-with-open-source-software/" rel="bookmark" title="Permalink to Color Relief Shaded Map Using Open Data with Open Source Software">Color Relief Shaded Map Using Open Data with Open Source&nbsp;Software</a></h2>
+            <h2><a href="/posts/2015/color-relief-shaded-map-using-open-data-with-open-source-software/" rel="bookmark" title="Permalink to Color Relief Shaded Map Using Open Data with Open Source Software">Color Relief Shaded Map Using Open Data with Open Source&nbsp;Software</a></h2>
             <small>Written on Oct 25, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/bash.html">bash</a>,         <a href="http://www.zimmi.cz/posts/tag/gdal.html">gdal</a>,         <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/qgis.html">qgis</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/posts/tag/bash.html">bash</a>,         <a href="/posts/tag/gdal.html">gdal</a>,         <a href="/posts/tag/linux.html">linux</a>,         <a href="/posts/tag/qgis.html">qgis</a>        | <a href="/posts/category/automation.html">automation</a>
         </small>
         <section>
             <p>The Digital Elevation Model over Europe (<span class="caps">EU</span>-<span class="caps">DEM</span>) has been recently released for public usage at <a href="http://land.copernicus.eu/in-situ/eu-dem">Copernicus Land Monitoring Services homepage</a>. Strictly speaking, it is a <strong>digital surface model</strong> coming from weighted average of <span class="caps">SRTM</span> and <span class="caps">ASTER</span> <span class="caps">GDEM</span> with geographic accuracy of 25 m. Data are provided as GeoTIFF files projected in 1 degree by 1 degree tiles (projected to <span class="caps">EPSG</span>:3035), so they correspond to the <span class="caps">SRTM</span> naming&nbsp;convention.</p>
@@ -116,7 +116,7 @@ unrar dem.rar -d copernicus
 
 
 <p>And here comes the&nbsp;Alps.</p>
-<p class="text-center"><img title="Hillshade" src="http://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/hillshade.png" class="center"></p>
+<p class="text-center"><img title="Hillshade" src="/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/hillshade.png" class="center"></p>
 
 <p>To create a color relief you need a ramp of heights with colors. <a href="http://cartographicperspectives.org/index.php/journal/article/viewFile/20/70">&#8220;The Development and Rationale of Cross-blended Hypsometric Tints&#8221;</a> by T. Patterson and B. Jenny is a great read on <strong>hypsometric tints</strong>. They also give advice on what colors to choose in different environments (see the table at the last page of the article). I settled for warm humid color&nbsp;values.</p>
 <table class="center">
@@ -192,7 +192,7 @@ unrar dem.rar -d copernicus
 
 
 <p>And here comes hypsometric&nbsp;tints.</p>
-<p class="text-center"><img title="Color relief" src="http://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/color_relief.png" class="center"></p>
+<p class="text-center"><img title="Color relief" src="/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/color_relief.png" class="center"></p>
 
 <p>Add a bit of compression and some overviews to make it smaller and load&nbsp;faster.</p>
 <div class="highlight"><pre>gdal_translate -of GTiff -co <span class="nv">TILED</span><span class="o">=</span>YES -co <span class="nv">COMPRESS</span><span class="o">=</span>DEFLATE color_relief.tif color_relief.compress.tif
@@ -208,7 +208,7 @@ gdaladdo hillshade.tif <span class="m">2</span> <span class="m">4</span> <span c
 
 <h2>Map&nbsp;composition</h2>
 <p>I chose Austria for its excessive amount of freely available datasets. What I didn&#8217;t take into consideration was my lack of knowledge when it comes to German (#fail). States come from <a href="http://data.gv.at">data.gv.at</a> and was dissolved from smaller administrative units. State capitals were downloaded from <a href="http://naturalearth.com">naturalearth.com</a>.</p>
-<p class="text-center"><a href="http://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/map.pdf" title="Click for PDF version"><img title="Austria" src="http://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/map.png" class="center"></a></p>
+<p class="text-center"><a href="/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/map.pdf" title="Click for PDF version"><img title="Austria" src="/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/map.png" class="center"></a></p>
 
 <p>I&#8217;d like to add some more thematic layers in the future. And translate the map to&nbsp;English.</p>
 <h2>Few words on <span class="caps">INSPIRE</span>&nbsp;Geoportal</h2>
@@ -219,10 +219,10 @@ gdaladdo hillshade.tif <span class="m">2</span> <span class="m">4</span> <span c
 
     <div class="panel">
         <div class="post-name">
-            <h2><a href="http://www.zimmi.cz/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using <span class="caps">GDAL</span></a></h2>
+            <h2><a href="/posts/2015/clip-raster-with-vector-using-gdal/" rel="bookmark" title="Permalink to Clip Raster With Vector Using GDAL">Clip Raster With Vector Using <span class="caps">GDAL</span></a></h2>
             <small>Written on Jul 21, 2015
         and marked as
-        <a href="http://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="http://www.zimmi.cz/posts/tag/gdal.html">gdal</a>        | <a href="http://www.zimmi.cz/posts/category/automation.html">automation</a>
+        <a href="/posts/tag/linux.html">linux</a>,         <a href="/posts/tag/gdal.html">gdal</a>        | <a href="/posts/category/automation.html">automation</a>
         </small>
         <section>
             <p>Recently I needed to clip several raster files with polygonal layer of municipalities. A solution to this task is pretty straightforward using <a href="http://gdal.org/"><span class="caps">GDAL</span></a> and a bit of Bash and <span class="caps">QGIS</span> thrown&nbsp;in.</p>
@@ -290,7 +290,7 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
     </script>
-<script src="http://www.zimmi.cz/posts/theme/js/packed.js?8bee1467"></script>
+<script src="/posts/theme/js/packed.js?8bee1467"></script>
 <script>
 $(document).foundation();
 </script>

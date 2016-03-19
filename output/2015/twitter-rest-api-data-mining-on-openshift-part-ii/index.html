@@ -4,8 +4,8 @@
           <title>Michal Zimmermann | Twitter <span class="caps">REST</span> <span class="caps">API</span> Data Mining on OpenShift (Part <span class="caps">II</span>)</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="http://www.zimmi.cz/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
-        <link href="http://www.zimmi.cz/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
+        <link href="/posts/atom.xml" type="application/atom+xml" rel="alternate" title="Michal Zimmermann Full Atom Feed" />
+        <link href="/posts/feed.xml" type="application/rss+xml" rel="alternate" title="Michal Zimmermann Full RSS Feed" />
 
 
 
@@ -13,7 +13,7 @@
     <meta name="tags" contents="openshift" />
     <meta name="tags" contents="twitter" />
 
-        <link rel="stylesheet" href="http://www.zimmi.cz/posts/theme/css/style.min.css?9a0407ed">
+        <link rel="stylesheet" href="/posts/theme/css/style.min.css?9a0407ed">
 
 </head>
 
@@ -29,9 +29,9 @@
         <section class="top-bar-section">
     <!-- Right Nav Section -->
             <ul class="right">
-                <li><a href="http://www.zimmi.cz/posts/categories">Categories</a></li>
-                <li><a href="http://www.zimmi.cz/posts/tags">Tags</a></li>
-                <li><a href="http://www.zimmi.cz/posts/feed.xml">RSS feed</a></li>
+                <li><a href="/posts/categories">Categories</a></li>
+                <li><a href="/posts/tags">Tags</a></li>
+                <li><a href="/posts/feed.xml">RSS feed</a></li>
             </ul>
         </section>
     </nav>
@@ -44,13 +44,13 @@
             <div class="large-12 columns">
 <div class="panel">
     <div class="post-name">
-        <h1><a href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-ii/" rel="bookmark" title="Permalink to Twitter REST API Data Mining on OpenShift (Part II)">Twitter <span class="caps">REST</span> <span class="caps">API</span> Data Mining on OpenShift (Part <span class="caps">II</span>)</a></h1>
+        <h1><a href="/posts/2015/twitter-rest-api-data-mining-on-openshift-part-ii/" rel="bookmark" title="Permalink to Twitter REST API Data Mining on OpenShift (Part II)">Twitter <span class="caps">REST</span> <span class="caps">API</span> Data Mining on OpenShift (Part <span class="caps">II</span>)</a></h1>
         <small>Written on Dec 6, 2015
     and marked as
-    <a href="http://www.zimmi.cz/posts/tag/javascript.html">javascript</a>,     <a href="http://www.zimmi.cz/posts/tag/openshift.html">openshift</a>,     <a href="http://www.zimmi.cz/posts/tag/twitter.html">twitter</a>    | <a href="http://www.zimmi.cz/posts/category/development.html">development</a>
+    <a href="/posts/tag/javascript.html">javascript</a>,     <a href="/posts/tag/openshift.html">openshift</a>,     <a href="/posts/tag/twitter.html">twitter</a>    | <a href="/posts/category/development.html">development</a>
     </small>
     <section>
-        <p>Last time I described <a href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/">the setup of my OpenShift Twitter crawler</a> and let it running and downloading data. It&#8217;s been more than two months since I started and I got interesting amount of data. I also made a simple <span class="caps">ETL</span> process to load it into my local PostGIS database, which I&#8217;d like to cover in this&nbsp;post.</p>
+        <p>Last time I described <a href="/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/">the setup of my OpenShift Twitter crawler</a> and let it running and downloading data. It&#8217;s been more than two months since I started and I got interesting amount of data. I also made a simple <span class="caps">ETL</span> process to load it into my local PostGIS database, which I&#8217;d like to cover in this&nbsp;post.</p>
 <h2>Extract&nbsp;data</h2>
 <p>Each day is written to the separate sqlite file with a name like <code>tw_day_D_M_YYYY</code>. <code>Bash</code> is used to gzip all the files before downloading them from&nbsp;OpenShift.</p>
 <div class="highlight"><pre><span class="c">#!/bin/bash</span>
@@ -119,28 +119,28 @@ psql <span class="nv">$DATABASE</span> <span class="s">&lt;&lt; EOF</span>
 
 <h2>First&nbsp;statistics</h2>
 <p>Some interesting charts and numbers&nbsp;follow.</p>
-<p class="text-center"><img title="Top 100 Twitter users in the Czech Republic" src="http://www.zimmi.cz/posts/assets/twitter-rest-api-data-mining-on-openshift-part-ii/authors.png" class="img-responsive centered"></p>
+<p class="text-center"><img title="Top 100 Twitter users in the Czech Republic" src="/posts/assets/twitter-rest-api-data-mining-on-openshift-part-ii/authors.png" class="img-responsive centered"></p>
 
-<p class="text-center"><img title="When people tweet in the Czech Republic" src="http://www.zimmi.cz/posts/assets/twitter-rest-api-data-mining-on-openshift-part-ii/hours.png" class="img-responsive centered"></p>
+<p class="text-center"><img title="When people tweet in the Czech Republic" src="/posts/assets/twitter-rest-api-data-mining-on-openshift-part-ii/hours.png" class="img-responsive centered"></p>
 
-<p class="text-center"><img title="Languages on Twitter in the Czech Republic" src="http://www.zimmi.cz/posts/assets/twitter-rest-api-data-mining-on-openshift-part-ii/languages.png" class="img-responsive centered"></p>
+<p class="text-center"><img title="Languages on Twitter in the Czech Republic" src="/posts/assets/twitter-rest-api-data-mining-on-openshift-part-ii/languages.png" class="img-responsive centered"></p>
     </section>
     </div>
 <div class="neighbors">
     <h3>More reading</h3>
     <ul>
         <li>
-            <a href="http://www.zimmi.cz/posts/2015/postgis-case-study-vozejkmap-open-data-part-iii/">
+            <a href="/posts/2015/postgis-case-study-vozejkmap-open-data-part-iii/">
                  PostGIS Case Study: Vozejkmap Open Data (Part <span class="caps">III</span>)
             </a>
         </li>
          <li>
-             <a href="http://www.zimmi.cz/posts/2015/liftago-open-dataset-infographics/">
+             <a href="/posts/2015/liftago-open-dataset-infographics/">
                  Liftago Open Dataset&nbsp;Infographics
              </a>
          </li>
          <li>
-             <a href="http://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/">
+             <a href="/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/">
                  Twitter <span class="caps">REST</span> <span class="caps">API</span> Data Mining on OpenShift (Part&nbsp;I)
              </a>
          </li>
@@ -170,7 +170,7 @@ psql <span class="nv">$DATABASE</span> <span class="s">&lt;&lt; EOF</span>
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
     </script>
-<script src="http://www.zimmi.cz/posts/theme/js/packed.js?8bee1467"></script>
+<script src="/posts/theme/js/packed.js?8bee1467"></script>
 <script>
 $(document).foundation();
 </script>
