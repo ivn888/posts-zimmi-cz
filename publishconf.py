@@ -10,7 +10,7 @@ import sys
 sys.path.append(os.curdir)
 from pelicanconf import *
 
-SITEURL = 'http://www.zimmi.cz/posts'
+SITEURL = '/posts'
 RELATIVE_URLS = False
 THEME = 'content/theme/simple'
 FEED_DOMAIN = SITEURL
