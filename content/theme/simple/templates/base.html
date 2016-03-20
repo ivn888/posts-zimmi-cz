@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ DEFAULT_LANG }}">
+<html lang="{{ DEFAULT_LANG }}" prefix="og: http://ogp.me/ns#">
 <head>
         {% block head %}
         <title>{% block title %}{{ SITENAME }} | {{ SITESUBTITLE }}{% endblock title %}</title>
@@ -33,6 +33,11 @@
         {% assets filters="cssmin", output="css/style.min.css", "css/foundation.min.css", "css/pygment.css", "css/screen.css" %}
         <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
         {% endassets %}
+
+        <meta property='og:title' content='Title of the article'/>
+        <meta property='og:image' content='//media.example.com/ 1234567.jpg'/>
+        <meta property='og:description' content='Description that will show in the preview'/>
+        <meta property='og:url' content='//www.example.com/URL of the article' />
 
 </head>
 
