@@ -39,6 +39,26 @@
 
     <div class="panel">
         <div class="post-name">
+            <h2><a href="/posts/2014/ogr2ogr-unix-x-windows/" rel="bookmark" title="Permalink to ogr2ogr UNIX x Windows">ogr2ogr <span class="caps">UNIX</span> x&nbsp;Windows</a></h2>
+            <small>Written on Sep 23, 2014
+        and marked as
+        <a href="/posts/tag/spatial.html">spatial</a>,         <a href="/posts/tag/linux.html">linux</a>        | <a href="/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p><span class="caps">GDAL</span> with its ogr2ogr, ogrinfo and many more is one of the best open source tools to do anything to your spatial data. It is a&nbsp;command line tool, which sort of determines it to be used with <span class="caps">UNIX</span> systems, but you might bump into a Windows guy trying to use it as well once in a&nbsp;while.</p>
+<p>Be careful, it behaves differently on different <span class="caps">OS</span>. Let&#8217;s say you do something like this on <span class="caps">UNIX</span>:</p>
+<div class="highlight"><pre>ogr2ogr -f GeoJSON -where &quot;attribute IN (&#39;value1&#39;, &#39;value2&#39;)&quot; output.json input.json
+</pre></div>
+
+
+<p>What you <abbr title="But you might get expected result as well">might get is a big nothing</abbr>. Executed on Windows it gives you the result you&#8217;ve expected. <em>Aargh</em>, what is that supposed to&nbsp;mean?</p>
+<p>Well, that&#8217;s the ogr2ogr&#8217;s way to tell you: <em>Hello there, you need to switch single quotes for double quotes and vice versa, you dumb!</em> I don&#8217;t know why and I find it really annoying. Just in case you get stuck with ogr2ogr (or probably any other command line tool), try&nbsp;this.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
             <h2><a href="/posts/2014/notify-when-average-of-10-subsequent-numbers-is-bigger-than-given-value/" rel="bookmark" title="Permalink to Notify When Average of 10 Subsequent Numbers Is Bigger Than Given Value">Notify When Average of 10 Subsequent Numbers Is Bigger Than Given&nbsp;Value</a></h2>
             <small>Written on Sep 21, 2014
         and marked as
@@ -516,40 +536,10 @@ z = map(lat, 16.59971950210866964, 63.68835804244784526, 0, height)
         </div>
     </div>
 
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="/posts/2014/leaflet-chmi-radar-control/" rel="bookmark" title="Permalink to Leaflet CHMI Radar Control">Leaflet <span class="caps">CHMI</span> Radar&nbsp;Control</a></h2>
-            <small>Written on Sep 1, 2014
-        and marked as
-        <a href="/posts/tag/leaflet.html">leaflet</a>,         <a href="/posts/tag/javascript.html">javascript</a>        | <a href="/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>I&#8217;ve been in love with Leaflet ever since v0.4 was released. Well-documented, clean <span class="caps">API</span> included, beautiful controls and tons of plugins makes it my number one choice to create a web map. I wrote a Google Maps <span class="caps">API</span> app used at edpp.cz a year and a half ago and I&#8217;ve been thinking of refactoring it since then. I don&#8217;t think I even knew Leaflet existed back in those&nbsp;days.</p>
-<p>I used to use Google Maps as my primary tool for web maps, it used to be the only choice back then. OpenLayers <span class="caps">API</span> documentation was one of the worst docs I have ever read (<em>alphabetic sorting, please!</em>), thus making it a no-go for me. It looked ugly and was sort of overwhelmed with functions. Leaflet came out completely different and I decided to rewrite our main map app using this great open-source&nbsp;library.</p>
-
-<h3>My first&nbsp;control</h3>
-
-<p><img src="/posts/assets/leaflet-chmi-radar-control/google_maps.png" title="Google maps layer control" class="left">Modularity is one of the things I like the most about Leaflet. I was struggling with creating checkboxes used to toggle layers in Google Maps app, it comes ready with Leaflet. Adding a control to the map is easy as piece of cake, you do <a href="http://leafletjs.com/reference.html#icontrol"><code>L.Control.extend({)}</code></a> and that&#8217;s it (almost). Since the map displays animated radar images showing the precipitation that occurred during last three hours or so I thought it would be great implementing this as a control: a button used to toggle the animation on/off and displaying the time currently shown image was created&nbsp;at.</p>
-
-<p>The image on the left side displays the old solution using Google Maps. It was using a lot of <span class="caps">DOM</span> manipulation, was quite hard to maintain and definitely not eye-candy. When the animation was turned on, another control popped up in the map&#8217;s top left corner displaying the time the image was taken at. The animation toggle (<em>srážkový radar</em>) was incorporated into the layer control. I decided to take it out and make it a separate feature of the&nbsp;map.</p>
-
-<p><img src="/posts/assets/leaflet-chmi-radar-control/control.png" title="Leaflet radar control" class="right">You can see the result in the image below. The control is a simple button with the radar icon displaying the time when active. It is only useful for the Czech Republic and is highly dependent on the image provider (<abbr title="Czech Hydrometeorogical Institute"><span class="caps">CHMI</span></abbr>), which means that if the <span class="caps">URL</span> of the images was to be changed, the whole control would&nbsp;break.</p>
-
-<p>You can<a href="/posts/assets/leaflet-chmi-radar-control/radarcontrol.zip"> grab the code if you like</a>. You add the control to the map as any other&nbsp;control:</p>
-
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">radar</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">Radar</span><span class="p">();</span>
-<span class="nx">radar</span><span class="p">.</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
-</pre></div>
-
-
-<p>You can set the control visibility with <code>visible</code> property passed into <code>options</code> of the&nbsp;control.</p>
-        </section>
-        </div>
-    </div>
-
 <div class="pagination">
     <p class="paginator">
             <a href="/posts/category/development.html" class="button">&laquo; Previous page</a>
+            <a href="/posts/category/development3.html" class="button">Next page &raquo;</a>
     </p>
 </div>            </div>
         </div>

@@ -39,6 +39,57 @@
 
     <div class="panel">
         <div class="post-name">
+            <h2><a href="/posts/2016/do-you-really-need-gulp-or-grunt-or-bower-or-what/" rel="bookmark" title="Permalink to Do You Really Need Gulp? Or Grunt? Or Bower? Or what?">Do You Really Need Gulp? Or Grunt? Or Bower? Or&nbsp;what?</a></h2>
+            <small>Written on Mar 20, 2016
+        and marked as
+        <a href="/posts/tag/javascript.html">javascript</a>        | <a href="/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <p><strong>Disclaimer:</strong> I&#8217;m an enthuastic developer, but I do not code for a living. I&#8217;m just the ordinary guy who keeps editing a wrong file wondering why <em>the heck</em> the changes are not being&nbsp;applied.</p>
+<p><strong><span class="caps">TL</span>;<span class="caps">DR</span>:</strong> I do think <code>npm</code> might be the&nbsp;answer.</p>
+<h2>Wonderful world of JavaScript&nbsp;DevOps</h2>
+<p>When I first started using JavaScript on the server side with <code>node.js</code>, I felt overwhelmed by numerous options to automate tasks. There was <code>npm</code> taking care of backend dependencies. Then I would build a&nbsp;frontend and found out about <code>bower</code> for handling frontend dependencies. Then it would be great to have some kind of minification/obfuscation/uglification/you-name-it task. And the <code>build</code> task. And the <code>build:prod</code> task. And how about <code>eslint</code> task? And then I would end up spending hours doing nothing, just reading blogs about the tools being used by others who do code for a&nbsp;living.</p>
+<p><strong>Intermezzo:</strong> I think my coding is slow. Definitely slower than yours. I&#8217;m getting better&nbsp;though.</p>
+<h2>Using the&nbsp;force</h2>
+<p>Looking back I find it a bit stressful - how <em>the heck</em> do I choose the right tools? Where&#8217;s Yoda to help me out? Anyway, next to adopt after <code>npm</code> was <code>bower</code>. And I liked it, even though some packages were missing - but who cares as long as there is no better way, right? Except there is&hellip; I&nbsp;guess.</p>
+<p>Automation was next in the line to tackle. So I chose <code>gulp</code> without a bit of hesitation. It was a&nbsp;hype, a bigger than <code>grunt</code> back then. I even heard of <code>yeoman</code>, but until now I still don&#8217;t know what it actually does. And I&#8217;m happy with&nbsp;that.</p>
+<p>A short summary so&nbsp;far:</p>
+<ul>
+<li><code>npm</code> for backend&nbsp;dependencies</li>
+<li><code>bower</code> for frontend&nbsp;dependencies</li>
+<li><code>gulp</code> for running&nbsp;tasks</li>
+</ul>
+<p>So far, so&nbsp;good.</p>
+<h2>Is Bower going to&nbsp;die?</h2>
+<p>Then I stumbled upon this tweet and started panicking. Or rather started to feel cheated. <em>It took me time to set all this up and now it&#8217;s useless? Or&nbsp;what?</em></p>
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Bower development is stopped. Move to npm, if you haven&#39;t already. <a href="https://t.co/RQRcE7DT5V">https://t.co/RQRcE7DT5V</a></p>&mdash; Nacho Coloma (@nachocoloma) <a href="https://twitter.com/nachocoloma/status/663622545162280960">November 9, 2015</a></blockquote>
+
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>Seeing it now, I&#8217;m glad I read this. And I really don&#8217;t know what happened to Bower, if anything at&nbsp;all.</p>
+<h2>Keeping it&nbsp;simple</h2>
+<p>So Bower&#8217;s dying, what are you going to do about that? You&#8217;ll use <code>npm</code> instead! And you&#8217;ll have a&nbsp;single source of truth called <code>package.json</code>. You&#8217;l resolve all the dependencies with a single <code>npm install</code> command and feel like a king. We&#8217;re down to two now - <code>npm</code> and <code>gulp</code>.</p>
+<h2>Gulp, Gulp&nbsp;everywhere!</h2>
+<p>When you get rid of Bower, next feeling you have is your <code>gulpfile.js</code> just got off the leash. It got really big and grew to ~160 lines of code and became a nightmare to&nbsp;manage.</p>
+<p>So you split it into <a href="https://github.com/zimmicz/bookmap/commit/98a3ce451856e2beaac8fa2be9eb3b7e2878b0a7">task files</a> and a <a href="https://github.com/zimmicz/bookmap/commit/07eaf7d355a47ff9d08e5b7138791a67669534d6">config file</a>. What a relief. But you still realize a <strong>half</strong> of your <code>package.json</code> dependencies starts with <code>gulp-</code>. And you hate&nbsp;it.</p>
+<h2>Webpack for the&nbsp;win</h2>
+<p>For me, a non-developer, setting the <a href="https://webpack.github.io/">webpack</a> wasn&#8217;t easy. I didn&#8217;t find docs very helpful either. Reading the website for the first time, I didn&#8217;t even understand what it should be used for. I&nbsp;got it working eventually. And I got rid of <code>gulp</code>, <code>gulp-connect</code>, <code>gulp-less</code>, <code>gulp-nodemon</code>, <code>gulp-rename</code>, <code>gulp-replace</code>, <code>gulp-task-listing</code> and <code>gutil</code>. And the whole <code>gulpfile.js</code>. That was a big win for&nbsp;me.</p>
+<h2>But how do you run&nbsp;tasks?</h2>
+<p>Well&hellip;</p>
+<div class="highlight"><pre>npm run start-dev <span class="c"># which in turn calls the code below</span>
+npm run start-webpack <span class="p">&amp;</span> <span class="nv">NODE_ENV</span><span class="o">=</span>development nodemon server.js <span class="c"># where start-webpack does the following</span>
+node_modules/webpack-dev-server/bin/webpack-dev-server.js --quiet --inline --hot --watch
+</pre></div>
+
+
+<p>That&#8217;s it. If I need to build code, I run <code>npm run build</code>, which calls some other tasks from <code>scripts</code> section in the <code>package.json</code>.</p>
+<p>That&#8217;s pretty much it. I don&#8217;t think it&#8217;s a silver bullet, but I feel like I finally found peace of mind for my future JavaScript development. At least for a month or so before some other guy comes to&nbsp;town.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
             <h2><a href="/posts/2015/twitter-rest-api-data-mining-on-openshift-part-ii/" rel="bookmark" title="Permalink to Twitter REST API Data Mining on OpenShift (Part II)">Twitter <span class="caps">REST</span> <span class="caps">API</span> Data Mining on OpenShift (Part <span class="caps">II</span>)</a></h2>
             <small>Written on Dec 6, 2015
         and marked as
@@ -553,26 +604,6 @@ www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
 <p>As I wanted to make it a bit easier I wrote the simple Python script (see above) that just authenticates against Geoserver and downloads the list of layers. I actually had to do that twice - both old and new instance. A <a href="https://www.diffchecker.com/">simple file comparison</a> followed and I got a list of missing layers in less than two&nbsp;minutes.</p>
 <p>If you do the same to workspaces, stores and layergroups, your chances of not losing some data after the switch are pretty&nbsp;high.</p>
 <p>I guess it&#8217;s reasonable to check your maps by hand as well, but this gives you the picture of the current state of your data real&nbsp;quick.</p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="/posts/2014/ogr2ogr-unix-x-windows/" rel="bookmark" title="Permalink to ogr2ogr UNIX x Windows">ogr2ogr <span class="caps">UNIX</span> x&nbsp;Windows</a></h2>
-            <small>Written on Sep 23, 2014
-        and marked as
-        <a href="/posts/tag/spatial.html">spatial</a>,         <a href="/posts/tag/linux.html">linux</a>        | <a href="/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p><span class="caps">GDAL</span> with its ogr2ogr, ogrinfo and many more is one of the best open source tools to do anything to your spatial data. It is a&nbsp;command line tool, which sort of determines it to be used with <span class="caps">UNIX</span> systems, but you might bump into a Windows guy trying to use it as well once in a&nbsp;while.</p>
-<p>Be careful, it behaves differently on different <span class="caps">OS</span>. Let&#8217;s say you do something like this on <span class="caps">UNIX</span>:</p>
-<div class="highlight"><pre>ogr2ogr -f GeoJSON -where &quot;attribute IN (&#39;value1&#39;, &#39;value2&#39;)&quot; output.json input.json
-</pre></div>
-
-
-<p>What you <abbr title="But you might get expected result as well">might get is a big nothing</abbr>. Executed on Windows it gives you the result you&#8217;ve expected. <em>Aargh</em>, what is that supposed to&nbsp;mean?</p>
-<p>Well, that&#8217;s the ogr2ogr&#8217;s way to tell you: <em>Hello there, you need to switch single quotes for double quotes and vice versa, you dumb!</em> I don&#8217;t know why and I find it really annoying. Just in case you get stuck with ogr2ogr (or probably any other command line tool), try&nbsp;this.</p>
         </section>
         </div>
     </div>
