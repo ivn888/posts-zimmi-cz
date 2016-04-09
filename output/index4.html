@@ -37,6 +37,23 @@
 
     <div class="panel">
         <div class="post-name">
+            <h2><a href="https://www.zimmi.cz/posts/2014/bash-prepend-to-filename/" rel="bookmark" title="Permalink to Bash: Prepend To Filename">Bash: Prepend To&nbsp;Filename</a></h2>
+            <small>Written on Nov 1, 2014
+        and marked as
+        <a href="https://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="https://www.zimmi.cz/posts/tag/bash.html">bash</a>        | <a href="https://www.zimmi.cz/posts/category/development.html">development</a>
+        </small>
+        <section>
+            <div class="highlight"><pre><span class="x">for f in *; do mv &quot;</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot; &quot;prepend_</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot;; done</span>
+</pre></div>
+
+
+<p>Whenever you need to prepend anything to your&nbsp;files.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
             <h2><a href="https://www.zimmi.cz/posts/2014/migrating-geoserver-and-checking-for-missing-data/" rel="bookmark" title="Permalink to Migrating Geoserver And Checking For Missing Data">Migrating Geoserver And Checking For Missing&nbsp;Data</a></h2>
             <small>Written on Oct 29, 2014
         and marked as
@@ -49,18 +66,18 @@
 <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
 <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
 
-<span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://example.com/geoserver/rest/layers&#39;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s">&#39;username&#39;</span><span class="p">,</span> <span class="s">&#39;password&#39;</span><span class="p">))</span>
+<span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://example.com/geoserver/rest/layers&#39;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">))</span>
 
 <span class="n">html</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">html</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">html</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">):</span>
     <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">href</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
     <span class="k">print</span> <span class="n">i</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;list.txt&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;list.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 
 
@@ -219,28 +236,28 @@
 
 
 <p>We need to retrieve the token, so we define a&nbsp;function:</p>
-<div class="highlight"><pre><span class="kd">function</span> <span class="nx">retrieveToken</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">req</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">;</span>
+<div class="highlight"><pre><span class="nt">function</span> <span class="nt">retrieveToken</span><span class="o">(</span><span class="nt">callback</span><span class="o">)</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">req</span> <span class="o">=</span> <span class="n">new</span> <span class="n">XMLHttpRequest</span><span class="p">;</span>
 
-    <span class="nx">req</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">status</span> <span class="o">==</span> <span class="s2">&quot;200&quot;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">responseText</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">callback</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">contents</span><span class="p">);</span> <span class="c1">// response contents is where the token is stored</span>
+    <span class="n">req</span><span class="o">.</span><span class="n">onload</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="err">{</span>
+        <span class="n">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;200&quot;</span><span class="p">)</span> <span class="err">{</span>
+            <span class="n">var</span> <span class="n">response</span> <span class="o">=</span> <span class="n">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">responseText</span><span class="p">);</span>
+            <span class="n">if</span> <span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span> <span class="err">{</span>
+                <span class="n">callback</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">contents</span><span class="p">);</span> <span class="o">//</span> <span class="n">response</span> <span class="n">contents</span> <span class="n">is</span> <span class="n">where</span> <span class="n">the</span> <span class="n">token</span> <span class="n">is</span> <span class="n">stored</span>
         <span class="p">}</span>
-    <span class="p">};</span>
-    <span class="nx">req</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;http://server.address/arcgis/tokens/?request=getToken&amp;username=username&amp;password=password&amp;expiration=60&quot;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-    <span class="nx">req</span><span class="p">.</span><span class="nx">send</span><span class="p">()</span>
-<span class="p">}</span>
+    <span class="err">}</span><span class="o">;</span>
+    <span class="nt">req</span><span class="nc">.open</span><span class="o">(</span><span class="s2">&quot;get&quot;</span><span class="o">,</span> <span class="s2">&quot;http://server.address/arcgis/tokens/?request=getToken&amp;username=username&amp;password=password&amp;expiration=60&quot;</span><span class="o">,</span> <span class="nt">true</span><span class="o">);</span>
+    <span class="nt">req</span><span class="nc">.send</span><span class="o">()</span>
+<span class="err">}</span>
 </pre></div>
 
 
 <p>I pass a parameter called <code>callback</code> - that&#8217;s a very important step, otherwise you would not be able to retrieve the token when you actually need it (<span class="caps">AJAX</span> stands for asynchronous). Now you just pass the token to the layer params like&nbsp;this:</p>
-<div class="highlight"><pre><span class="nx">retrieveToken</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">layer</span><span class="p">.</span><span class="nx">getSource</span><span class="p">().</span><span class="nx">updateParams</span><span class="p">({</span>
-        <span class="nx">token</span><span class="o">:</span> <span class="nx">token</span>
-    <span class="p">})</span>
-<span class="p">}</span>
+<div class="highlight"><pre>retrieveToken(function(token) {
+    layer.getSource().updateParams({
+        token: token
+    })
+}
 </pre></div>
 
 
@@ -373,54 +390,6 @@
 
 <p>When you call <code>format("DD° MM' SS'  DD° MM' SS'");</code> you&#8217;ll get decimal value in return (or <code>prompt</code> to be accurate). What I like the most about this solution is the usage of Math.pow(). I think it is a neat way to transform the values as you need to divide parts of latitude or longitude by 60<sup>0</sup>, 60<sup>1</sup> and 60<sup>2</sup> respectively.</p>
 <p>There is definitely a googol of different solutions to this task, I just liked the simplicity of this&nbsp;one.</p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="https://www.zimmi.cz/posts/2014/geoserver-printing-with-mapfish/" rel="bookmark" title="Permalink to Geoserver Printing With Mapfish">Geoserver Printing With&nbsp;Mapfish</a></h2>
-            <small>Written on Sep 2, 2014
-        and marked as
-        <a href="https://www.zimmi.cz/posts/tag/geoserver.html">geoserver</a>        | <a href="https://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>Printing a web map requires a lot more than doing <code>Ctrl + P</code>. <a href="http://mapfish.org/">MapFish</a> seems to be the best option to use with Geoserver, and it comes <a href="http://docs.geoserver.org/stable/en/user/community/printing/">ready as an extension</a>. If you installed the module properly, you should be seeing general info at <a href="http://localhost:8080/geoserver/pdf/info.json">http://localhost:8080/geoserver/pdf/info.json</a>. You&#8217;ll find a <code>config.yaml</code> in <code>data_dir/printing</code>.</p>
-
-<p>MapFish lets you access three different&nbsp;points:</p>
-
-<ol>
-<li><code>info.json</code> that returns current config as defined in config.yaml&nbsp;file</li>
-<li><code>print.pdf</code> that actually prints the map as defined in the <code>spec</code> <span class="caps">GET</span>&nbsp;argument</li>
-<li><code>create.json</code> that returns a <span class="caps">JSON</span> object with an <span class="caps">URL</span> of the printed&nbsp;map</li>
-</ol>
-
-<p>Remember, if you&#8217;re displaying a lot of layers in the map and all of them should be printed, you need to pass it as a <span class="caps">POST</span> argument when calling <code>print.pdf</code> or <code>create.json</code>, otherwise you&#8217;ll be getting an error complaining about the <span class="caps">GET</span> request&nbsp;length.</p>
-
-<p>The <code>config.yaml</code> file is where you define settings for the print module. You definitely want to define <code>dpis</code> (we&#8217;re using 90, 200 and 300 <span class="caps">DPI</span>), <code>scales</code> (they probably need to be hardcoded, I didn&#8217;t succeed trying any arbitrary scale) and <code>layouts</code> (we&#8217;re using A4 to A0 both portrait and&nbsp;landscape).</p>
-
-<p>However, defining the page size might get tricky as MapFish does not use standardized sizes defined in cm, in or any other unit. I&#8217;ve experimenting and doing some maths and here&#8217;s what I came up with for portrait&nbsp;layouts.</p>
-
-<table class="table-centered">
-    <tr>
-        <th>A0</th>
-        <th>A1</th>
-        <th>A2</th>
-        <th>A3</th>
-        <th>A4</th>
-    </tr>
-    <tr>
-        <td>2382&times;3361</td>
-        <td>1683&times;2380</td>
-        <td>1190&times;1680</td>
-        <td>840&times;1180</td>
-        <td>595&times;832</td>
-    </tr>
-</table>
-
-<p><em>The bigger paper you use, the smaller <span class="caps">DPI</span> is available</em>, that&#8217;s what I found out messing around with MapFish settings. This means that we&#8217;re using 200 <span class="caps">DPI</span> top for A2 layout and 90 <span class="caps">DPI</span> for A1 and A0 layout,&nbsp;respectively.</p>
-
-<p>JQuery takes care of sending <span class="caps">POST</span> request and fetching the response. <a href="http://www.edpp.cz/poli_mapa-povodnoveho-planu-mesta/">See it in action</a> (Choose <em>Nástroje</em> and <em>Tisknout</em> for&nbsp;printing).</p>
         </section>
         </div>
     </div>

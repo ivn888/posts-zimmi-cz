@@ -50,19 +50,19 @@
     <section>
         <p>I&#8217;ve been running some <span class="caps">GRASS</span>/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten&nbsp;minutes.</p>
 <p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
-<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
+<div class="highlight"><pre><span class="ch">#!/usr/bin/env bash</span>
 <span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
 
-<span class="k">while</span> <span class="nb">true</span><span class="p">;</span> <span class="k">do</span>
+<span class="k">while</span> true<span class="p">;</span> <span class="k">do</span>
     <span class="nb">echo</span> <span class="s2">&quot;############ </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2"> ############&quot;</span>
     <span class="nv">x</span><span class="o">=</span><span class="k">$(</span>ssh user@remote.server <span class="s2">&quot;tail -n 30 path/to/my/log_</span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="k">)</span>
 
-    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
+    <span class="k">if</span> <span class="o">[[</span> $<span class="nv">x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
         <span class="k">then</span>
             notify-send -u critical <span class="s2">&quot;Finally </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">&quot;</span>
             mpg123 -n <span class="m">250</span> ~/Music/queen-we_are_the_champions.mp3
             <span class="nb">exit</span>
-<span class="nb">        </span><span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
+        <span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
     <span class="k">fi</span>
     sleep 60
 <span class="k">done</span>

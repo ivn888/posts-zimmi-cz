@@ -4,180 +4,16 @@
 		"selected_items":
 		[
 			[
-				"fun",
-				"function"
-			],
-			[
-				"crea",
-				"created_by"
-			],
-			[
-				"eve",
-				"eventsBuilder"
-			],
-			[
-				"book",
-				"booksBuilder"
-			],
-			[
-				"boo",
-				"booksBuilder"
-			],
-			[
-				"creat",
-				"created_by"
-			],
-			[
-				"create",
-				"created_at"
-			],
-			[
-				"autho",
-				"authorsBuilder"
-			],
-			[
-				"Eve",
-				"EventService"
-			],
-			[
-				"q",
-				"queryText"
-			],
-			[
-				"created",
-				"created_by"
-			],
-			[
-				"arra",
-				"array_agg"
-			],
-			[
-				"prp",
-				"prepare_server"
-			],
-			[
-				"prepa",
-				"prepare_server"
-			],
-			[
-				"Aut",
-				"AuthUserFactory"
-			],
-			[
-				"bmau",
-				"bm_authors_books"
-			],
-			[
-				"prpe",
-				"prepareAuthorUpdateStatement"
-			],
-			[
-				"bm_author",
-				"bm_authors_books"
-			],
-			[
-				"bm",
-				"bm_bookmap"
-			],
-			[
-				"req",
-				"require"
-			],
-			[
-				"upda",
-				"updateObject"
-			],
-			[
-				"upd",
-				"updateObject"
-			],
-			[
-				"uda",
-				"updateObject"
-			],
-			[
-				"udp",
-				"updateObject"
-			],
-			[
-				"prep",
-				"prepareUpdateStatement"
-			],
-			[
-				"auth",
-				"authorQueries"
-			],
-			[
-				"inlie",
-				"inline-block"
-			],
-			[
-				"API",
-				"API_URL"
-			],
-			[
-				"sear",
-				"searchAuthors"
-			],
-			[
-				"err",
-				"err400"
-			],
-			[
-				"O",
-				"Oops"
-			],
-			[
-				"get",
-				"getAllAuthors"
-			],
-			[
-				"date",
-				"datePicker"
-			],
-			[
-				"http",
-				"httpError"
-			],
-			[
-				"getAut",
-				"getAuthor"
-			],
-			[
-				"Auth",
-				"AuthorService"
-			],
-			[
-				"cre",
-				"createAuthor"
-			],
-			[
-				"cont",
-				"controllerAs"
-			],
-			[
-				"user",
-				"username"
-			],
-			[
-				"A",
-				"AuthorUpdateController"
-			],
-			[
-				"qu",
-				"query"
-			],
-			[
-				"query",
-				"queryText"
-			],
-			[
-				"route",
-				"routeParams"
+				"twee",
+				"tweets_sorted"
 			],
 			[
 				"Date",
 				"dateObject"
+			],
+			[
+				"bm",
+				"bm_users"
 			],
 			[
 				"conn",
@@ -444,6 +280,10 @@
 				"location_type"
 			],
 			[
+				"get",
+				"getElementsByClassName"
+			],
+			[
 				"voz",
 				"vozejkmap-infobox-nearest"
 			],
@@ -514,11 +354,163 @@
 			[
 				"sh",
 				"shuffleOptions"
+			],
+			[
+				"cre",
+				"_createOptions"
+			],
+			[
+				"opti",
+				"options"
+			],
+			[
+				"crea",
+				"createElement"
+			],
+			[
+				"righ",
+				"rightOption"
+			],
+			[
+				"rig",
+				"rightOption"
+			],
+			[
+				"F",
+				"f"
+			],
+			[
+				"geoj",
+				"geojsonTileLayer"
+			],
+			[
+				"river",
+				"river_style"
+			],
+			[
+				"inter",
+				"intersection_mimo"
+			],
+			[
+				"division",
+				"division_union"
+			],
+			[
+				"divis",
+				"division_union"
+			],
+			[
+				"di",
+				"di_pardubice"
+			],
+			[
+				"divsio",
+				"division_union"
+			],
+			[
+				"zpf",
+				"zpf_dz_nad_1_rok"
+			],
+			[
+				"tbo",
+				"tbo_zabor_zpf"
+			],
+			[
+				"vstup_di_poruchy_2",
+				"vstup_di_poruchy_2013"
+			],
+			[
+				"vstup_di_por",
+				"vstup_di_poruchy_2013"
+			],
+			[
+				"vstup_di_use",
+				"vstup_di_useky_opravy_2013"
+			],
+			[
+				"podi",
+				"podil_jmenovatel"
+			],
+			[
+				"pod",
+				"podil_citatel"
+			],
+			[
+				"divi",
+				"division_parcel_id"
+			],
+			[
+				"cisl",
+				"cislo_useku"
+			],
+			[
+				"di_usek",
+				"di_useky_navrh_2013"
+			],
+			[
+				"pkc_useky",
+				"pkc_useky_navrh"
+			],
+			[
+				"border",
+				"borderwidth"
+			],
+			[
+				"dib",
+				"di_bloky_100m_navrh_2013"
+			],
+			[
+				"MUT",
+				"MULTIPOLYGON"
+			],
+			[
+				"di_",
+				"di_useky_hodnoceni_2014"
+			],
+			[
+				"diuse",
+				"di_useky_hodnoceni_2013"
+			],
+			[
+				"admi",
+				"adminj_n"
+			],
+			[
+				"sa",
+				"staniceni1"
+			],
+			[
+				"MULTI",
+				"MULTILINESTRING"
+			],
+			[
+				"kod",
+				"kod_tr_kom"
+			],
+			[
+				"MUL",
+				"MULTILINESTRINGZ"
+			],
+			[
+				"getElem",
+				"getElementById"
+			],
+			[
+				"RES",
+				"RES_LAT_ID"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "content/2016/a-month-of-commuting-on-my-own.md",
+			"settings":
+			{
+				"buffer_size": 1663,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -527,85 +519,13 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 400.0,
-		"last_filter": "ren",
+		"height": 183.0,
+		"last_filter": "filename",
 		"selected_items":
 		[
 			[
-				"ren",
-				"File: Rename"
-			],
-			[
-				"cop",
-				"File: Copy Path"
-			],
-			[
-				"mard",
-				"Set Syntax: Markdown Light"
-			],
-			[
-				"javasc",
-				"Set Syntax: JavaScript"
-			],
-			[
-				"less",
-				"Set Syntax: LESS"
-			],
-			[
-				"insta",
-				"Package Control: Install Package"
-			],
-			[
-				"css",
-				"Set Syntax: CSS"
-			],
-			[
-				"lore",
-				"Snippet: Lorem ipsum"
-			],
-			[
-				"sql",
-				"Set Syntax: SQL"
-			],
-			[
-				"remove",
-				"Package Control: Remove Package"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
-			],
-			[
-				"path",
-				"File: Copy Path"
-			],
-			[
-				"diff",
-				"Git: Diff Current File"
-			],
-			[
-				"move",
-				"File: Move"
-			],
-			[
-				"dele",
-				"File: Delete"
-			],
-			[
-				"new file",
-				"File: New File Relative to Project Root"
-			],
-			[
-				"copy",
-				"File: Copy Path"
-			],
-			[
-				"rena",
-				"File: Rename"
-			],
-			[
-				"delete",
-				"File: Delete"
+				"filename",
+				"File: Copy Name"
 			],
 			[
 				"bash",
@@ -622,6 +542,10 @@
 			[
 				"MARKD",
 				"Set Syntax: Markdown"
+			],
+			[
+				"sql",
+				"Set Syntax: SQL"
 			],
 			[
 				"swl",
@@ -676,8 +600,16 @@
 				"Glue - Launch"
 			],
 			[
+				"diff",
+				"Git: Diff Tool Current File"
+			],
+			[
 				"dif",
 				"Git: Diff Current File"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
 			],
 			[
 				"packa",
@@ -708,8 +640,16 @@
 				"Package Control: Install Package"
 			],
 			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
 				"markdo",
 				"Set Syntax: Markdown Light"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
 			],
 			[
 				"markdown",
@@ -741,140 +681,141 @@
 	},
 	"expanded_folders":
 	[
-		"/home/zimmi/documents/zimmi/posts",
-		"/home/zimmi/documents/zimmi/posts/content",
-		"/home/zimmi/documents/zimmi/posts/content/2016"
+		"/home/zimmi/dev/zimmi.cz/posts",
+		"/home/zimmi/dev/zimmi.cz/posts/content/2014",
+		"/home/zimmi/dev/zimmi.cz/posts/content/2016",
+		"/home/zimmi/dev/zimmi.cz/posts/content/assets"
 	],
 	"file_history":
 	[
-		"/home/zimmi/documents/clevermaps/cm-roads/dgn2tif/process.sh",
-		"/home/zimmi/documents/zimmi/posts/content/2016/how-to-convert-dgn-to-tiff-with-gdal.md",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/map/geocoder.control.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/.gitignore",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/gulpfile.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/querybuilders/books.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/build/.gitignore",
-		"/home/zimmi/documents/zimmi/misc/bookmap/.git/COMMIT_EDITMSG",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/map/newEvent.control.js",
-		"/home/zimmi/documents/zimmi/temp/bookmap/server.js",
-		"/home/zimmi/documents/zimmi/temp/bookmap/package.json",
-		"/home/zimmi/documents/zimmi/misc/bookmap/build/assets/app.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/package.json",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/config/config.js.example",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/index.tpl",
-		"/home/zimmi/documents/zimmi/misc/bookmap/build/server.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/build/index.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/index.html",
-		"/home/zimmi/documents/zimmi/temp/bookmap/start.js",
-		"/home/zimmi/documents/zimmi/temp/bookmap/app.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/config/config.js",
-		"/home/zimmi/documents/zimmi/temp/bookmap/.gitignore",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/books/books.anonymous.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/books/books.authenticated.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/events/events.anonymous.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/events/events.authenticated.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/login/login.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/prepare.login.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/tokens/tokens.authenticated.js",
-		"/home/zimmi/documents/zimmi/temp/bookmap/.openshift/action_hooks/deploy",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/authors/authors.authenticated.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/authors/authors.anonymous.js",
+		"/home/zimmi/documents/zimmi/misc/maps/commute/circle.svg",
+		"/home/zimmi/documents/zimmi/misc/maps/commute/map.svg",
+		"/home/zimmi/dev/zimmi.cz/posts/content/2014/analyzing-twitter-languages-with-streaming-api.md",
+		"/home/zimmi/downloads/mapgentoolbox_v1_1_sept2013/readme.txt",
+		"/home/zimmi/dev/zimmi.cz/posts/content/2015/leaflet-with-custom-crs-epsg-5514.md",
+		"/home/zimmi/documents/zimmi/dizertace/post-processing/twitter/stats/plots.r",
+		"/home/zimmi/documents/zimmi/posts/content/2015/twitter-rest-api-data-mining-on-openshift-part-ii.md",
+		"/home/zimmi/documents/zimmi/dizertace/post-processing/twitter/stats/languages.r",
+		"/home/zimmi/documents/zimmi/posts/.git/COMMIT_EDITMSG",
+		"/home/zimmi/documents/zimmi/posts/Makefile",
+		"/home/zimmi/documents/zimmi/dizertace/post-processing/twitter/stats/hours.r",
+		"/home/zimmi/documents/zimmi/dizertace/post-processing/twitter/stats/authors.r",
+		"/home/zimmi/documents/zimmi/posts/content/2015/automated-map-creation-with-qgis-postgis-python-svg-and-imagemagick.md",
 		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/routes/auth.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/main.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/author/author.controller.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/utils/token.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/etc/example/liquibase-install-pgsql.properties",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/etc/example/liquibase-reinstallable-pgsql.properties",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_events.yml",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_tokens.yml",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/routes/authors.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/node_modules/bcrypt/package.json",
-		"/home/zimmi/.ssh/known_hosts",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/author/authorList.directive.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/book.controller.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/bookForm.directive.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/author/authorForm.directive.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/author/authors.update.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/books.update.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/books.new.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/app.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/login/login.controller.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/login/login.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/assets/less/bm-bootstrap-theme.less",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/routes/events.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/event.controller.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/INSTALL",
-		"/home/zimmi/documents/clevermaps/cm-roads/cr-15017/temp/mv.txt",
-		"/home/zimmi/documents/clevermaps/cm-roads/cr-15017/sfericke_fotky/7_Fotografie_Panoramaticka_kamera/dimap/scp.txt",
-		"/home/zimmi/documents/zimmi/misc/bookmap/README",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/node_modules/gulp-nodemon/node_modules/colors/ReadMe.md",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/newEvent.controller.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/events.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/author/author.service.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/event.service.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/event.module.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/author/authorList.directive.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/book.module.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/eventForm.directive.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/eventList.directive.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/eventList.directive.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/eventForm.directive.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/bookList.directive.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/bookList.directive.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/shared/bm.selected.directive.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/config.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/middlewares/validateRequest.js",
-		"/home/zimmi/documents/clevermaps/cm-roads/cr-15007/skripty/diagnostika/di_00_import.sh",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/author/authors.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/books.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/shared/sidebar.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/index.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/gulpfile.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/author/author.module.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/shared/auth.tokenInterceptor.factory.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/event/events.new.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/querybuilders/events.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/routes/books.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/routes/index.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/utils/logger.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/bundle/bookmap.min.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/logs/test-logs.log",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/querybuilders/authors.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test/login.js",
-		"/home/zimmi/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
-		"/home/zimmi/.config/sublime-text-3/Packages/Default/Preferences.sublime-settings",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/book.service.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/routes/users.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/share/example/fill_bm_users.sql",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/share/example/fill_all.sql",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/share/example/fill_bm_events.sql",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_authors.yml",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_users.yml",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/js/auth/auth.factory.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/js/auth/auth.controller.js",
 		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_roles.yml",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_users.yml",
 		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/master.yml",
-		"/tmp/zimmi/psql.edit.5631.sql",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/assets/css/app.css",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/logs/all-logs.log",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/book/bookForm.directive.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/components/author/authors.new.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/partials/authors.new.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/test/conf.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/test/spec.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/node_modules/angular-datepicker/dist/index.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/node_modules/angular-datepicker/dist/index.css",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/node_modules/angular-datepicker/README.md",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/node_modules/angular-datepicker/app/templates/datepicker.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/assets/css/messages.css",
-		"/home/zimmi/documents/zimmi/misc/bookmap/makefile",
-		"/home/zimmi/documents/zimmi/misc/bookmap/npm-debug.log",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/shared/login.controller.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/shared/auth.user.factory.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/partials/login.html",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/node_modules/.bin/gulp",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/app/shared/auth.factory.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/shared/errors.js",
-		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/share/example/fill_bm_authors_books.sql"
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/js/app.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/js/controllers.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/js/factory.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/main.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/partials/page3.html",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/middlewares/validateRequest.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/public/javascripts/auth.factory.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/partials/login.html",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/js/directives.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/js/filters.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/public/javascripts/app.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/partials/header.html",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/index.html",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/public/javascripts/auth.controller.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/gulpfile.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/views/index.html",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/routes/index.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/routes/users.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/secret.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/models/database.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client/public/views/index.html",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/share/example/fill_bm_users.sql",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/config.js",
+		"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/package.json",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/share/example/fill_bm_authors.sql",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_books.yml",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_authors_books.yml",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_events.yml",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/bm_authors.yml",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/etc/example/liquibase-install-pgsql.properties",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_rizeni.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_pozadovane_parcely.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_parcely.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_omezeni.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_ochrana_par.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_ochrana_bud.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_lv.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_listiny.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_jpv_par.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_jpv_opsub.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_jpv_jed.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_jpv_bud.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_jine.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_geom.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_datum_aktualizace.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_budovy.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_budouc_zplatnene.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/res_bpej.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/requests.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/req_kn_ruian.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/req_kn_man.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/req_kn_budouc.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/master.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/install/create-schema.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_omezeni.yml",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/bm_bookmap/install/create_schema.yml",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/INSTALL",
+		"/home/zimmi/documents/clevermaps/cm-temp/batch.dat",
+		"/home/zimmi/documents/clevermaps/cm-roads/cr-15020/data/diagnostika/images_1.dat",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/db/install/master.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/src_ruian/db/install/master.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/src_ruian/db/install/rn_zsj.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/db/install/master.yml",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/db/etc/example/liquibase-install-pgsql.properties",
+		"/home/zimmi/documents/clevermaps/cm-datasources/etc/example/liquibase-install-pgsql.properties",
+		"/home/zimmi/documents/zimmi/misc/bookmap/.gitignore",
+		"/home/zimmi/.psqlrc",
+		"/home/zimmi/.gitconfig",
+		"/home/zimmi/documents/zimmi/misc/dotfiles/psqlrc",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/db/etc/example/liquibase-init-pgsql.properties",
+		"/home/zimmi/documents/zimmi/misc/bookmap/db/db/install/init.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/db/install/init.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/INSTALL",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_ca_mgeo/db/reinstallable/do_delivery_lpis.yml",
+		"/home/zimmi/documents/zimmi/misc/dotfiles/install.sh",
+		"/home/zimmi/documents/zimmi/misc/dotfiles/screenrc",
+		"/home/zimmi/documents/zimmi/dizertace/post-processing/twitter/stats.sql",
+		"/home/zimmi/documents/zimmi/dizertace/post-processing/twitter/stats/first.r",
+		"/home/zimmi/documents/zimmi/homepage/well_known/acme-challenge/LBk1FepDPFOjWXA8U2h3nmBboAjyi6N10H37FZpkQIA",
+		"/home/zimmi/documents/zimmi/homepage/server.js",
+		"/home/zimmi/documents/zimmi/homepage/.well-known/acme-challenge/bxOxqoqmP1L8yzj_10sm79K3nx0t_4BSERd2-hC1RXk",
+		"/home/zimmi/documents/zimmi/homepage/.well-known/acme-challenge/GihXIUCdmpzg0JnO2ulG8eHKjORtYPSqlZ4Xc1eWAZs",
+		"/home/zimmi/documents/zimmi/homepage/.git/COMMIT_EDITMSG",
+		"/home/zimmi/documents/zimmi/homepage/.well-known/acme-challenge/LFYcESs2eGDp6zWEva6Flfjqves9JxQgvBQabnuUIMI",
+		"/home/zimmi/documents/zimmi/homepage/.git/MERGE_MSG",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_ca_mgeo/db/install/lpis.yml",
+		"/home/zimmi/downloads/geoserver-2.8.1/data_dir/user_projections/epsg.properties",
+		"/home/zimmi/documents/clevermaps/cm-datasources/src_lpis/db/reinstallable/do_update_pudni_bloky.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/src_lpis/db/reinstallable/do_update_par_lpis.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/share/client/plpgsql/create_funcs.sql",
+		"/home/zimmi/bin/cm-aktualizace",
+		"/home/zimmi/documents/clevermaps/cm-datasources/src_cmkn/old/update_scripts/5_road_tables/01_sy_55-breclav/02_SYMAP_kn_data.sql",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/share/client/plpgsql/create_tables.sql",
+		"/home/zimmi/documents/clevermaps/cm-datasources/.git/COMMIT_EDITMSG",
+		"/home/zimmi/documents/clevermaps/cm-datasources/.git/rebase-merge/git-rebase-todo",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_budouc_zplatnene.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_lv.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_jine.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_rizeni.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/src_cmkn/old/update_scripts/5_road_tables/01_sy_55-breclav/03_SYMAP_rizeni_a_listiny.sql",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_listiny.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_geom.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_jpv_opsub.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_jpv_jed.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_jpv_bud.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_jpv_par.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_ochrana_bud.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_budovy.yml",
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_bpej.yml"
 	],
 	"find":
 	{
@@ -885,13 +826,6 @@
 		"height": 104.0,
 		"where_history":
 		[
-			"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server",
-			"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client",
-			"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server/test",
-			"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/client",
-			"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/server",
-			"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/",
-			"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap/ngClient/app",
 			"/home/zimmi/documents/zimmi/misc/bookmap/src/bookmap",
 			"/home/zimmi/documents/clevermaps/cm-datasources/",
 			"/home/zimmi/documents/clevermaps/cm-datasources/src_kn",
@@ -906,134 +840,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"console.",
-			"console.log",
-			"build",
-			"\"\"",
-			"client",
-			"API",
-			"node_modules",
-			"main.js",
-			"54.234.37.172",
-			"\",\n",
-			"leaflet",
-			"book",
-			"books",
-			"\\",
-			"authors",
-			"path",
-			"body",
-			"express",
-			"Router",
-			"router",
-			"done(client);",
-			"updateObject",
-			"done(client);",
-			"{[type]}",
-			"updateObject",
-			"queryText",
-			"console.log",
-			"books",
-			"authors",
-			"success",
-			"username",
-			"id",
-			"SET NULL",
-			"authors",
-			"\\",
-			"console",
-			"\\",
-			"author",
-			"AuthorService",
-			"author",
-			"authors",
-			"Authors",
-			"authors",
-			"book",
-			"authorForm",
-			"book",
-			"author",
-			"();\n",
-			"hide",
-			"id",
-			"url",
-			"server",
-			"url",
-			"next",
-			"login",
-			"done",
-			"beforeEach",
-			"_filter",
-			"cgNotify",
-			"LoginController",
-			"$scope",
-			"scope",
-			"$window.sessionStorage.user",
-			"notify",
-			"data",
-			"chunks",
-			"req.body",
-			"authors",
-			"data",
-			"rowCount",
-			"authors",
-			"done()",
-			"on(\"error",
-			"data",
-			"genToken",
-			"next",
-			"console.log",
-			"\\",
-			"999",
-			"updateObject",
-			"key",
-			"req.body",
-			"i + 1",
-			"created_at",
-			"query",
-			"update",
-			"PUT",
-			"id",
-			"DELETE",
-			"DELETEE",
-			"Zimmerma",
+			"png",
+			"bg=\"white\"",
+			"tweets_geo_sorted",
+			"tweets_cnt",
 			"validateUser",
-			"res.body",
-			"next",
-			"X-Access-Token",
-			"connectionString",
-			"express",
-			"routes",
-			"pg",
-			"connectionString",
-			"authors",
-			"wins",
-			"getAllAuthors",
-			"author",
-			"AuthorService",
-			"routeParams",
-			"http",
-			"API",
-			"log",
-			"add",
-			"selectedAuthors",
 			"'",
-			"bower_components",
-			"node_modules",
-			"server",
+			"access-key",
+			"AuthenticationFactory",
+			"UserAuthFactory",
+			"myApp",
+			"products",
+			"prod",
+			"auth",
 			"'",
-			"log",
-			"ng-repeat",
-			"type=\"text/javascript\"",
-			"location",
-			"author",
-			"BookNew",
-			"AuthFactory",
-			"route",
-			"routeParams",
-			"AuthFactory",
-			"deleteAuthor",
-			"getAllAuthors"
+			"dbUser",
+			"userObject",
+			"params",
+			"\\",
+			"“",
+			"”",
+			"17",
+			"username",
+			"cm",
+			"cm_bookmap",
+			"TOWGS84",
+			"589,76,480,0,0,0,0",
+			"6377397.155,299.1528128",
+			"${schema.name}",
+			"par_lpis",
+			"pdf",
+			"png",
+			"decimal",
+			"MinScaleDenominator",
+			"${schema.name}.lpis",
+			"api_ca_mgeo.lpis",
+			"a",
+			"st_difference",
+			"dimap",
+			"OPTIONS .+",
+			"OPTIONS (schema_name 'api_symap', table_name 'req_kn_budouc');",
+			"^OPTIONS.+",
+			"FOREIGN ",
+			"FOREIGN",
+			"SERVER \"cm-dtsrc-symap\"",
+			"then",
+			"${role.adm.name}",
+			"${schema.name}",
+			"api_symap",
+			"parcely",
+			"omezeni",
+			"sy_omezeni",
+			"sy_jpv_bud",
+			"omezeni",
+			"vstup_kn_man",
+			"opsub",
+			"omezeni",
+			"budovy",
+			"omezeni omezeni",
+			"install-data-${schema.name}",
+			"install-data-src_kn",
+			"INSERT INTO",
+			"INSERT",
+			"metadata_kn_tables",
+			"INSERT * metadata_kn_tables",
+			"INSERT INTO ${schema.name}.metadata_kn_tables",
+			"table_name, table_type, version_from version_to",
+			"metadata_kn_tables",
+			"version_from",
+			"version_from version_to)",
+			"subli",
+			"dimap",
+			"$HOME",
+			"s3cmd",
+			"gz",
+			"prez",
+			"spadd",
+			"count",
+			"cardtr_amount_czk",
+			"pocet_plateb",
+			"SUM",
+			"l_res",
+			"FOREIGN DATA WRAPPER",
+			"dimap",
+			"not exists",
+			"bloky_poruchy",
+			"vstup_di_100m_bloky_poruchy",
+			"CREATE TABLE",
+			"plochy",
+			"linie",
+			"plochy",
+			"linie",
+			"plochy",
+			"plochy.",
+			"linie",
+			"plochy",
+			"pocet_obyvatel_zsj_d",
+			"ELSE",
+			"THEN 1",
+			"p20150630",
+			"20150531",
+			"20150630",
+			"20150531",
+			"transactions_p20150430",
+			"transactions_p20150531",
+			"transactions_p20150630",
+			"kaufland",
+			"src_ruian",
+			"cardmereqh_geo_latitude",
+			"cardmereqh_geo_longitude",
+			"cardmereqh_geo_latitude",
+			"equipments",
+			"latitude",
+			"..",
+			"  ",
+			"UNLOGGED",
+			"mon",
+			"CREATE",
+			"df.",
+			"res_100m_bloky_poruchy",
+			"res_di_poruch",
+			"vstup_mm_100_m_neprasna",
+			"di_pardubice_6_roads",
+			"vyp_",
+			"vyp_1",
+			"plochy",
+			"poruchy_linie",
+			"ogr2ogr \\\n    -overwrite \\\n    -f \"PostgreSQL\" PG:\"dbname=cm_roads user=zimmi\" \\\n    poruchy_linie.shp \\\n    -lco SCHEMA=cr15020 \\\n    -lco OVERWRITE=YES \\\n    -t_srs \"EPSG:5514\" \\\n    -nln vstup_poruchy_linie",
+			"roads"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1041,15 +975,7 @@
 		"regex": false,
 		"replace_history":
 		[
-			"server.js",
-			"",
-			"events",
-			"done();",
-			"events",
-			"",
-			"app.listen()",
-			"done(client)",
-			"",
+			"tiff",
 			"\"",
 			"api_ca_mgeo",
 			"",
@@ -1130,8 +1056,98 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "content/2016/a-month-of-commuting-on-my-own.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1663,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1663,
+								1663
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/MarkdownEditing/Markdown.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 462.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -1166,10 +1182,6 @@
 		]
 	},
 	"menu_visible": true,
-	"output.exec":
-	{
-		"height": 116.0
-	},
 	"output.find_results":
 	{
 		"height": 0.0
@@ -1188,196 +1200,12 @@
 		"selected_items":
 		[
 			[
-				"config.js.e",
-				"src/bookmap/client/app/config/config.js.example"
+				"analyzin",
+				"content/2014/analyzing-twitter-languages-with-streaming-api.md"
 			],
 			[
-				"config.js.ex",
-				"src/bookmap/client/app/config/config.js.example"
-			],
-			[
-				"gulp",
-				"src/bookmap/gulpfile.js"
-			],
-			[
-				"server",
-				"src/bookmap/server.js"
-			],
-			[
-				"main.js",
-				"src/bookmap/main.js"
-			],
-			[
-				"readme",
-				"src/bookmap/node_modules/gulp-nodemon/node_modules/colors/ReadMe.md"
-			],
-			[
-				"authorser",
-				"src/bookmap/client/app/components/author/author.service.js"
-			],
-			[
-				"bootthele",
-				"src/bookmap/client/assets/less/bm-bootstrap-theme.less"
-			],
-			[
-				"bootthemele",
-				"src/bookmap/client/assets/less/bm-bootstrap-theme.less"
-			],
-			[
-				"themeless",
-				"src/bookmap/client/assets/less/bm-bootstrap-theme.less"
-			],
-			[
-				"bm-bo",
-				"src/bookmap/client/assets/less/bm-bootstrap-theme.less"
-			],
-			[
-				"packag",
-				"src/bookmap/package.json"
-			],
-			[
-				"package",
-				"src/bookmap/package.json"
-			],
-			[
-				"gulpf",
-				"src/bookmap/client/gulpfile.js"
-			],
-			[
-				"directive.h",
-				"src/bookmap/client/app/components/author/authorForm.directive.html"
-			],
-			[
-				"bookm",
-				"src/bookmap/client/app/bundle/bookmap.min.js"
-			],
-			[
-				"app",
-				"src/bookmap/client/app/app.js"
-			],
-			[
-				"side",
-				"src/bookmap/client/app/shared/sidebar.html"
-			],
-			[
-				"logger",
-				"src/bookmap/utils/logger.js"
-			],
-			[
-				"author.new",
-				"src/bookmap/client/partials/authors.new.html"
-			],
-			[
-				"makef",
-				"makefile"
-			],
-			[
-				"gulpfile",
-				"src/bookmap/client/gulpfile.js"
-			],
-			[
-				"app.",
-				"src/bookmap/client/app/app.js"
-			],
-			[
-				"makefile",
-				"makefile"
-			],
-			[
-				"gulpfi",
-				"src/bookmap/client/gulpfile.js"
-			],
-			[
-				"bookmap.min.js",
-				"src/bookmap/client/app/bundle/bookmap.min.js"
-			],
-			[
-				"logincontroller",
-				"src/bookmap/client/app/shared/login.controller.js"
-			],
-			[
-				"gul",
-				"src/bookmap/node_modules/.bin/gulp"
-			],
-			[
-				"authfact",
-				"src/bookmap/client/app/shared/auth.factory.js"
-			],
-			[
-				"error",
-				"src/bookmap/server/shared/errors.js"
-			],
-			[
-				"routesindex",
-				"src/bookmap/server/routes/index.js"
-			],
-			[
-				"makefi",
-				"makefile"
-			],
-			[
-				"index.js",
-				"src/bookmap/server/routes/index.js"
-			],
-			[
-				"fillal",
-				"db/bm_bookmap/share/example/fill_all.sql"
-			],
-			[
-				"authors.js",
-				"src/bookmap/server/test/authors.js"
-			],
-			[
-				"author",
-				"src/bookmap/server/test/authors.js"
-			],
-			[
-				"packa",
-				"src/bookmap/package.json"
-			],
-			[
-				"book.cont",
-				"src/bookmap/client/app/components/book/book.controller.js"
-			],
-			[
-				"bookservi",
-				"src/bookmap/client/app/components/book/book.service.js"
-			],
-			[
-				"inde",
-				"src/bookmap/client/index.html"
-			],
-			[
-				"index",
-				"src/bookmap/ngClient/index.html"
-			],
-			[
-				"index.",
-				"src/bookmap/ngClient/index.html"
-			],
-			[
-				"loadsh.js",
-				"src/bookmap/ngClient/node_modules/lodash/chain/lodash.js"
-			],
-			[
-				"inde.",
-				"src/bookmap/ngClient/index.html"
-			],
-			[
-				"bma",
-				"db/bm_bookmap/install/bm_authors.yml"
-			],
-			[
-				"books.",
-				"src/bookmap/ngClient/partials/books.html"
-			],
-			[
-				"authors.htm",
-				"src/bookmap/ngClient/partials/authors.html"
-			],
-			[
-				"author.js",
-				"src/bookmap/server/routes/authors.js"
+				"leaflet",
+				"content/2015/leaflet-with-custom-crs-epsg-5514.md"
 			],
 			[
 				"roadtables",

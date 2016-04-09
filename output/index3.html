@@ -37,6 +37,68 @@
 
     <div class="panel">
         <div class="post-name">
+            <h2><a href="https://www.zimmi.cz/posts/2015/postgis-count-line-self-intersections/" rel="bookmark" title="Permalink to PostGIS: Count Line Self-Intersections">PostGIS: Count Line&nbsp;Self-Intersections</a></h2>
+            <small>Written on Mar 30, 2015
+        and marked as
+        <a href="https://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="https://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="https://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        </small>
+        <section>
+            <p><a href="https://gis.stackexchange.com/questions/107927/counting-self-intersections-of-linestring-using-postgis/140674#140674">Is there a way of using PostgreSQL + PostGIS for finding the number of self intersections in a linestring?</a> was a question that made me think of this problem. I came up with a solution that takes just a few lines of&nbsp;code.</p>
+<p>Assume the following&nbsp;geometries:</p>
+<div class="highlight"><pre>CREATE TABLE test2 (
+    id integer NOT NULL,
+    wkb_geometry geometry(LineString,5514)
+);
+COPY test2 (id, wkb_geometry) FROM stdin;
+1   01020000208A15000004000000CCDC7845E339EEBFF2003B4A8A08E1BFE4154DAB7C31DCBF24C2042773E3E53F2287BA2CC591E43F604749BFE3B2E2BF2AE9770A11B8F0BF9C91435D56C0C63F
+2   01020000208A1500000600000050212BF9E63EC03F1FA046FD69F1EA3F504D44212915EA3F74A99EDF44E3F33F2CE2805DFAB1F33F805D24B1B189DC3F9834DE5938C1F53FB56F1FBF8AAFEC3F24D0C85B4666EA3FF311B0D8D75BE93F306EAA073894D23FA841B27E3404F33F
+\.
+</pre></div>
+
+
+<p><img src="https://www.zimmi.cz/posts/assets/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
+<p>Note that those geometries are valid while not being simple, thus, <code>ST_IsValidReason()</code> wouldn&#8217;t help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those&nbsp;two.</p>
+<div class="highlight"><pre>WITH noded AS (
+SELECT id, COUNT(id)
+FROM (
+    SELECT DISTINCT (ST_DumpPoints(ST_Node(wkb_geometry))).geom, id
+    FROM test
+) tmp  group by id
+),
+test AS (
+    SELECT id, COUNT(id)
+        FROM (
+            SELECT DISTINCT (ST_DumpPoints(wkb_geometry)).geom, id
+            FROM test
+        ) tmp  group by id
+)
+
+SELECT noded.id, noded.count - test.count cnt FROM noded JOIN test USING (id);
+</pre></div>
+
+
+<p>This query gives you geometry id and the difference in number of vertices between the original and simple geometry. Note the <code>DISTINCT</code> in the <code>noded</code> <span class="caps">CTE</span> - with <code>ST_Node()</code> you get <code>one vertex x number of intersecting lines</code> for each intersection. <code>DISTINCT</code> gives you just one of&nbsp;them.</p>
+<p>The query result on my <code>test</code> table:
+<table>
+    <tr>
+        <th>id</th>
+        <th>cnt</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>2</td>
+    </tr>
+</table></p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="post-name">
             <h2><a href="https://www.zimmi.cz/posts/2015/postgis-rectangular-grid-creation/" rel="bookmark" title="Permalink to PostGIS: Rectangular Grid Creation">PostGIS: Rectangular Grid&nbsp;Creation</a></h2>
             <small>Written on Mar 24, 2015
         and marked as
@@ -344,40 +406,40 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
 
 <span class="n">BOTTOM_LEFT</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">679363</span><span class="p">,</span><span class="o">-</span><span class="mi">1120688</span><span class="p">)</span>
 <span class="n">TOP_RIGHT</span>   <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">565171</span><span class="p">,</span><span class="o">-</span><span class="mi">1042703</span><span class="p">)</span>
-<span class="n">SRS_WIDTH</span>   <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">639084</span> <span class="o">-</span> <span class="o">-</span><span class="mi">638825</span><span class="p">)</span> <span class="c"># tile width in units of crs =&gt; 259 m</span>
-<span class="n">SRS_HEIGHT</span>  <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">1070426</span> <span class="o">-</span> <span class="o">-</span><span class="mi">1070273</span><span class="p">)</span> <span class="c"># tile height in units of crs =&gt; 153 m</span>
+<span class="n">SRS_WIDTH</span>   <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">639084</span> <span class="o">-</span> <span class="o">-</span><span class="mi">638825</span><span class="p">)</span> <span class="c1"># tile width in units of crs =&gt; 259 m</span>
+<span class="n">SRS_HEIGHT</span>  <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">1070426</span> <span class="o">-</span> <span class="o">-</span><span class="mi">1070273</span><span class="p">)</span> <span class="c1"># tile height in units of crs =&gt; 153 m</span>
 <span class="n">PX_WIDTH</span>    <span class="o">=</span> <span class="mi">977</span>
 <span class="n">PX_HEIGHT</span>   <span class="o">=</span> <span class="mi">578</span>
 
-<span class="n">FORMAT</span>      <span class="o">=</span> <span class="s">&#39;image/png&#39;</span>
-<span class="n">LAYERS</span>      <span class="o">=</span> <span class="p">[</span><span class="s">&#39;KN&#39;</span><span class="p">,</span> <span class="s">&#39;RST_PK&#39;</span><span class="p">]</span>
+<span class="n">FORMAT</span>      <span class="o">=</span> <span class="s1">&#39;image/png&#39;</span>
+<span class="n">LAYERS</span>      <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;KN&#39;</span><span class="p">,</span> <span class="s1">&#39;RST_PK&#39;</span><span class="p">]</span>
 <span class="n">SIZE</span>        <span class="o">=</span> <span class="p">(</span><span class="n">PX_WIDTH</span><span class="p">,</span> <span class="n">PX_HEIGHT</span><span class="p">)</span>
-<span class="n">SRS</span>         <span class="o">=</span> <span class="s">&#39;EPSG:5514&#39;</span>
-<span class="n">STYLES</span>      <span class="o">=</span> <span class="p">[</span><span class="s">&#39;default&#39;</span><span class="p">,</span> <span class="s">&#39;default&#39;</span><span class="p">]</span>
+<span class="n">SRS</span>         <span class="o">=</span> <span class="s1">&#39;EPSG:5514&#39;</span>
+<span class="n">STYLES</span>      <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">]</span>
 <span class="n">TRANSPARENT</span> <span class="o">=</span> <span class="bp">True</span>
 
-<span class="n">DIRECTORY</span> <span class="o">=</span> <span class="s">&#39;tiles/&#39;</span>
-<span class="n">SLEEP</span>     <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span> <span class="c"># seconds</span>
+<span class="n">DIRECTORY</span> <span class="o">=</span> <span class="s1">&#39;tiles/&#39;</span>
+<span class="n">SLEEP</span>     <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span> <span class="c1"># seconds</span>
 
-<span class="n">dx</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c"># area width in units of crs</span>
-<span class="n">dy</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c"># area height in units of crs</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># area width in units of crs</span>
+<span class="n">dy</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># area height in units of crs</span>
 
 <span class="n">cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dx</span> <span class="o">/</span> <span class="n">SRS_WIDTH</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="n">rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dy</span> <span class="o">/</span> <span class="n">SRS_HEIGHT</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
 
 <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;world_file.pngw&#39;</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_template</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;world_file.pngw&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_template</span><span class="p">:</span>
     <span class="n">tmpl</span> <span class="o">=</span> <span class="n">wld_template</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-<span class="n">wms</span> <span class="o">=</span> <span class="n">WebMapService</span><span class="p">(</span><span class="s">&#39;http://services.cuzk.cz/wms/wms.asp&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.1.1&#39;</span><span class="p">)</span>
+<span class="n">wms</span> <span class="o">=</span> <span class="n">WebMapService</span><span class="p">(</span><span class="s1">&#39;http://services.cuzk.cz/wms/wms.asp&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;1.1.1&#39;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.png&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">):</span>
             <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">continue</span>
 
@@ -398,16 +460,16 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
             <span class="n">transparent</span><span class="o">=</span><span class="n">TRANSPARENT</span>
         <span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.png&#39;</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">png</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">png</span><span class="p">:</span>
             <span class="n">png</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.pngw&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.pngw&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_file</span><span class="p">:</span>
             <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tmpl</span><span class="p">)</span>
-            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">SRS_WIDTH</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">((</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SRS_HEIGHT</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">SRS_WIDTH</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">((</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SRS_HEIGHT</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
         <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span> <span class="s">&#39; out of &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rows</span> <span class="o">*</span> <span class="n">cols</span><span class="p">)</span>
+        <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span> <span class="s1">&#39; out of &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rows</span> <span class="o">*</span> <span class="n">cols</span><span class="p">)</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">SLEEP</span><span class="p">)</span>
 </pre></div>
 
@@ -813,23 +875,6 @@ Total runtime: 3930.270 ms
 
 <p>Now there&#8217;s a significant difference between total runtimes of both queries and - more important - also a difference between their query plans. The latter is like <strong>20 % faster</strong>.</p>
 <p>I&#8217;m puzzled about this behavior and would appreciate any thoughts on this. Reach me at <a href="http://twitter.com/zimmicz">Twitter</a>, <a href="https://www.linkedin.com/pub/michal-zimmermann/29/8/b30">LinkedIn</a> or e-mail&nbsp;(zimmicz[at]gmail.com).</p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel">
-        <div class="post-name">
-            <h2><a href="https://www.zimmi.cz/posts/2014/bash-prepend-to-filename/" rel="bookmark" title="Permalink to Bash: Prepend To Filename">Bash: Prepend To&nbsp;Filename</a></h2>
-            <small>Written on Nov 1, 2014
-        and marked as
-        <a href="https://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="https://www.zimmi.cz/posts/tag/bash.html">bash</a>        | <a href="https://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <div class="highlight"><pre><span class="x">for f in *; do mv &quot;</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot; &quot;prepend_</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot;; done</span>
-</pre></div>
-
-
-<p>Whenever you need to prepend anything to your&nbsp;files.</p>
         </section>
         </div>
     </div>

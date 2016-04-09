@@ -102,20 +102,20 @@ cat <span class="s">&lt;&lt;EOT &gt;&gt; ~/.zprofile # I use zsh shell</span>
 
 <p>Anacron is to laptop what cron is to 24/7 running server. It just runs automatic jobs when the laptop is running. If it&#8217;s not and the job should be run, it runs it once the <span class="caps">OS</span> boots. Brilliant&nbsp;idea.</p>
 <p>It runs the following code for me to keep the app writing data to the&nbsp;database.</p>
-<div class="highlight"><pre><span class="c">#!/bin/bash</span>
+<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
 
 <span class="nv">workdir</span><span class="o">=</span><span class="s1">&#39;/home/zimmi/documents/zimmi/dizertace/social&#39;</span>
-<span class="nv">logfile</span><span class="o">=</span><span class="nv">$workdir</span>/restart-gear.log
-date &gt; <span class="nv">$logfile</span>
+<span class="nv">logfile</span><span class="o">=</span>$workdir/restart-gear.log
+date &gt; $logfile
 
 <span class="o">{</span> 
 <span class="nv">HOME</span><span class="o">=</span>/home/zimmi
-<span class="nb">cd</span> <span class="nv">$workdir</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<span class="nb">cd</span> $workdir <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git merge origin/master <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
 <span class="nb">echo</span> <span class="s2">&quot;Success&quot;</span> <span class="p">;</span> 
-<span class="o">}</span> &gt;&gt; <span class="nv">$logfile</span> 2&gt;<span class="p">&amp;</span>1
+<span class="o">}</span> &gt;&gt; $logfile 2&gt;<span class="p">&amp;</span>1
 </pre></div>
 
 
