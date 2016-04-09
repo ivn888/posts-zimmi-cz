@@ -6,6 +6,10 @@ code {
     background-color: #f0f0f0;
 }
 
+a {
+  transition: all 0.2s ease-in-out;
+}
+
 img.left {
   padding-bottom: .5rem;
   padding-right: .5rem;
