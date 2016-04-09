@@ -11,7 +11,7 @@
   {% endfor %}
 
   {% for tag in article.tags %}
-    <meta name="tags" contents="{{tag}}" />
+    <meta name="tags" content="{{tag}}" />
   {% endfor %}
   <meta property="og:title" content="{{ article.title }}" />
   <meta property="og:description" content="{{ article.content|truncate }}" />
