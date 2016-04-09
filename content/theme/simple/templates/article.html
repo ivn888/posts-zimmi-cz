@@ -14,7 +14,7 @@
     <meta name="tags" content="{{tag}}" />
   {% endfor %}
   <meta property="og:title" content="{{ article.title }}" />
-  <meta property="og:description" content="{{ article.content|truncate }}" />
+  <meta property="og:description" content="{{ article.content|striptags|truncate }}" />
   <meta property="og:url" content="{{ SITEURL }}/{{ article.url }}" />
 {% endblock %}
 
