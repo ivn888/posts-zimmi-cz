@@ -29,7 +29,7 @@ My period card expired on March 8 and I decided not to renew it. Why? See the li
 
 Not so long ago *I considered commuting a waste of time*. It took me 40-50 minutes to get to work and about the same to get back home. That's 1-2 hours not being productive, not doing anything at all actually, just changing places.
 
-That's a *terrible mistake* to do. It's much better to see this time as an **oportunity** to do that little extra for yourself - walk, run, ride. Even though it takes me a bit longer than public transport (showering and dressing included), it leaves me with totally different state of mind in the end - it just starts me up (hello Rolling Stones).
+That's a *terrible mistake* to do. It's much better to see this time as an **opportunity** to do that little extra for yourself - walk, run, ride. Even though it takes me a bit longer than public transport (showering and dressing included), it leaves me with totally different state of mind in the end - it just starts me up (hello Rolling Stones).
 
 You can go for a ride right from work. That's priceless.
 

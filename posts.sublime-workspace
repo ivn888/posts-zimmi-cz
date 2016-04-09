@@ -507,7 +507,7 @@
 			"file": "content/theme/simple/static/css/screen.css",
 			"settings":
 			{
-				"buffer_size": 2802,
+				"buffer_size": 2845,
 				"line_ending": "Unix"
 			}
 		},
@@ -1083,15 +1083,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2802,
+						"buffer_size": 2845,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1269,
-								1269
+								103,
+								103
 							]
 						],
 						"settings":
@@ -1160,7 +1160,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2685.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
