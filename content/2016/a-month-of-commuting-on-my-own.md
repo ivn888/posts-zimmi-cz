@@ -35,7 +35,7 @@ You can go for a ride right from work. That's priceless.
 
 As a by-product I started to care more about what I eat and when I eat it. I actually spend time cooking so I get enough food during the day. Something I didn't do before, because you can always buy something sweet before the bus comes, right?
 
-<div class="text-center"><a href="{filename}/assets/a-month-of-commuting-on-my-own/map.pdf"><embed width="100%" height="250px" src="{filename}/assets/a-month-of-commuting-on-my-own/map.pdf" title="Daily commute in Brno" class="img-rounded" type="application/pdf"></a><p><strong>Figure:</strong> Daily commute in Brno: bike in pink, run in green. <a href="{filename}/assets/a-month-of-commuting-on-my-own/map.pdf">See the full version.</a></p></div>
+<div class="text-center"><a href="{filename}/assets/a-month-of-commuting-on-my-own/map.pdf"><embed style="width:100%; height:250px" src="{filename}/assets/a-month-of-commuting-on-my-own/map.pdf" title="Daily commute in Brno" class="img-rounded" type="application/pdf"></a><p><strong>Figure:</strong> Daily commute in Brno: bike in pink, run in green. <a href="{filename}/assets/a-month-of-commuting-on-my-own/map.pdf">See the full version.</a></p></div>
 
 ## What's not so great about commuting?
 
