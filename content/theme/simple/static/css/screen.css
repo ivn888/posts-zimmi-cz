@@ -23,8 +23,11 @@ img.right {
   margin-right: auto;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto Condensed', 'Trebuchet MS', Verdana, sans-serif;
+}
+
 .header h1 {
-    font-family: 'Roboto Condensed', 'Trebuchet MS', Verdana, sans-serif;
     font-size: 280%;
     line-height: 1.2;
     margin-bottom: 2rem;
@@ -75,33 +78,37 @@ img.right {
 
 
 .panel h1 a {
-    border-bottom: 5px dotted #d8d8d8;
-    color: #333333;
-    display: inline;
+    border-bottom: 1px solid #d8d8d8;
+    display: block;
     line-height: 1.45;
-    padding-bottom: .20rem;
-    padding-top: 0rem;
+
 }
 
 .panel h1 a:hover {
-    border-bottom-color: #cc0000;
+    border-bottom-color: #990000;
+    color: #990000;
+}
+
+.panel h1,
+.panel h2,
+.panel h3,
+.panel h4 {
     color: #cc0000;
+    padding-bottom: .5rem;
 }
 
 .panel h2,
 .panel h3,
 .panel h4 {
-    border-bottom: 4px dotted #d8d8d8;
-    color: #cc0000;
-    padding-bottom: .5rem;
+    border-bottom: 1px solid #d8d8d8;
 }
 
 .panel h3 {
-  border-bottom: 3px dotted #d8d8d8
+  border-bottom: 1px solid #E5E5E5
 }
 
 .panel h4 {
-  border-bottom: 2px dotted #d8d8d8
+  border-bottom: 1px solid #F2F2F2
 }
 
 pre {
@@ -117,6 +124,10 @@ pre {
 .pagination {
     text-align: center;
 }
+
+  .pagination a {
+    background: #cc0000;
+  }
 
 .footer {
     margin-bottom: 1rem;
@@ -144,4 +155,36 @@ pre {
 
 .name h1 a:hover {
   background: #AF0000;
+}
+
+.card {
+  background: #fff;
+  border-radius: 2px;
+  display: block;
+  margin: 1rem;
+}
+
+.card-1 {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.2s ease-in-out;
+}
+
+.card-1:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+.card-2 {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.card-3 {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+.card-4 {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.card-5 {
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }

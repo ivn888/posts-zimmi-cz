@@ -47,4 +47,4 @@ CATEGORIES_SAVE_AS = 'categories/index.html'
 TAGS_SAVE_AS = 'tags/index.html'
 
 PLUGIN_PATHS = ['content/plugins']
-PLUGINS = ['neighbors', 'assets', 'optimize_images']
+PLUGINS = ['neighbors', 'assets']

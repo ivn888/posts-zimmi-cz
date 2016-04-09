@@ -43,7 +43,7 @@ As a by-product I started to care more about what I eat and when I eat it. I act
 
 **Traffic** sucks in the evening. I get up before six, leave home before half past six, thus avoid heavy traffic. Riding a bike home in the evening is threatening sometimes and a bit of mutual respect between pedestrians, cyclists and drivers would do.
 
-**Cycling paths** sometimes ends right before the big crossroads. Often drivers use parts of the network as parking lanes, which puts you in danger suddenly.
+**Cycling paths** sometimes end right before the big crossroads. Often drivers use parts of the network as parking lanes, which puts you in danger suddenly.
 
 **Other cyclists, skaters, people walking their dogs, little kids** usually don't care about you at all. You better don't get distracted if you want to get home safe and sound.
 
