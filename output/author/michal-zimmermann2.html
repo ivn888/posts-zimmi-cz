@@ -38,6 +38,133 @@
 
     <div class="panel card card-1">
         <div class="post-name">
+            <h1><a href="https://www.zimmi.cz/posts/2015/color-relief-shaded-map-using-open-data-with-open-source-software/" rel="bookmark" title="Permalink to Color Relief Shaded Map Using Open Data with Open Source Software">Color Relief Shaded Map Using Open Data with Open Source&nbsp;Software</a></h1>
+            <small>Written on Oct 25, 2015
+        and marked as
+        <a href="https://www.zimmi.cz/posts/tag/bash.html">bash</a>,         <a href="https://www.zimmi.cz/posts/tag/gdal.html">gdal</a>,         <a href="https://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="https://www.zimmi.cz/posts/tag/qgis.html">qgis</a>        | <a href="https://www.zimmi.cz/posts/category/automation.html">automation</a>
+        </small>
+        <section>
+            <p>The Digital Elevation Model over Europe (<span class="caps">EU</span>-<span class="caps">DEM</span>) has been recently released for public usage at <a href="http://land.copernicus.eu/in-situ/eu-dem">Copernicus Land Monitoring Services homepage</a>. Strictly speaking, it is a <strong>digital surface model</strong> coming from weighted average of <span class="caps">SRTM</span> and <span class="caps">ASTER</span> <span class="caps">GDEM</span> with geographic accuracy of 25 m. Data are provided as GeoTIFF files projected in 1 degree by 1 degree tiles (projected to <span class="caps">EPSG</span>:3035), so they correspond to the <span class="caps">SRTM</span> naming&nbsp;convention.</p>
+<p>If you can&#8217;t see the map to choose the data to download, make sure you&#8217;re not using <span class="caps">HTTPS</span> Everywhere or similar browser&nbsp;plugin.</p>
+<p>I chose <strong>Austria</strong> to play with the&nbsp;data.</p>
+<h2>Obtaining the&nbsp;data</h2>
+<p>It&#8217;s so easy I doubt it&#8217;s even worth a word. Get zipped data with <code>wget</code>, extract them to a&nbsp;directory.</p>
+<div class="highlight"><pre>wget https://cws-download.eea.europa.eu/in-situ/eudem/eu-dem/EUD_CP-DEMS_4500025000-AA.rar -O dem.rar
+unrar dem.rar -d copernicus
+<span class="nb">cd </span>copernicus
+</pre></div>
+
+
+<h2>Hillshade and color&nbsp;relief</h2>
+<p>Use <span class="caps">GDAL</span> to create hillshade with a simple command. No need to use <code>-s</code> flag to convert units, it already comes in meters. Exaggerate heights a bit with <code>-z</code> flag.</p>
+<div class="highlight"><pre>gdaldem hillshade EUD_CP-DEMS_4500025000-AA.tif hillshade.tif -z 3
+</pre></div>
+
+
+<p>And here comes the&nbsp;Alps.</p>
+<p class="text-center"><img title="Hillshade" src="https://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/hillshade.png" class="center"></p>
+
+<p>To create a color relief you need a ramp of heights with colors. <a href="http://cartographicperspectives.org/index.php/journal/article/viewFile/20/70">&#8220;The Development and Rationale of Cross-blended Hypsometric Tints&#8221;</a> by T. Patterson and B. Jenny is a great read on <strong>hypsometric tints</strong>. They also give advice on what colors to choose in different environments (see the table at the last page of the article). I settled for warm humid color&nbsp;values.</p>
+<table class="center">
+<thead>
+    <tr>
+        <th>Elevation [m]</th>
+        <th>Red</th>
+        <th>Green</th>
+        <th>Blue</th>
+    </tr>
+</thead>
+<tbody>
+<tr style="background: rgb(220, 220, 220)">
+<td>5000</td>
+<td>220</td>
+<td>220</td>
+<td>220</td>
+</tr>
+<tr style="background: rgb(212, 207, 204)">
+<td>4000</td>
+<td>212</td>
+<td>207</td>
+<td>204</td>
+</tr>
+<tr style="background: rgb(212, 193, 179)">
+<td>3000</td>
+<td>212</td>
+<td>193</td>
+<td>179</td>
+</tr>
+<tr style="background: rgb(212, 184, 163)">
+<td>2000</td>
+<td>212</td>
+<td>184</td>
+<td>163</td>
+</tr>
+<tr style="background: rgb(212, 201, 180)">
+<td>1000</td>
+<td>212</td>
+<td>201</td>
+<td>180</td>
+</tr>
+<tr style="background: rgb(196, 192, 166)">
+<td>600</td>
+<td>169</td>
+<td>192</td>
+<td>166</td>
+</tr>
+<tr style="background: rgb(134, 184, 159)">
+<td>200</td>
+<td>134</td>
+<td>184</td>
+<td>159</td>
+</tr>
+<tr style="background: rgb(120, 172, 149)">
+<td>50</td>
+<td>120</td>
+<td>172</td>
+<td>149</td>
+</tr>
+<tr style="background: rgb(114, 164, 141)">
+<td>0</td>
+<td>114</td>
+<td>164</td>
+<td>141</td>
+</tr>
+</tbody>
+</table>
+
+<p>I created a color relief with another <span class="caps">GDAL</span>&nbsp;command.</p>
+<div class="highlight"><pre>gdaldem color-relief EUD_CP-DEMS_4500025000-AA.tif ramp_humid.txt color_relief.tif
+</pre></div>
+
+
+<p>And here comes hypsometric&nbsp;tints.</p>
+<p class="text-center"><img title="Color relief" src="https://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/color_relief.png" class="center"></p>
+
+<p>Add a bit of compression and some overviews to make it smaller and load&nbsp;faster.</p>
+<div class="highlight"><pre>gdal_translate -of GTiff -co <span class="nv">TILED</span><span class="o">=</span>YES -co <span class="nv">COMPRESS</span><span class="o">=</span>DEFLATE color_relief.tif color_relief.compress.tif
+gdal_translate -of GTiff -co <span class="nv">TILED</span><span class="o">=</span>YES -co <span class="nv">COMPRESS</span><span class="o">=</span>DEFLATE hillshade.tif hillshade.compress.tif
+rm color_relief.tif
+rm hillshade.tif
+mv color_relief.compress.tif color_relief.tif
+mv hillshade.compress.tif hillshade.tif
+gdaladdo color_relief.tif <span class="m">2</span> <span class="m">4</span> <span class="m">8</span> 16
+gdaladdo hillshade.tif <span class="m">2</span> <span class="m">4</span> <span class="m">8</span> 16
+</pre></div>
+
+
+<h2>Map&nbsp;composition</h2>
+<p>I chose Austria for its excessive amount of freely available datasets. What I didn&#8217;t take into consideration was my lack of knowledge when it comes to German (#fail). States come from <a href="http://data.gv.at">data.gv.at</a> and was dissolved from smaller administrative units. State capitals were downloaded from <a href="http://naturalearth.com">naturalearth.com</a>.</p>
+<p class="text-center"><a href="https://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/map.pdf" title="Click for PDF version"><img title="Austria" src="https://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/map.png" class="center"></a></p>
+
+<p>I&#8217;d like to add some more thematic layers in the future. And translate the map to&nbsp;English.</p>
+<h2>Few words on <span class="caps">INSPIRE</span>&nbsp;Geoportal</h2>
+<p><a href="http://inspire-geoportal.ec.europa.eu/"><span class="caps">INSPIRE</span> Geoportal</a> should be the first place you go to search for European spatial data (at last <span class="caps">EU</span> thinks so). I used it to find data for this map and it was a very frustrating experience. It was actually more frustrating than using Austrian open data portal in German. Last news are from May 21, 2015, but the whole site looks and feels like deep 90s or early 2000 at&nbsp;least.</p>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel card card-1">
+        <div class="post-name">
             <h1><a href="https://www.zimmi.cz/posts/2015/postgresql-in-vs-exists/" rel="bookmark" title="Permalink to PostgreSQL IN vs EXISTS">PostgreSQL <span class="caps">IN</span> vs <span class="caps">EXISTS</span></a></h1>
             <small>Written on Oct 9, 2015
         and marked as
@@ -152,10 +279,10 @@
 <p>The <code>parallel</code> modifies several images per second. Uploading these right away seems to be the next step. But how do you tell <code>rsync</code> to check for modified files every now and then? Another for loop mixed with <code>sleep</code> would work, but it just doesn&#8217;t feel&nbsp;right.</p>
 <p>Luckily, there&#8217;s a <a href="http://linux.die.net/man/1/inotifywait"><code>inotifywait</code></a> tool capable of watching changes to files and taking actions based on those&nbsp;changes.</p>
 <div class="highlight"><pre>inotifywait -e close_write -m --format <span class="s1">&#39;%f&#39;</span> . <span class="p">|</span> <span class="se">\</span>
-<span class="k">while</span> <span class="nb">read</span> file
+<span class="k">while</span> <span class="nb">read </span>file
 <span class="k">do</span>
-    <span class="nb">echo</span> <span class="nv">$f</span>ile
-    rsync -OWRD0Pq --ignore-existing <span class="nv">$f</span>ile data@localhost
+    <span class="nb">echo</span> <span class="nv">$file</span>
+    rsync -OWRD0Pq --ignore-existing <span class="nv">$file</span> data@localhost
 <span class="k">done</span>
 </pre></div>
 
@@ -299,7 +426,7 @@
 
 <p>The <code>transform="matrix(1.18081,0,0,1.18081,270.0,550.0)</code> part puts the text on the right spot. Great finding about <span class="caps">SVG</span> is that it places each <code>&lt;text&gt;</code> element on the new line, so you don&#8217;t need to deal with calculating the position in your&nbsp;script.</p>
 <p>Scale adjustment is done with a dirty lambda&nbsp;function.</p>
-<div class="highlight"><pre><span class="n">content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">r&quot;&gt;(\d{1,3}\.\d{3,5})&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span> <span class="p">:</span><span class="s2">&quot;&gt;    &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))))</span> <span class="o">+</span> <span class="s2">&quot;&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="n">old_map</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<div class="highlight"><pre><span class="n">content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&quot;&gt;(\d{1,3}\.\d{3,5})&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span> <span class="p">:</span><span class="s">&quot;&gt;    &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))))</span> <span class="o">+</span> <span class="s">&quot;&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="n">old_map</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 </pre></div>
 
 
@@ -334,16 +461,16 @@
 <li>The script takes one argument - raster&nbsp;name.</li>
 <li>Profit!</li>
 </ol>
-<div class="highlight"><pre><span class="ch">#!/usr/bin/env bash</span>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
 
 <span class="nv">OBEC</span><span class="o">=</span><span class="nv">$1</span>
-<span class="nv">BASE</span><span class="o">=</span><span class="k">$(</span>basename $OBEC _jpeg.tif<span class="k">)</span>
-<span class="nb">echo</span> <span class="nv">$BA</span>SE
-<span class="nv">EXTENT</span><span class="o">=</span><span class="k">$(</span>ogrinfo -so obce/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.shp <span class="nv">$BA</span>SE <span class="p">|</span> grep Extent <span class="se">\</span>
+<span class="nv">BASE</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$OBEC</span> _jpeg.tif<span class="k">)</span>
+<span class="nb">echo</span> <span class="nv">$BASE</span>
+<span class="nv">EXTENT</span><span class="o">=</span><span class="k">$(</span>ogrinfo -so obce/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.shp <span class="nv">$BASE</span> <span class="p">|</span> grep Extent <span class="se">\</span>
 <span class="p">|</span> sed <span class="s1">&#39;s/Extent: //g&#39;</span> <span class="p">|</span> sed <span class="s1">&#39;s/(//g&#39;</span> <span class="p">|</span> sed <span class="s1">&#39;s/)//g&#39;</span> <span class="se">\</span>
 <span class="p">|</span> sed <span class="s1">&#39;s/ - /, /g&#39;</span><span class="k">)</span>
-<span class="nv">EXTENT</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$E</span>XTENT <span class="p">|</span> awk -F <span class="s1">&#39;,&#39;</span> <span class="s1">&#39;{print $1 &quot; &quot; $4 &quot; &quot; $3 &quot; &quot; $2}&#39;</span><span class="k">)</span>
-gdal_translate -projwin <span class="nv">$E</span>XTENT -of GTiff $OBEC output/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.tif
+<span class="nv">EXTENT</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$EXTENT</span> <span class="p">|</span> awk -F <span class="s1">&#39;,&#39;</span> <span class="s1">&#39;{print $1 &quot; &quot; $4 &quot; &quot; $3 &quot; &quot; $2}&#39;</span><span class="k">)</span>
+gdal_translate -projwin <span class="nv">$EXTENT</span> -of GTiff <span class="nv">$OBEC</span> output/<span class="si">${</span><span class="nv">BASE</span><span class="si">}</span>.tif
 gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <span class="s1">&#39;EPSG:5514&#39;</span> <span class="se">\</span>
     -co <span class="nv">COMPRESS</span><span class="o">=</span>JPEG <span class="se">\</span>
     -co <span class="nv">TILED</span><span class="o">=</span>YES -<span class="se">\</span>
@@ -469,19 +596,19 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
         <section>
             <p>I&#8217;ve been running some <span class="caps">GRASS</span>/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten&nbsp;minutes.</p>
 <p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
-<div class="highlight"><pre><span class="ch">#!/usr/bin/env bash</span>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
 <span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
 
-<span class="k">while</span> true<span class="p">;</span> <span class="k">do</span>
+<span class="k">while</span> <span class="nb">true</span><span class="p">;</span> <span class="k">do</span>
     <span class="nb">echo</span> <span class="s2">&quot;############ </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2"> ############&quot;</span>
     <span class="nv">x</span><span class="o">=</span><span class="k">$(</span>ssh user@remote.server <span class="s2">&quot;tail -n 30 path/to/my/log_</span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="k">)</span>
 
-    <span class="k">if</span> <span class="o">[[</span> $<span class="nv">x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
+    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
         <span class="k">then</span>
             notify-send -u critical <span class="s2">&quot;Finally </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">&quot;</span>
             mpg123 -n <span class="m">250</span> ~/Music/queen-we_are_the_champions.mp3
             <span class="nb">exit</span>
-        <span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
+<span class="nb">        </span><span class="k">else</span> <span class="nb">echo</span> <span class="s2">&quot;Not yet&quot;</span>
     <span class="k">fi</span>
     sleep 60
 <span class="k">done</span>
@@ -575,26 +702,26 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 <li><code>export</code>ing coordinates rounded to one decimal place makes your <span class="caps">SVG</span> a lot&nbsp;smaller.</li>
 </ul>
 <p>You can change <span class="caps">SVG</span> look with simple <span class="caps">CSS</span>, just be sure to use layer names as <span class="caps">CSS</span>&nbsp;ids:</p>
-<div class="highlight"><pre><span class="nn">#airports</span> <span class="p">{</span>
+<div class="highlight"><pre><span class="nf">#airports</span> <span class="p">{</span>
     <span class="n">fill</span><span class="o">:</span> <span class="m">#CC0000</span><span class="p">;</span>
-    <span class="n">fill</span><span class="o">-</span><span class="nb">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="n">fill</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
     <span class="n">stroke</span><span class="o">:</span> <span class="m">#660000</span><span class="p">;</span>
-    <span class="n">stroke</span><span class="o">-</span><span class="nb">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="nn">#countries</span> <span class="p">{</span>
+<span class="nf">#countries</span> <span class="p">{</span>
     <span class="n">fill</span><span class="o">:</span> <span class="m">#e6deb4</span><span class="p">;</span>
     <span class="n">stroke</span><span class="o">:</span> <span class="m">#a59f81</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="nn">#grid</span> <span class="p">{</span>
+<span class="nf">#grid</span> <span class="p">{</span>
     <span class="n">stroke</span><span class="o">:</span> <span class="m">#d0d0d0</span><span class="p">;</span>
-    <span class="n">stroke</span><span class="o">-</span><span class="nb">width</span><span class="o">:</span> <span class="m">.3px</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="k">width</span><span class="o">:</span> <span class="m">.3px</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="nn">#travels</span> <span class="p">{</span>
+<span class="nf">#travels</span> <span class="p">{</span>
     <span class="n">stroke</span><span class="o">:</span> <span class="m">#1f78b4</span><span class="p">;</span>
-    <span class="n">stroke</span><span class="o">-</span><span class="nb">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="n">stroke</span><span class="o">-</span><span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
     <span class="n">stroke</span><span class="o">-</span><span class="n">dasharray</span><span class="o">:</span> <span class="m">5</span><span class="o">,</span><span class="m">5</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
@@ -656,40 +783,40 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 
 
 <p>Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript&nbsp;function:</p>
-<div class="highlight"><pre><span class="c">/**</span>
-<span class="c"> * @param  number coef  scale radius by number of flights to the given destination</span>
-<span class="c"> * @param  string flight_id</span>
-<span class="c"> */</span>
-<span class="nt">var</span> <span class="nt">circle</span> <span class="o">=</span> <span class="nt">function</span><span class="o">(</span><span class="nt">coef</span><span class="o">,</span> <span class="nt">flight_id</span><span class="o">,</span> <span class="nt">timeshift</span><span class="o">)</span> <span class="p">{</span>
-    <span class="n">var</span> <span class="n">svgns</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/2000/svg&quot;</span><span class="p">;</span>
-    <span class="n">var</span> <span class="n">svgDocument</span> <span class="o">=</span><span class="n">document</span><span class="p">;</span>
-    <span class="n">var</span> <span class="n">motion</span> <span class="o">=</span> <span class="n">svgDocument</span><span class="o">.</span><span class="n">createElementNS</span><span class="p">(</span><span class="n">svgns</span><span class="o">,</span><span class="s2">&quot;animateMotion&quot;</span><span class="p">);</span>
-    <span class="n">var</span> <span class="n">animation</span> <span class="o">=</span> <span class="n">svgDocument</span><span class="o">.</span><span class="n">createElementNS</span><span class="p">(</span><span class="n">svgns</span><span class="o">,</span><span class="s2">&quot;animate&quot;</span><span class="p">);</span>
-    <span class="n">var</span> <span class="n">shape</span>  <span class="o">=</span> <span class="n">svgDocument</span><span class="o">.</span><span class="n">createElementNS</span><span class="p">(</span><span class="n">svgns</span><span class="o">,</span> <span class="s2">&quot;circle&quot;</span><span class="p">);</span>
-    <span class="n">var</span> <span class="n">time</span> <span class="o">=</span> <span class="m">15</span> <span class="o">+</span> <span class="n">timeshift</span><span class="p">;</span>
-    <span class="n">var</span> <span class="n">dur</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="n">flight_id</span><span class="p">)</span><span class="o">.</span><span class="n">getAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;data-dist&quot;</span><span class="p">)</span><span class="o">/</span><span class="m">100</span><span class="p">;</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="o">,</span> <span class="n">time</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="o">,</span> <span class="n">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="o">,</span> <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="n">flight_id</span><span class="p">)</span><span class="o">.</span><span class="n">getAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;d&quot;</span><span class="p">));</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;xlink:href&quot;</span><span class="o">,</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="n">flight_id</span><span class="p">);</span>
-    <span class="n">motion</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="o">,</span> <span class="n">flight_id</span> <span class="o">+</span> <span class="s2">&quot;_motion&quot;</span><span class="p">);</span>
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * @param  number coef  scale radius by number of flights to the given destination</span>
+<span class="cm"> * @param  string flight_id</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">circle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">coef</span><span class="p">,</span> <span class="nx">flight_id</span><span class="p">,</span> <span class="nx">timeshift</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">svgns</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/2000/svg&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">svgDocument</span> <span class="o">=</span><span class="nb">document</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">motion</span> <span class="o">=</span> <span class="nx">svgDocument</span><span class="p">.</span><span class="nx">createElementNS</span><span class="p">(</span><span class="nx">svgns</span><span class="p">,</span><span class="s2">&quot;animateMotion&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">animation</span> <span class="o">=</span> <span class="nx">svgDocument</span><span class="p">.</span><span class="nx">createElementNS</span><span class="p">(</span><span class="nx">svgns</span><span class="p">,</span><span class="s2">&quot;animate&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">shape</span>  <span class="o">=</span> <span class="nx">svgDocument</span><span class="p">.</span><span class="nx">createElementNS</span><span class="p">(</span><span class="nx">svgns</span><span class="p">,</span> <span class="s2">&quot;circle&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">+</span> <span class="nx">timeshift</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">dur</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">flight_id</span><span class="p">).</span><span class="nx">getAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;data-dist&quot;</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="p">;</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="p">,</span> <span class="nx">time</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="p">,</span> <span class="nx">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">flight_id</span><span class="p">).</span><span class="nx">getAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">));</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;xlink:href&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">flight_id</span><span class="p">);</span>
+    <span class="nx">motion</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nx">flight_id</span> <span class="o">+</span> <span class="s2">&quot;_motion&quot;</span><span class="p">);</span>
 
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;attributeName&quot;</span><span class="o">,</span> <span class="s2">&quot;opacity&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;from&quot;</span><span class="o">,</span> <span class="s2">&quot;1&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;to&quot;</span><span class="o">,</span> <span class="s2">&quot;0&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="o">,</span> <span class="n">time</span> <span class="o">+</span> <span class="n">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="o">,</span> <span class="s2">&quot;0.1s&quot;</span><span class="p">);</span>
-    <span class="n">animation</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="o">,</span> <span class="s2">&quot;freeze&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;attributeName&quot;</span><span class="p">,</span> <span class="s2">&quot;opacity&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;from&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="p">,</span> <span class="nx">time</span> <span class="o">+</span> <span class="nx">dur</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;dur&quot;</span><span class="p">,</span> <span class="s2">&quot;0.1s&quot;</span><span class="p">);</span>
+    <span class="nx">animation</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">,</span> <span class="s2">&quot;freeze&quot;</span><span class="p">);</span>
 
 
-    <span class="n">shape</span><span class="o">.</span><span class="n">setAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;r&quot;</span><span class="o">,</span>  <span class="m">1</span><span class="o">*</span><span class="n">coef</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">setAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;fill&quot;</span><span class="o">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">setAttributeNS</span><span class="p">(</span><span class="n">null</span><span class="o">,</span> <span class="s2">&quot;stroke&quot;</span><span class="o">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="o">,</span> <span class="s2">&quot;airplane-&quot;</span> <span class="o">+</span> <span class="n">flight_id</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">motion</span><span class="p">);</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">animation</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>  <span class="mi">1</span><span class="o">*</span><span class="nx">coef</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;fill&quot;</span><span class="p">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttributeNS</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;stroke&quot;</span><span class="p">,</span> <span class="s2">&quot;1f78b4&quot;</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;airplane-&quot;</span> <span class="o">+</span> <span class="nx">flight_id</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">motion</span><span class="p">);</span>
+    <span class="nx">shape</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">animation</span><span class="p">);</span>
 
-    <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="s2">&quot;airplanes&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">shape</span><span class="p">);</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;airplanes&quot;</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">shape</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 
@@ -721,22 +848,22 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 <div class="highlight"><pre>grass -text path/to/mapset -c
 
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>ilot_050 <span class="nv">layer</span><span class="o">=</span>ilot_2015_050 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
-<span class="c1"># turn the snapping off, I don&#39;t want the input changed in any way, even though it is not topologically valid</span>
+<span class="c"># turn the snapping off, I don&#39;t want the input changed in any way, even though it is not topologically valid</span>
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>lollipops_050 <span class="nv">layer</span><span class="o">=</span>lollipops.lollipops_2015_050_tmp <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>holes_050 <span class="nv">layer</span><span class="o">=</span>phase_3.holes_050 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.db.addcolumn <span class="nv">map</span><span class="o">=</span>ilot_050 <span class="nv">columns</span><span class="o">=</span><span class="s2">&quot;id_0 int&quot;</span>
 v.db.update <span class="nv">map</span><span class="o">=</span>ilot_050 <span class="nv">column</span><span class="o">=</span>id_0 <span class="nv">value</span><span class="o">=</span>1
 
-<span class="c1"># dissolve didn&#39;t work without a column specified, dunno why</span>
+<span class="c"># dissolve didn&#39;t work without a column specified, dunno why</span>
 v.dissolve <span class="nv">input</span><span class="o">=</span>ilot_050 <span class="nv">column</span><span class="o">=</span>id_0 <span class="nv">output</span><span class="o">=</span>ilot_050_dissolve --overwrite
 v.buffer <span class="nv">input</span><span class="o">=</span>ilot_050_dissolve <span class="nv">output</span><span class="o">=</span>ilot_050_buffer <span class="nv">distance</span><span class="o">=</span><span class="m">20</span> --overwrite
 
-<span class="c1"># v.out and v.in routine used just because I didn&#39;t get the way attributes work in GRASS, would do it differently next time</span>
+<span class="c"># v.out and v.in routine used just because I didn&#39;t get the way attributes work in GRASS, would do it differently next time</span>
 v.out.ogr <span class="nv">input</span><span class="o">=</span>ilot_050_buffer <span class="nv">output</span><span class="o">=</span>ilot_050_buffer <span class="nv">format</span><span class="o">=</span>ESRI_Shapefile --overwrite
 v.in.ogr <span class="nv">input</span><span class="o">=</span>ilot_050_buffer <span class="nv">output</span><span class="o">=</span>ilot_050_buffer <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.overlay <span class="nv">ainput</span><span class="o">=</span>ilot_050_buffer <span class="nv">binput</span><span class="o">=</span>holes_050 <span class="nv">operator</span><span class="o">=</span>or <span class="nv">output</span><span class="o">=</span>combined_050_01 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 
-<span class="c1"># tried v.patch to combine the three layers, it gave some strange results in the final overlay</span>
+<span class="c"># tried v.patch to combine the three layers, it gave some strange results in the final overlay</span>
 v.overlay <span class="nv">ainput</span><span class="o">=</span>combined_050_01 <span class="nv">binput</span><span class="o">=</span>lollipops_050 <span class="nv">operator</span><span class="o">=</span>or <span class="nv">output</span><span class="o">=</span>combined_050_02 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.out.ogr <span class="nv">input</span><span class="o">=</span>combined_050_02 <span class="nv">output</span><span class="o">=</span>combined_050 <span class="nv">format</span><span class="o">=</span>ESRI_Shapefile --overwrite
 v.in.ogr <span class="nv">input</span><span class="o">=</span>combined_050 <span class="nv">output</span><span class="o">=</span>combined_050_in <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
@@ -744,7 +871,7 @@ v.db.addcolumn <span class="nv">map</span><span class="o">=</span>combined_050_i
 v.db.update <span class="nv">map</span><span class="o">=</span>combined_050_in <span class="nv">column</span><span class="o">=</span>id_1 <span class="nv">value</span><span class="o">=</span>1
 v.dissolve <span class="nv">input</span><span class="o">=</span>combined_050_in <span class="nv">column</span><span class="o">=</span>id_1 <span class="nv">output</span><span class="o">=</span>combined_050_dissolve --overwrite
 
-<span class="c1"># get rid of &lt; 10cm edges</span>
+<span class="c"># get rid of &lt; 10cm edges</span>
 v.generalize <span class="nv">input</span><span class="o">=</span>combined_050_dissolve <span class="nv">output</span><span class="o">=</span>combined_050_gen <span class="nv">method</span><span class="o">=</span>reduction <span class="nv">threshold</span><span class="o">=</span>0.1 --overwrite
 v.out.ogr <span class="nv">input</span><span class="o">=</span>combined_050_gen <span class="nv">output</span><span class="o">=</span>combined_050_gen <span class="nv">format</span><span class="o">=</span>ESRI_Shapefile --overwrite
 v.in.ogr <span class="nv">input</span><span class="o">=</span>combined_050_gen <span class="nv">output</span><span class="o">=</span>combined_050_gen <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
@@ -754,7 +881,7 @@ v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=ign user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>grid <span class="nv">layer</span><span class="o">=</span>grid <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.db.connect -d <span class="nv">map</span><span class="o">=</span>buffer_050
 
-<span class="c1"># instead of v.out and v.in routine</span>
+<span class="c"># instead of v.out and v.in routine</span>
 db.connect <span class="nv">driver</span><span class="o">=</span>sqlite <span class="nv">database</span><span class="o">=</span><span class="s1">&#39;$GISDBASE/$LOCATION_NAME/$MAPSET/sqlite.db&#39;</span>
 v.db.addtable <span class="nv">map</span><span class="o">=</span>buffer_050
 v.overlay <span class="nv">ainput</span><span class="o">=</span>buffer_050 <span class="nv">binput</span><span class="o">=</span>grid <span class="nv">operator</span><span class="o">=</span>and <span class="nv">output</span><span class="o">=</span>buffer_050_grid <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
@@ -771,71 +898,6 @@ v.out.postgis <span class="nv">input</span><span class="o">=</span>buffer_050_gr
 <li>It is great to exploit synergy of different <span class="caps">GIS</span> tools used for what they&#8217;re best&nbsp;at.</li>
 </ul>
 <p>The more I work with big data, the more I get used to not seeing them. That&#8217;s kind of a twist after crafting maps at&nbsp;university.</p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel card card-1">
-        <div class="post-name">
-            <h1><a href="https://www.zimmi.cz/posts/2015/postgis-finding-biggest-land-users-nearby/" rel="bookmark" title="Permalink to PostGIS: Finding Biggest Land Users Nearby">PostGIS: Finding Biggest Land Users&nbsp;Nearby</a></h1>
-            <small>Written on Apr 3, 2015
-        and marked as
-        <a href="https://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="https://www.zimmi.cz/posts/tag/postgis.html">postgis</a>        | <a href="https://www.zimmi.cz/posts/category/sql.html">SQL</a>
-        </small>
-        <section>
-            <p>At <a href="http://clevermaps.cz">CleverMaps</a> we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird&nbsp;challenges.</p>
-<h2>Give me the biggest land users&nbsp;nearby</h2>
-<p><em>Find the biggest land users in surrounding cadastral communities for each cadastral community (~ 13K)</em> being the latest task, here&#8217;s the query I tackled it&nbsp;with:</p>
-<div class="highlight"><pre>WITH users_ AS (
-    SELECT
-        cad_code,
-        id,
-        zipcode,
-        city,
-        concat_ws(&#39; &#39;,street, concat_ws(&#39;/&#39;, house_number, street_number)) as street,
-        name,
-        &#39;Users with more than 10 ha&#39;::text note,
-        SUM(acreage) area
-        FROM land_blocks -- being a table with info about all the agricultural land blocks
-        JOIN users u ON id_uz = id
-        GROUP BY cad_code, u.id
-        HAVING SUM(acreage) &gt; 10
-),
-ints AS (
-    SELECT
-        ku.cad_code as community,
-        ku2.cad_code as surrounding,
-        ku2.cad_name
-    FROM cadastral_community ku
-    JOIN cadastral_community ku2
-        ON ST_Intersects(ku.geom, ku2.geom)
-    WHERE ku.cad_code &lt;&gt; ku2.cad_code
-)
-SELECT
-    DISTINCT ON (surrounding, cad_name, u.zipcode, u.city, u.street, u.name)
-    surrounding,
-    cad_name,
-    u.zipcode,
-    u.city,
-    u.street,
-    u.name,
-    u.note,
-    u.area
-FROM
-    users_ u
-JOIN ints
-    ON cad_code = community;
-</pre></div>
-
-
-<p>Few things to&nbsp;note:</p>
-<ul>
-<li><code>concat_ws()</code> is a great function for joining values that might be <code>NULL</code>. If such a value is found, it is skipped and the function continues with the next one (if any). Thus, you&#8217;ll never get a string ending with a trailing slash (<code>Street name 55/</code>).</li>
-<li>With <code>users_</code> <span class="caps">CTE</span> I get a list of owners having more than 10 hectares of land for each cadastral community. This gives me the inverse result of what I want (if I know the biggest owners in the cadastral community, I know these are the ones that should be listed for surrounding c.&nbsp;communities).</li>
-<li>This <em>putting-it-all-together</em> step is done with <code>ints</code> <span class="caps">CTE</span> that outputs the list of surrounding c. communities for each of&nbsp;them.</li>
-<li><code>DISTINCT ON</code> cleans up the list so the same owners don&#8217;t appear more than once for any given c.&nbsp;community.</li>
-</ul>
-<p>Writing this makes me realize the list should be probably sorted by area so only the occurence with the biggest value is kept for each c. community. Simple <code>ORDER BY</code> should deal with this just fine. Or even more sophisticated, using <code>GROUP BY</code> to output the total acreage in all surrounding c.&nbsp;communities.</p>
         </section>
         </div>
     </div>

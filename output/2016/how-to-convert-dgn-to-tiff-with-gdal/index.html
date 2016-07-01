@@ -51,40 +51,40 @@
     <section>
         <p>We have to deal with <span class="caps">DGN</span> drawings quite often at <a href="http://www.clevermaps.cz">CleverMaps</a> - heavily used for infrastructure projects (highways, roads, pipelines), they are a pure nightmare to the <span class="caps">GIS</span> person inside me. Right now, I&#8217;m only capable of converting it into a raster file and serve it with Geoserver. The transformation from <span class="caps">DGN</span> to <span class="caps">PDF</span> to <span class="caps">PNG</span> to Tiff is not something that makes me utterly happy&nbsp;though.</p>
 <p>All you need to do the same is <a href="https://www.zimmi.cz/posts/tag/gdal.html"><span class="caps">GDAL</span></a>, ImageMagick, some <span class="caps">PDF</span> documents created out of <span class="caps">DGN</span> files - something MicroStation can help you with - and their upper left and lower right corner&nbsp;coordinates.</p>
-<div class="highlight"><pre><span class="c1"># I recommend putting some limits on ImageMagick - it tends to eat up all the resources and quit</span>
-<span class="nb">export</span> <span class="nv">MAGICK_MEMORY_LIMIT</span><span class="o">=</span>1512
-<span class="nb">export</span> <span class="nv">MAGICK_MAP_LIMIT</span><span class="o">=</span>512
-<span class="nb">export</span> <span class="nv">MAGICK_AREA_LIMIT</span><span class="o">=</span>1024
-<span class="nb">export</span> <span class="nv">MAGICK_FILES_LIMIT</span><span class="o">=</span>512
-<span class="nb">export</span> <span class="nv">MAGICK_TMPDIR</span><span class="o">=</span>/partition/large/enough
+<div class="highlight"><pre><span class="c"># I recommend putting some limits on ImageMagick - it tends to eat up all the resources and quit</span>
+<span class="nb">export </span><span class="nv">MAGICK_MEMORY_LIMIT</span><span class="o">=</span>1512
+<span class="nb">export </span><span class="nv">MAGICK_MAP_LIMIT</span><span class="o">=</span>512
+<span class="nb">export </span><span class="nv">MAGICK_AREA_LIMIT</span><span class="o">=</span>1024
+<span class="nb">export </span><span class="nv">MAGICK_FILES_LIMIT</span><span class="o">=</span>512
+<span class="nb">export </span><span class="nv">MAGICK_TMPDIR</span><span class="o">=</span>/partition/large/enough
 
-<span class="c1"># I expect two files on the input: the first is PDF file with drawing, the second is a simple text file with four coordinates on a single line in the following order: upper left x, upper left y, lower right x, lower right y</span>
+<span class="c"># I expect two files on the input: the first is PDF file with drawing, the second is a simple text file with four coordinates on a single line in the following order: upper left x, upper left y, lower right x, lower right y</span>
 <span class="nv">INPUT</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="p">:?</span><span class="s2">&quot;PDF file path&quot;</span><span class="si">}</span>
 <span class="nv">COORDS</span><span class="o">=</span><span class="si">${</span><span class="nv">2</span><span class="p">:?</span><span class="s2">&quot;Bounding box file path&quot;</span><span class="si">}</span>
-<span class="nv">OUTPUTDIRNAME</span><span class="o">=</span><span class="k">$(</span>dirname $INPUT<span class="k">)</span>
-<span class="nv">OUTPUTFILENAME</span><span class="o">=</span><span class="k">$(</span>basename $INPUT <span class="p">|</span> cut -d. -f1<span class="k">)</span>.png
-<span class="nv">OUTPUTPATH</span><span class="o">=</span>$OUTPUTDIRNAME/$OUTPUTFILENAME
+<span class="nv">OUTPUTDIRNAME</span><span class="o">=</span><span class="k">$(</span>dirname <span class="nv">$INPUT</span><span class="k">)</span>
+<span class="nv">OUTPUTFILENAME</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$INPUT</span> <span class="p">|</span> cut -d. -f1<span class="k">)</span>.png
+<span class="nv">OUTPUTPATH</span><span class="o">=</span><span class="nv">$OUTPUTDIRNAME</span>/<span class="nv">$OUTPUTFILENAME</span>
 
-<span class="c1"># create PNG image - I actually don&#39;t remember why it didn&#39;t work directly to Tiff</span>
+<span class="c"># create PNG image - I actually don&#39;t remember why it didn&#39;t work directly to Tiff</span>
 gdal_translate <span class="se">\</span>
     -co <span class="nv">WORLDFILE</span><span class="o">=</span>YES <span class="se">\</span>
     -co <span class="nv">ZLEVEL</span><span class="o">=</span><span class="m">5</span> <span class="se">\</span>
     -of PNG <span class="se">\</span>
     --config GDAL_CACHEMAX <span class="m">500</span> <span class="se">\</span>
     --config GDAL_PDF_DPI <span class="m">300</span> <span class="se">\</span>
-    -a_srs EPSG:5514 <span class="se">\ </span><span class="c1"># Czech local CRS</span>
-    -a_ullr <span class="k">$(</span><span class="nb">echo</span> <span class="k">$(</span>cat <span class="nv">$C</span>OORDS<span class="k">))</span> <span class="se">\ </span><span class="c1"># read the file with coordinates</span>
-    $INPUT <span class="se">\</span>
-    $OUTPUTPATH
+    -a_srs EPSG:5514 <span class="se">\ </span><span class="c"># Czech local CRS</span>
+    -a_ullr <span class="k">$(</span><span class="nb">echo</span> <span class="k">$(</span>cat <span class="nv">$COORDS</span><span class="k">))</span> <span class="se">\ </span><span class="c"># read the file with coordinates</span>
+    <span class="nv">$INPUT</span> <span class="se">\</span>
+    <span class="nv">$OUTPUTPATH</span>
 
-<span class="c1"># convert to Tiff image</span>
+<span class="c"># convert to Tiff image</span>
 convert <span class="se">\</span>
     -define tiff:tile-geometry<span class="o">=</span>256x256 <span class="se">\</span>
-    -transparent white <span class="se">\ </span><span class="c1"># drawings come with white background</span>
-    $OUTPUTPATH <span class="se">\</span>
+    -transparent white <span class="se">\ </span><span class="c"># drawings come with white background</span>
+    <span class="nv">$OUTPUTPATH</span> <span class="se">\</span>
     <span class="si">${</span><span class="nv">OUTPUTPATH</span><span class="p">/.png</span><span class="si">}</span>_alpha.tif
 
-<span class="c1"># build overwies to speed things up</span>
+<span class="c"># build overwies to speed things up</span>
 gdaladdo <span class="si">${</span><span class="nv">OUTPUTPATH</span><span class="p">/.png</span><span class="si">}</span>_alpha.tif <span class="m">2</span> <span class="m">4</span> <span class="m">8</span> <span class="m">16</span> 32
 </pre></div>
 
