@@ -107,10 +107,12 @@ OPTIONS (LAYER &#39;A05_Vodni_nadrze&#39;);
 
 
 <p>Note the <code>fid</code> column - required for <strong>write access</strong> to underlying&nbsp;datasource.</p>
-<p>Things to remember:
-<em> foreign tables mean no constraints nor indices
-</em> no indices mean spatial queries are terribly slow compared to PostGIS
-* I like the idea of <code>CREATE UNLOGGED TABLE dams2 AS SELECT * FROM dams</code>, not sure what to use it for&nbsp;though</p>
+<p>Things to&nbsp;remember:</p>
+<ul>
+<li>foreign tables mean no constraints nor&nbsp;indices</li>
+<li>no indices mean spatial queries are terribly slow compared to&nbsp;PostGIS</li>
+<li>I like the idea of <code>CREATE UNLOGGED TABLE dams2 AS SELECT * FROM dams</code>, not sure what to use it for&nbsp;though</li>
+</ul>
         </section>
         </div>
     </div>

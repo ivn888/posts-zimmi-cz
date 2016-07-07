@@ -70,6 +70,7 @@ Let's create PostgreSQL tables (use `ogrinfo` or Paul's `ogr_fdw_info` to list t
 Note the `fid` column - required for **write access** to underlying datasource.
 
 Things to remember:
+
 * foreign tables mean no constraints nor indices
 * no indices mean spatial queries are terribly slow compared to PostGIS
 * I like the idea of `CREATE UNLOGGED TABLE dams2 AS SELECT * FROM dams`, not sure what to use it for though
