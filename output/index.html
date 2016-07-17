@@ -37,6 +37,91 @@
 
     <div class="panel card card-1">
         <div class="post-name">
+            <h1><a href="https://www.zimmi.cz/posts/2016/syncing-two-postgresql-databases-faster/" rel="bookmark" title="Permalink to Syncing Two PostgreSQL Databases Faster">Syncing Two PostgreSQL Databases&nbsp;Faster</a></h1>
+            <small>Written on Jul 17, 2016
+        and marked as
+        <a href="https://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="https://www.zimmi.cz/posts/tag/bash.html">bash</a>        | <a href="https://www.zimmi.cz/posts/category/sql.html">SQL</a>
+        </small>
+        <section>
+            <p>Imagine you run two database machines hosting structurally the same databases on two separate servers and you need to transfer data from one to another. Not very often, let&#8217;s say once a month. Your tables aren&#8217;t small nor huge, let&#8217;s say millions rows in&nbsp;general.</p>
+<p>You&#8217;re going to use <code>pg_dump</code> and pipe it to <code>psql</code>, but the indices on your tables will slow you down a&nbsp;lot.</p>
+<p>That&#8217;s why you&#8217;ll want to drop all indices and constraints (<code>drop_indices_constraints.sql</code>):</p>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span>
+    <span class="s1">&#39;DROP INDEX &#39;</span> <span class="o">||</span> <span class="n">schemaname</span> <span class="o">||</span> <span class="s1">&#39;.&#39;</span> <span class="o">||</span> <span class="n">indexname</span> <span class="o">||</span> <span class="s1">&#39;;&#39;</span>
+<span class="k">FROM</span> <span class="n">pg_indexes</span>
+<span class="k">WHERE</span> <span class="n">schemaname</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="k">unnest</span><span class="p">(</span><span class="n">string_to_array</span><span class="p">(:</span><span class="s1">&#39;schemas&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)))</span>
+<span class="k">UNION</span> <span class="k">ALL</span>
+<span class="k">SELECT</span> <span class="s1">&#39;ALTER TABLE &#39;</span> <span class="o">||</span>
+    <span class="n">tc</span><span class="p">.</span><span class="n">table_schema</span> <span class="o">||</span>
+    <span class="s1">&#39;.&#39;</span> <span class="o">||</span>
+    <span class="n">tc</span><span class="p">.</span><span class="k">table_name</span> <span class="o">||</span>
+    <span class="s1">&#39; DROP CONSTRAINT &#39;</span> <span class="o">||</span>
+    <span class="n">tc</span><span class="p">.</span><span class="k">constraint_name</span>  <span class="o">||</span>
+    <span class="s1">&#39;;&#39;</span>
+<span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">table_constraints</span> <span class="n">tc</span>
+<span class="k">JOIN</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">constraint_column_usage</span> <span class="n">ccu</span> <span class="k">ON</span> <span class="p">(</span><span class="n">tc</span><span class="p">.</span><span class="k">constraint_catalog</span> <span class="o">=</span> <span class="n">ccu</span><span class="p">.</span><span class="k">constraint_catalog</span> <span class="k">AND</span> <span class="n">tc</span><span class="p">.</span><span class="k">constraint_schema</span> <span class="o">=</span> <span class="n">ccu</span><span class="p">.</span><span class="k">constraint_schema</span> <span class="k">AND</span> <span class="n">tc</span><span class="p">.</span><span class="k">constraint_name</span> <span class="o">=</span> <span class="n">ccu</span><span class="p">.</span><span class="k">constraint_name</span><span class="p">)</span>
+<span class="k">WHERE</span> <span class="n">tc</span><span class="p">.</span><span class="n">table_schema</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="k">unnest</span><span class="p">(</span><span class="n">string_to_array</span><span class="p">(:</span><span class="s1">&#39;schemas&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)));</span>
+</pre></div>
+
+
+<p>Then you will transfer the&nbsp;data:</p>
+<div class="highlight"><pre><span></span>pg_dump -a -t <span class="s2">&quot;schema1.*&quot;</span> -t <span class="s2">&quot;schema2.*&quot;</span> -O -d <span class="nb">source</span> -v <span class="p">|</span> psql -h localhost -d target
+</pre></div>
+
+
+<p>And restore the already dropped indices and constraints (<code>create_indices_constraints.sql</code>):</p>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">indexdef</span> <span class="o">||</span> <span class="s1">&#39;;&#39;</span>
+<span class="k">FROM</span> <span class="n">pg_indexes</span>
+<span class="k">WHERE</span> <span class="n">schemaname</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="k">unnest</span><span class="p">(</span><span class="n">string_to_array</span><span class="p">(:</span><span class="s1">&#39;schemas&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)))</span>
+<span class="k">UNION</span> <span class="k">ALL</span>
+<span class="k">SELECT</span> <span class="s1">&#39;ALTER TABLE &#39;</span> <span class="o">||</span>
+    <span class="n">tc</span><span class="p">.</span><span class="n">table_schema</span> <span class="o">||</span>
+    <span class="s1">&#39;.&#39;</span> <span class="o">||</span>
+    <span class="n">tc</span><span class="p">.</span><span class="k">table_name</span> <span class="o">||</span>
+    <span class="s1">&#39; ADD CONSTRAINT &#39;</span> <span class="o">||</span>
+    <span class="n">tc</span><span class="p">.</span><span class="k">constraint_name</span> <span class="o">||</span>
+    <span class="s1">&#39; &#39;</span> <span class="o">||</span>
+    <span class="n">tc</span><span class="p">.</span><span class="n">constraint_type</span> <span class="o">||</span>
+    <span class="s1">&#39;(&#39;</span> <span class="o">||</span>
+    <span class="n">string_agg</span><span class="p">(</span><span class="n">ccu</span><span class="p">.</span><span class="k">column_name</span><span class="p">::</span><span class="nb">text</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="p">)</span><span class="o">||</span> <span class="c1">-- column order should be taken into account here</span>
+    <span class="s1">&#39;);&#39;</span>
+<span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">table_constraints</span> <span class="n">tc</span>
+<span class="k">JOIN</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">constraint_column_usage</span> <span class="n">ccu</span> <span class="k">ON</span> <span class="p">(</span><span class="n">tc</span><span class="p">.</span><span class="k">constraint_catalog</span> <span class="o">=</span> <span class="n">ccu</span><span class="p">.</span><span class="k">constraint_catalog</span> <span class="k">AND</span> <span class="n">tc</span><span class="p">.</span><span class="k">constraint_schema</span> <span class="o">=</span> <span class="n">ccu</span><span class="p">.</span><span class="k">constraint_schema</span> <span class="k">AND</span> <span class="n">tc</span><span class="p">.</span><span class="k">constraint_name</span> <span class="o">=</span> <span class="n">ccu</span><span class="p">.</span><span class="k">constraint_name</span><span class="p">)</span>
+<span class="k">WHERE</span> <span class="n">tc</span><span class="p">.</span><span class="n">table_schema</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="k">unnest</span><span class="p">(</span><span class="n">string_to_array</span><span class="p">(:</span><span class="s1">&#39;schemas&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)))</span>
+    <span class="k">AND</span> <span class="n">tc</span><span class="p">.</span><span class="n">constraint_type</span> <span class="o">=</span> <span class="s1">&#39;PRIMARY KEY&#39;</span>
+<span class="k">GROUP</span> <span class="k">BY</span>
+    <span class="n">tc</span><span class="p">.</span><span class="n">table_schema</span><span class="p">,</span>
+    <span class="n">tc</span><span class="p">.</span><span class="k">table_name</span><span class="p">,</span>
+    <span class="n">tc</span><span class="p">.</span><span class="k">constraint_name</span><span class="p">,</span>
+    <span class="n">tc</span><span class="p">.</span><span class="n">constraint_type</span><span class="p">;</span>
+</pre></div>
+
+
+<h2>Few&nbsp;sidenotes</h2>
+<ol>
+<li>Run the second piece of code first. If you forget, run that code on the source&nbsp;database.</li>
+<li>Notice the <code>:schemas</code>. Variable assignment is one of the <code>psql</code> features I really&nbsp;like.</li>
+</ol>
+<p>The bash script proposal might look as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><span class="c1"># store indices and constraint definitions</span>
+psql -d target -v <span class="nv">schemas</span><span class="o">=</span><span class="s1">&#39;schema1&#39;</span>,<span class="s1">&#39;schema2&#39;</span> -i create_indices_constraints.sql &gt; create.sql
+
+<span class="c1"># drop indices and constraints</span>
+psql -d target -v <span class="nv">schemas</span><span class="o">=</span><span class="s1">&#39;schema1&#39;</span>,<span class="s1">&#39;schema2&#39;</span> -i drop_indices_constraints.sql <span class="p">|</span> psql -d target
+
+​# load data
+pg_dump -a -t <span class="s2">&quot;schema1.*&quot;</span> -t <span class="s2">&quot;schema2.*&quot;</span> -O -d <span class="nb">source</span> -v <span class="p">|</span> psql -h localhost -d target
+
+<span class="c1">#renew indices and constraints</span>
+psql -d target -i create.sql
+​
+</pre></div>
+        </section>
+        </div>
+    </div>
+
+    <div class="panel card card-1">
+        <div class="post-name">
             <h1><a href="https://www.zimmi.cz/posts/2016/testing-postgresql-ogr-fdw/" rel="bookmark" title="Permalink to Testing PostgreSQL OGR FDW">Testing PostgreSQL <span class="caps">OGR</span> <span class="caps">FDW</span></a></h1>
             <small>Written on Jul 1, 2016
         and marked as
@@ -53,7 +138,7 @@
 </ul>
 <p>I got some data about <a href="http://www.dibavod.cz/download.php?id_souboru=1413">rivers</a> and <a href="http://www.dibavod.cz/download.php?id_souboru=1416">dams</a> from <a href="http://www.dibavod.cz"><span class="caps">DIBAVOD</span></a> open datasets to play&nbsp;with.</p>
 <p>First define the foreign server&nbsp;object:</p>
-<div class="highlight"><pre>CREATE SERVER dibavod
+<div class="highlight"><pre><span></span>CREATE SERVER dibavod
 FOREIGN DATA WRAPPER ogr_fdw
 OPTIONS (
     datasource &#39;/downloads/dibavod&#39;,
@@ -65,7 +150,7 @@ OPTIONS (
 
 <p>Note the <span class="caps">OGR</span> specific driver configuration options are available inside <code>config_options</code>. In case of <span class="caps">ESRI</span> Shapefiles, the <code>datasource</code> is the directory your files reside&nbsp;in.</p>
 <p>Let&#8217;s create PostgreSQL tables (use <code>ogrinfo</code> or Paul&#8217;s <code>ogr_fdw_info</code> to list the&nbsp;columns):</p>
-<div class="highlight"><pre>CREATE FOREIGN TABLE rivers (
+<div class="highlight"><pre><span></span>CREATE FOREIGN TABLE rivers (
     fid integer,
     utokj_id numeric,
     utokjn_id numeric,
@@ -205,7 +290,7 @@ OPTIONS (LAYER &#39;A05_Vodni_nadrze&#39;);
 <p>For me, a non-developer, setting the <a href="https://webpack.github.io/">webpack</a> wasn&#8217;t easy. I didn&#8217;t find docs very helpful either. Reading the website for the first time, I didn&#8217;t even understand what it should be used for. I&nbsp;got it working eventually. And I got rid of <code>gulp</code>, <code>gulp-connect</code>, <code>gulp-less</code>, <code>gulp-nodemon</code>, <code>gulp-rename</code>, <code>gulp-replace</code>, <code>gulp-task-listing</code> and <code>gutil</code>. And the whole <code>gulpfile.js</code>. That was a big win for&nbsp;me.</p>
 <h2>But how do you run&nbsp;tasks?</h2>
 <p>Well&hellip;</p>
-<div class="highlight"><pre>npm run start-dev <span class="c1"># which in turn calls the code below</span>
+<div class="highlight"><pre><span></span>npm run start-dev <span class="c1"># which in turn calls the code below</span>
 npm run start-webpack <span class="p">&amp;</span> <span class="nv">NODE_ENV</span><span class="o">=</span>development nodemon server.js <span class="c1"># where start-webpack does the following</span>
 node_modules/webpack-dev-server/bin/webpack-dev-server.js --quiet --inline --hot --watch
 </pre></div>
@@ -227,7 +312,7 @@ node_modules/webpack-dev-server/bin/webpack-dev-server.js --quiet --inline --hot
         <section>
             <p>We have to deal with <span class="caps">DGN</span> drawings quite often at <a href="http://www.clevermaps.cz">CleverMaps</a> - heavily used for infrastructure projects (highways, roads, pipelines), they are a pure nightmare to the <span class="caps">GIS</span> person inside me. Right now, I&#8217;m only capable of converting it into a raster file and serve it with Geoserver. The transformation from <span class="caps">DGN</span> to <span class="caps">PDF</span> to <span class="caps">PNG</span> to Tiff is not something that makes me utterly happy&nbsp;though.</p>
 <p>All you need to do the same is <a href="https://www.zimmi.cz/posts/tag/gdal.html"><span class="caps">GDAL</span></a>, ImageMagick, some <span class="caps">PDF</span> documents created out of <span class="caps">DGN</span> files - something MicroStation can help you with - and their upper left and lower right corner&nbsp;coordinates.</p>
-<div class="highlight"><pre><span class="c1"># I recommend putting some limits on ImageMagick - it tends to eat up all the resources and quit</span>
+<div class="highlight"><pre><span></span><span class="c1"># I recommend putting some limits on ImageMagick - it tends to eat up all the resources and quit</span>
 <span class="nb">export</span> <span class="nv">MAGICK_MEMORY_LIMIT</span><span class="o">=</span>1512
 <span class="nb">export</span> <span class="nv">MAGICK_MAP_LIMIT</span><span class="o">=</span>512
 <span class="nb">export</span> <span class="nv">MAGICK_AREA_LIMIT</span><span class="o">=</span>1024
@@ -237,9 +322,9 @@ node_modules/webpack-dev-server/bin/webpack-dev-server.js --quiet --inline --hot
 <span class="c1"># I expect two files on the input: the first is PDF file with drawing, the second is a simple text file with four coordinates on a single line in the following order: upper left x, upper left y, lower right x, lower right y</span>
 <span class="nv">INPUT</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="p">:?</span><span class="s2">&quot;PDF file path&quot;</span><span class="si">}</span>
 <span class="nv">COORDS</span><span class="o">=</span><span class="si">${</span><span class="nv">2</span><span class="p">:?</span><span class="s2">&quot;Bounding box file path&quot;</span><span class="si">}</span>
-<span class="nv">OUTPUTDIRNAME</span><span class="o">=</span><span class="k">$(</span>dirname $INPUT<span class="k">)</span>
-<span class="nv">OUTPUTFILENAME</span><span class="o">=</span><span class="k">$(</span>basename $INPUT <span class="p">|</span> cut -d. -f1<span class="k">)</span>.png
-<span class="nv">OUTPUTPATH</span><span class="o">=</span>$OUTPUTDIRNAME/$OUTPUTFILENAME
+<span class="nv">OUTPUTDIRNAME</span><span class="o">=</span><span class="k">$(</span>dirname <span class="nv">$INPUT</span><span class="k">)</span>
+<span class="nv">OUTPUTFILENAME</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$INPUT</span> <span class="p">|</span> cut -d. -f1<span class="k">)</span>.png
+<span class="nv">OUTPUTPATH</span><span class="o">=</span><span class="nv">$OUTPUTDIRNAME</span>/<span class="nv">$OUTPUTFILENAME</span>
 
 <span class="c1"># create PNG image - I actually don&#39;t remember why it didn&#39;t work directly to Tiff</span>
 gdal_translate <span class="se">\</span>
@@ -249,15 +334,15 @@ gdal_translate <span class="se">\</span>
     --config GDAL_CACHEMAX <span class="m">500</span> <span class="se">\</span>
     --config GDAL_PDF_DPI <span class="m">300</span> <span class="se">\</span>
     -a_srs EPSG:5514 <span class="se">\ </span><span class="c1"># Czech local CRS</span>
-    -a_ullr <span class="k">$(</span><span class="nb">echo</span> <span class="k">$(</span>cat <span class="nv">$C</span>OORDS<span class="k">))</span> <span class="se">\ </span><span class="c1"># read the file with coordinates</span>
-    $INPUT <span class="se">\</span>
-    $OUTPUTPATH
+    -a_ullr <span class="k">$(</span><span class="nb">echo</span> <span class="k">$(</span>cat <span class="nv">$COORDS</span><span class="k">))</span> <span class="se">\ </span><span class="c1"># read the file with coordinates</span>
+    <span class="nv">$INPUT</span> <span class="se">\</span>
+    <span class="nv">$OUTPUTPATH</span>
 
 <span class="c1"># convert to Tiff image</span>
 convert <span class="se">\</span>
     -define tiff:tile-geometry<span class="o">=</span>256x256 <span class="se">\</span>
     -transparent white <span class="se">\ </span><span class="c1"># drawings come with white background</span>
-    $OUTPUTPATH <span class="se">\</span>
+    <span class="nv">$OUTPUTPATH</span> <span class="se">\</span>
     <span class="si">${</span><span class="nv">OUTPUTPATH</span><span class="p">/.png</span><span class="si">}</span>_alpha.tif
 
 <span class="c1"># build overwies to speed things up</span>
@@ -280,20 +365,20 @@ gdaladdo <span class="si">${</span><span class="nv">OUTPUTPATH</span><span class
         <section>
             <h2>Using <span class="caps">JOIN</span>&nbsp;clause</h2>
 <p>All my <span class="caps">GIS</span> life I&#8217;ve been using a simple <code>JOIN</code> clause to find a row with an <code>id = previous_id + 1</code>. In other words, imagine a simple table with no&nbsp;indices:</p>
-<div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">test</span> <span class="p">(</span><span class="n">id</span> <span class="nb">integer</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">test</span> <span class="p">(</span><span class="n">id</span> <span class="nb">integer</span><span class="p">);</span>
 <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">test</span> <span class="k">SELECT</span> <span class="n">i</span> <span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10000000</span><span class="p">)</span> <span class="n">i</span><span class="p">;</span>
 </pre></div>
 
 
 <p>Let&#8217;s retrieve next row for each row in that&nbsp;table:</p>
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">id</span>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">id</span>
 <span class="k">FROM</span> <span class="n">test</span> <span class="n">a</span>
 <span class="k">LEFT</span> <span class="k">JOIN</span> <span class="n">test</span> <span class="n">b</span> <span class="k">ON</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">id</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">id</span><span class="p">);</span> <span class="c1">-- note the LEFT JOIN is needed to get the last row as well</span>
 </pre></div>
 
 
 <p>Execution plan looks like&nbsp;this:</p>
-<div class="highlight"><pre><span class="n">Hash</span> <span class="k">Join</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">311087</span><span class="p">.</span><span class="mi">17</span><span class="p">..</span><span class="mi">953199</span><span class="p">.</span><span class="mi">41</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10088363</span> <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">25440</span><span class="p">.</span><span class="mi">770</span><span class="p">..</span><span class="mi">79591</span><span class="p">.</span><span class="mi">869</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">Hash</span> <span class="k">Join</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">311087</span><span class="p">.</span><span class="mi">17</span><span class="p">..</span><span class="mi">953199</span><span class="p">.</span><span class="mi">41</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10088363</span> <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">25440</span><span class="p">.</span><span class="mi">770</span><span class="p">..</span><span class="mi">79591</span><span class="p">.</span><span class="mi">869</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
    <span class="n">Hash</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">((</span><span class="n">a</span><span class="p">.</span><span class="n">id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
    <span class="o">-&gt;</span>  <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">test</span> <span class="n">a</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">145574</span><span class="p">.</span><span class="mi">63</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10088363</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">588</span><span class="p">..</span><span class="mi">10801</span><span class="p">.</span><span class="mi">584</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
    <span class="o">-&gt;</span>  <span class="n">Hash</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">145574</span><span class="p">.</span><span class="mi">63</span><span class="p">..</span><span class="mi">145574</span><span class="p">.</span><span class="mi">63</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10088363</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">25415</span><span class="p">.</span><span class="mi">282</span><span class="p">..</span><span class="mi">25415</span><span class="p">.</span><span class="mi">282</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -305,7 +390,7 @@ gdaladdo <span class="si">${</span><span class="nv">OUTPUTPATH</span><span class
 
 
 <p>If we add an index with <code>CREATE INDEX ON test (id)</code>, the plan&nbsp;changes:</p>
-<div class="highlight"><pre><span class="n">Merge</span> <span class="k">Join</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">87</span><span class="p">..</span><span class="mi">669369</span><span class="p">.</span><span class="mi">85</span> <span class="k">rows</span><span class="o">=</span><span class="mi">9999844</span> <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">035</span><span class="p">..</span><span class="mi">56219</span><span class="p">.</span><span class="mi">294</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">Merge</span> <span class="k">Join</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">87</span><span class="p">..</span><span class="mi">669369</span><span class="p">.</span><span class="mi">85</span> <span class="k">rows</span><span class="o">=</span><span class="mi">9999844</span> <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">035</span><span class="p">..</span><span class="mi">56219</span><span class="p">.</span><span class="mi">294</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
    <span class="n">Merge</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
    <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="k">Only</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">test_id_idx</span> <span class="k">on</span> <span class="n">test</span> <span class="n">a</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">43</span><span class="p">..</span><span class="mi">259686</span><span class="p">.</span><span class="mi">10</span> <span class="k">rows</span><span class="o">=</span><span class="mi">9999844</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">015</span><span class="p">..</span><span class="mi">11101</span><span class="p">.</span><span class="mi">937</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
          <span class="n">Heap</span> <span class="n">Fetches</span><span class="p">:</span> <span class="mi">0</span>
@@ -320,13 +405,13 @@ gdaladdo <span class="si">${</span><span class="nv">OUTPUTPATH</span><span class
 <h2>Using window&nbsp;function</h2>
 <p><a href="http://www.postgresql.org/docs/9.4/static/functions-window.html">Window functions</a> are real fun. They&#8217;re great if you&#8217;re doing counts, sums or ranks by groups. And, to my surprise, they&#8217;re great in finding next rows as&nbsp;well.</p>
 <p>With the same <code>test</code> table, we retrieve next row for each row with the following&nbsp;query:</p>
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">lead</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">id</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">lead</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">id</span><span class="p">)</span>
 <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">test</span><span class="p">;</span>
 </pre></div>
 
 
 <p>How does that score without an index? Better than the <code>JOIN</code> clause.</p>
-<div class="highlight"><pre><span class="n">WindowAgg</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1581246</span><span class="p">.</span><span class="mi">90</span><span class="p">..</span><span class="mi">1756294</span><span class="p">.</span><span class="mi">50</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10002720</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">28785</span><span class="p">.</span><span class="mi">388</span><span class="p">..</span><span class="mi">63819</span><span class="p">.</span><span class="mi">071</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">WindowAgg</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1581246</span><span class="p">.</span><span class="mi">90</span><span class="p">..</span><span class="mi">1756294</span><span class="p">.</span><span class="mi">50</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10002720</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">28785</span><span class="p">.</span><span class="mi">388</span><span class="p">..</span><span class="mi">63819</span><span class="p">.</span><span class="mi">071</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
    <span class="o">-&gt;</span>  <span class="n">Sort</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1581246</span><span class="p">.</span><span class="mi">90</span><span class="p">..</span><span class="mi">1606253</span><span class="p">.</span><span class="mi">70</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10002720</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">28785</span><span class="p">.</span><span class="mi">354</span><span class="p">..</span><span class="mi">40117</span><span class="p">.</span><span class="mi">899</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
          <span class="n">Sort</span> <span class="k">Key</span><span class="p">:</span> <span class="n">id</span>
          <span class="n">Sort</span> <span class="k">Method</span><span class="p">:</span> <span class="k">external</span> <span class="n">merge</span>  <span class="n">Disk</span><span class="p">:</span> <span class="mi">136848</span><span class="n">kB</span>
@@ -337,7 +422,7 @@ gdaladdo <span class="si">${</span><span class="nv">OUTPUTPATH</span><span class
 
 
 <p>And it works even better if indexed. It&#8217;s actually ~1,5&times; faster than the <code>JOIN</code> way.</p>
-<div class="highlight"><pre><span class="n">WindowAgg</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">43</span><span class="p">..</span><span class="mi">409770</span><span class="p">.</span><span class="mi">03</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10002720</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">087</span><span class="p">..</span><span class="mi">35647</span><span class="p">.</span><span class="mi">815</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">WindowAgg</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">43</span><span class="p">..</span><span class="mi">409770</span><span class="p">.</span><span class="mi">03</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10002720</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">087</span><span class="p">..</span><span class="mi">35647</span><span class="p">.</span><span class="mi">815</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
    <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="k">Only</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">test_id_idx</span> <span class="k">on</span> <span class="n">test</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">43</span><span class="p">..</span><span class="mi">259729</span><span class="p">.</span><span class="mi">23</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10002720</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">059</span><span class="p">..</span><span class="mi">11310</span><span class="p">.</span><span class="mi">879</span> <span class="k">rows</span><span class="o">=</span><span class="mi">10000001</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
          <span class="n">Heap</span> <span class="n">Fetches</span><span class="p">:</span> <span class="mi">0</span>
  <span class="n">Planning</span> <span class="n">time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">247</span> <span class="n">ms</span>
@@ -376,7 +461,7 @@ gdaladdo <span class="si">${</span><span class="nv">OUTPUTPATH</span><span class
             <p>Last time I described <a href="https://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/">the setup of my OpenShift Twitter crawler</a> and let it running and downloading data. It&#8217;s been more than two months since I started and I got interesting amount of data. I also made a simple <span class="caps">ETL</span> process to load it into my local PostGIS database, which I&#8217;d like to cover in this&nbsp;post.</p>
 <h2>Extract&nbsp;data</h2>
 <p>Each day is written to the separate sqlite file with a name like <code>tw_day_D_M_YYYY</code>. <code>Bash</code> is used to gzip all the files before downloading them from&nbsp;OpenShift.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 ssh openshift <span class="s">&lt;&lt; EOF</span>
 <span class="s">    cd app-root/data</span>
@@ -394,7 +479,7 @@ tar -xzf twitter.tar.gz <span class="o">&amp;&amp;</span>
 
 <h2>Transform&nbsp;data</h2>
 <p>The transformation part operates on downloaded files and merges them into one big <span class="caps">CSV</span> file. That&#8217;s pretty straightforward. Note that&#8217;s quite simple with sqlite flags, some <code>sed</code> and <code>tail</code> commands.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 rm -rf ./data/csv
 mkdir ./data/csv
@@ -402,9 +487,9 @@ mkdir ./data/csv
 <span class="k">for</span> db in ./data/*.db<span class="p">;</span> <span class="k">do</span>
     <span class="nv">FILENAME</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$db</span><span class="k">)</span>
     <span class="nv">DBNAME</span><span class="o">=</span><span class="si">${</span><span class="nv">FILENAME</span><span class="p">%%.db</span><span class="si">}</span>
-    <span class="nv">CSVNAME</span><span class="o">=</span><span class="nv">$DB</span>NAME.csv
-    <span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$DB</span><span class="s2">NAME to csv...&quot;</span>
-    sqlite3 -header -csv <span class="nv">$db</span> <span class="s2">&quot;select * from </span><span class="nv">$DB</span><span class="s2">NAME;&quot;</span> &gt; ./data/csv/<span class="nv">$C</span>SVNAME
+    <span class="nv">CSVNAME</span><span class="o">=</span><span class="nv">$DBNAME</span>.csv
+    <span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$DBNAME</span><span class="s2"> to csv...&quot;</span>
+    sqlite3 -header -csv <span class="nv">$db</span> <span class="s2">&quot;select * from </span><span class="nv">$DBNAME</span><span class="s2">;&quot;</span> &gt; ./data/csv/<span class="nv">$CSVNAME</span>
 <span class="k">done</span>
 
 <span class="nb">cd</span> ./data/csv
@@ -412,15 +497,15 @@ touch tweets.csv
 <span class="nb">echo</span> <span class="k">$(</span>sed -n 1p <span class="k">$(</span>ls -d -1 *.csv <span class="p">|</span> head -n 1<span class="k">))</span> &gt; tweets.csv <span class="c1"># get column names</span>
 
 <span class="k">for</span> csv in tw_*.csv<span class="p">;</span> <span class="k">do</span>
-    <span class="nb">echo</span> <span class="nv">$c</span>sv
-    tail -n +2 <span class="nv">$c</span>sv &gt;&gt; tweets.csv <span class="c1"># get all lines without the first one</span>
+    <span class="nb">echo</span> <span class="nv">$csv</span>
+    tail -n +2 <span class="nv">$csv</span> &gt;&gt; tweets.csv <span class="c1"># get all lines without the first one</span>
 <span class="k">done</span>
 </pre></div>
 
 
 <h2>Load&nbsp;data</h2>
 <p>In the last step, the data is loaded with <span class="caps">SQL</span> <code>\copy</code> command.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 <span class="nb">export</span> <span class="nv">PG_USE_COPY</span><span class="o">=</span>YES
 
@@ -428,7 +513,7 @@ touch tweets.csv
 <span class="nv">SCHEMA</span><span class="o">=</span>dizertace
 <span class="nv">TABLE</span><span class="o">=</span>tweets
 
-psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
+psql <span class="nv">$DATABASE</span> <span class="s">&lt;&lt; EOF</span>
 <span class="s">    DROP TABLE IF EXISTS $SCHEMA.$TABLE;</span>
 <span class="s">    CREATE UNLOGGED TABLE $SCHEMA.$TABLE (id text, author text, author_id text, tweet text, created_at text, lon float, lat float, lang text);</span>
 <span class="s">    \copy $SCHEMA.$TABLE FROM &#39;data/csv/tweets.csv&#39; CSV HEADER DELIMITER &#39;,&#39;</span>
@@ -463,7 +548,7 @@ psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
 <h2>Subgroup&nbsp;clustering</h2>
 <p>Vozejkmap data is categorized based on the place type (banks, parking lots, pubs, &hellip;). One of the core features of map showing such data should be the easy way to turn these categories on and&nbsp;off.</p>
 <p>As far as I know, it&#8217;s not trivial to do this with the standard Leaflet library. Extending <code>L.control.layers</code> and implement its <code>addOverlay</code>, <code>removeOverlay</code> methods on your own might be the way to add needed behavior. Fortunately, there&#8217;s an easier option thanks to <a href="https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup">Leaflet.FeatureGroup.SubGroup</a> that can handle such use case and is really straightforward. See the code&nbsp;below.</p>
-<div class="highlight"><pre><span class="nx">cluster</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">markerClusterGroup</span><span class="p">({</span>
+<div class="highlight"><pre><span></span><span class="nx">cluster</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">markerClusterGroup</span><span class="p">({</span>
     <span class="nx">chunkedLoading</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">chunkInterval</span><span class="o">:</span> <span class="mi">500</span>
 <span class="p">});</span>
@@ -487,7 +572,7 @@ psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
 <p>Turf is one of those libraries I get amazed easily with, spending a week trying to find a use case, finally putting it aside with <em>&#8220;I&#8217;ll get back to it later&#8221;</em>. I usually don&#8217;t. This time it&#8217;s&nbsp;different.</p>
 <p>I use Turf to get the nearest neighbor for any marker on click. My first try ended up with the same marker being the result as it was a member of a feature collection passed to <code>turf.nearest()</code> method. After snooping around the docs I found <code>turf.remove()</code> method that can filter GeoJSON based on key-value&nbsp;pair.</p>
 <p>Another handy function is <code>turf.distance()</code> that gives you distance between two points. The code below adds an information about the nearest point and its distance into the&nbsp;popup.</p>
-<div class="highlight"><pre><span class="c1">// data is a geojson feature collection</span>
+<div class="highlight"><pre><span></span><span class="c1">// data is a geojson feature collection</span>
 <span class="nx">json</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">geoJson</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">onEachFeature</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">feature</span><span class="p">,</span> <span class="nx">layer</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">layer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
@@ -538,25 +623,25 @@ psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
 </blockquote>
 <h3>Pitfalls</h3>
 <p>If your application doesn&#8217;t generate any traffic, <strong>OpenShift turns it off</strong>. It wakes up once someone visits again. I had no idea about that and spent some time trying to stop that behavior. Obviously, I could have scheduled a cron job on my laptop pinging it every now and then. Luckily, OpenShift can run cron jobs itself. All you need is to embed a cron cartridge into the running application (and install a bunch of ruby dependencies&nbsp;beforehand).</p>
-<div class="highlight"><pre>rhc cartridge add cron-1.4 -a app-name
+<div class="highlight"><pre><span></span>rhc cartridge add cron-1.4 -a app-name
 </pre></div>
 
 
 <p>Then create <code>.openshift/cron/{hourly,daily,weekly,monthly}</code> folder in the git repository and put your script running a simple curl command into one of&nbsp;those.</p>
-<div class="highlight"><pre>curl http://social-zimmi.rhcloud.com &gt; /dev/null
+<div class="highlight"><pre><span></span>curl http://social-zimmi.rhcloud.com &gt; /dev/null
 </pre></div>
 
 
 <p>Another problem was just around the corner. Once in a while, the app stopped writing data to the database without saying a word. What helped was restarting it - the only automatic way to do so being a <code>git push</code> command. Sadly, I haven&#8217;t found a way to restart the app from within itself; it probably can&#8217;t be&nbsp;done.</p>
 <p>When you <code>git push</code>, the gear stops, builds, deploys and restarts the app. By using hot deployment you can minimize the downtime. Just put the <code>hot_deploy</code> file into <code>.openshift/markers</code> folder.</p>
-<div class="highlight"><pre>git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push
+<div class="highlight"><pre><span></span>git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push
 </pre></div>
 
 
 <p>This solved the problem until I realize that <strong>every restart deleted all the data</strong> collected so far. If your data are to stay safe and sound, <strong>save them in <code>process.env.OPENSHIFT_DATA_DIR</code></strong> (which is <code>app-root/data</code>).</p>
 <h3>Anacron to the&nbsp;rescue</h3>
 <p>How do you push an empty commit once a day? With cron of course. Even better, <strong>anacron</strong>.</p>
-<div class="highlight"><pre>mkdir ~/.anacron
+<div class="highlight"><pre><span></span>mkdir ~/.anacron
 <span class="nb">cd</span> ~/.anacron
 mkdir cron.daily cron.weekly cron.monthly spool etc
 
@@ -583,20 +668,20 @@ cat <span class="s">&lt;&lt;EOT &gt;&gt; ~/.zprofile # I use zsh shell</span>
 
 <p>Anacron is to laptop what cron is to 24/7 running server. It just runs automatic jobs when the laptop is running. If it&#8217;s not and the job should be run, it runs it once the <span class="caps">OS</span> boots. Brilliant&nbsp;idea.</p>
 <p>It runs the following code for me to keep the app writing data to the&nbsp;database.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 <span class="nv">workdir</span><span class="o">=</span><span class="s1">&#39;/home/zimmi/documents/zimmi/dizertace/social&#39;</span>
-<span class="nv">logfile</span><span class="o">=</span>$workdir/restart-gear.log
-date &gt; $logfile
+<span class="nv">logfile</span><span class="o">=</span><span class="nv">$workdir</span>/restart-gear.log
+date &gt; <span class="nv">$logfile</span>
 
 <span class="o">{</span> 
 <span class="nv">HOME</span><span class="o">=</span>/home/zimmi
-<span class="nb">cd</span> $workdir <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<span class="nb">cd</span> <span class="nv">$workdir</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git merge origin/master <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
 <span class="nb">echo</span> <span class="s2">&quot;Success&quot;</span> <span class="p">;</span> 
-<span class="o">}</span> &gt;&gt; $logfile 2&gt;<span class="p">&amp;</span>1
+<span class="o">}</span> &gt;&gt; <span class="nv">$logfile</span> 2&gt;<span class="p">&amp;</span>1
 </pre></div>
 
 
@@ -608,116 +693,6 @@ git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
 <p>I don&#8217;t know which one did the magic&nbsp;though.</p>
 <p>I&#8217;ve been harvesting Twitter for a month with about 10-15K tweets a day (only interested in the Czech Republic). 
 <sup>1</sup>&frasl;<sub>6</sub> to <sup>1</sup>&frasl;<sub>5</sub> of them is located with latitude and longitude. More on this next&nbsp;time.</p>
-        </section>
-        </div>
-    </div>
-
-    <div class="panel card card-1">
-        <div class="post-name">
-            <h1><a href="https://www.zimmi.cz/posts/2015/installing-postgis-22-with-sfcgal-on-ubuntu-based-os/" rel="bookmark" title="Permalink to Installing PostGIS 2.2 with SFCGAL on Ubuntu-based OS">Installing PostGIS 2.2 with <span class="caps">SFCGAL</span> on Ubuntu-based <span class="caps">OS</span></a></h1>
-            <small>Written on Oct 29, 2015
-        and marked as
-        <a href="https://www.zimmi.cz/posts/tag/postgresql.html">postgresql</a>,         <a href="https://www.zimmi.cz/posts/tag/postgis.html">postgis</a>,         <a href="https://www.zimmi.cz/posts/tag/linux.html">linux</a>        | <a href="https://www.zimmi.cz/posts/category/development.html">development</a>
-        </small>
-        <section>
-            <p>I&#8217;ve seen a bunch of questions on <span class="caps">GIS</span> StackExchange recently related to <a href="http://sfcgal.org/"><span class="caps">SFCGAL</span></a> extension for <a href="http://postgis.net">PostGIS 2.2</a>. Great news are it can be installed with one simple query <code>CREATE EXTENSION postgis_sfcgal</code>. Not so great news are you have to compile it from source for Ubuntu-based <span class="caps">OS</span> (14.04) as recent versions of required packages are not available in the&nbsp;repositories.</p>
-<p>I tested my solution on elementary <span class="caps">OS</span> 0.3.1 based on Ubuntu 14.04. <strong>And it works!</strong> It installs PostgreSQL 9.4 from repositories together with <span class="caps">GDAL</span> and <span class="caps">GEOS</span> and some other libs PostGIS depends on. PostGIS itself, <span class="caps">CGAL</span>, Boost, <span class="caps">MPFR</span> and <span class="caps">GMP</span> are built from&nbsp;source.</p>
-<p>Here comes the code (commented where&nbsp;needed).</p>
-<div class="highlight"><pre>sudo -i
-<span class="nb">echo</span> <span class="s2">&quot;deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main&quot;</span> <span class="p">|</span> tee -a /etc/apt/sources.list
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc <span class="p">|</span> sudo apt-key add -
-apt-get update
-apt-get install -y postgresql-9.4 <span class="se">\</span>
-    postgresql-client-9.4 <span class="se">\</span>
-    postgresql-contrib-9.4 <span class="se">\</span>
-    libpq-dev <span class="se">\</span>
-    postgresql-server-dev-9.4 <span class="se">\</span>
-    build-essential <span class="se">\</span>
-    libgeos-c1 <span class="se">\</span>
-    libgdal-dev <span class="se">\</span>
-    libproj-dev <span class="se">\</span>
-    libjson0-dev <span class="se">\</span>
-    libxml2-dev <span class="se">\</span>
-    libxml2-utils <span class="se">\</span>
-    xsltproc <span class="se">\</span>
-    docbook-xsl <span class="se">\</span>
-    docbook-mathml <span class="se">\</span>
-    cmake <span class="se">\</span>
-    gcc <span class="se">\</span>
-    m4 <span class="se">\</span>
-    icu-devtools
-
-<span class="nb">exit</span> <span class="c1"># leave root otherwise postgis will choke</span>
-
-<span class="nb">cd</span> /tmp
-touch download.txt
-cat <span class="s">&lt;&lt;EOT &gt;&gt; download.txt</span>
-<span class="s">https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2</span>
-<span class="s">https://github.com/Oslandia/SFCGAL/archive/v1.2.0.tar.gz</span>
-<span class="s">http://www.mpfr.org/mpfr-current/mpfr-3.1.3.tar.gz</span>
-<span class="s">http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz</span>
-<span class="s">https://github.com/CGAL/cgal/archive/releases/CGAL-4.6.3.tar.gz</span>
-<span class="s">http://download.osgeo.org/postgis/source/postgis-2.2.0.tar.gz</span>
-
-<span class="s">EOT</span>
-
-cat download.txt <span class="p">|</span> xargs -n <span class="m">1</span> -P <span class="m">8</span> wget <span class="c1"># make wget a little bit faster</span>
-
-tar xjf gmp-6.0.0a.tar.bz2
-tar xzf mpfr-3.1.3.tar.gz
-tar xzf v1.2.0.tar.gz
-tar xzf boost_1_59_0.tar.gz
-tar xzf CGAL-4.6.3.tar.gz
-tar xzf postgis-2.2.0.tar.gz
-
-<span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>nproc<span class="k">)</span>
-
-<span class="k">if</span> <span class="o">[[</span> <span class="nv">$C</span>ORES &gt; <span class="m">1</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-    <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>expr <span class="nv">$C</span>ORES - 1<span class="k">)</span> <span class="c1"># be nice to your PC</span>
-<span class="k">fi</span>
-
-<span class="nb">cd</span> gmp-6.0.0
-./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
-
-<span class="nb">cd</span> ..
-<span class="nb">cd</span> mpfr-3.1.3
-./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
-
-<span class="nb">cd</span> ..
-<span class="nb">cd</span> boost_1_59_0
-./bootstrap.sh --prefix<span class="o">=</span>/usr/local --with-libraries<span class="o">=</span>all <span class="o">&amp;&amp;</span> sudo ./b2 install <span class="c1"># there might be some warnings along the way, don&#39;t panic</span>
-<span class="nb">echo</span> <span class="s2">&quot;/usr/local/lib&quot;</span> <span class="p">|</span> sudo tee /etc/ld.so.conf.d/boost.conf
-sudo ldconfig
-
-<span class="nb">cd</span> ..
-<span class="nb">cd</span> cgal-releases-CGAL-4.6.3
-cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
-
-<span class="nb">cd</span> ..
-<span class="nb">cd</span> SFCGAL-1.2.0/
-cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
-
-<span class="nb">cd</span> ..
-<span class="nb">cd</span> postgis-2.2.0
-./configure <span class="se">\</span>
-    --with-geosconfig<span class="o">=</span>/usr/bin/geos-config <span class="se">\</span>
-    --with-xml2config<span class="o">=</span>/usr/bin/xml2-config <span class="se">\</span>
-    --with-projdir<span class="o">=</span>/usr/share/proj <span class="se">\</span>
-    --with-libiconv<span class="o">=</span>/usr/bin <span class="se">\</span>
-    --with-jsondir<span class="o">=</span>/usr/include/json <span class="se">\</span>
-    --with-gdalconfig<span class="o">=</span>/usr/bin/gdal-config <span class="se">\</span>
-    --with-raster <span class="se">\</span>
-    --with-topology <span class="se">\</span>
-    --with-sfcgal<span class="o">=</span>/usr/local/bin/sfcgal-config <span class="o">&amp;&amp;</span> <span class="se">\</span>
-make <span class="o">&amp;&amp;</span> make cheatsheets <span class="o">&amp;&amp;</span> sudo make install <span class="c1"># deliberately one CPU only</span>
-
-sudo -u postgres psql
-sudo -u postgres createdb spatial_template
-sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;CREATE EXTENSION postgis;&quot;</span>
-sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;CREATE EXTENSION postgis_topology;&quot;</span>
-sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;CREATE EXTENSION postgis_sfcgal;&quot;</span>
-sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postgis_full_version();&quot;</span>
-</pre></div>
         </section>
         </div>
     </div>

@@ -46,7 +46,7 @@
         <section>
             <p>Using <span class="caps">WMS</span> in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with <span class="caps">WMS</span>&nbsp;layers.</p>
 <p><a href="https://geopython.github.io/OWSLib/">OWSLib</a> is a great tool to help you get images from <span class="caps">WMS</span> server. Code and some comments&nbsp;follow.</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">math</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -154,7 +154,7 @@
 <p><strong>tl;dr: I hate&nbsp;Esri.</strong></p>
 <p>I found myself in need to access secured layers published via <span class="caps">WMS</span> on ArcGIS Server using username and password I was given, so here&#8217;s a little how-to for anyone who would have to do the&nbsp;same.</p>
 <p>Let&#8217;s start with a simple ol.layer.Image and pretend this is the secured layer we&#8217;re looking&nbsp;for:</p>
-<div class="highlight"><pre>var layer = new ol.layer.Image({
+<div class="highlight"><pre><span></span>var layer = new ol.layer.Image({
     extent: extent,
     source: new ol.source.ImageWMS(/** @type {olx.source.ImageWMSOptions} */ ({
         url: url,
@@ -168,7 +168,7 @@
 
 
 <p>We need to retrieve the token, so we define a&nbsp;function:</p>
-<div class="highlight"><pre><span class="nt">function</span> <span class="nt">retrieveToken</span><span class="o">(</span><span class="nt">callback</span><span class="o">)</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="nt">function</span> <span class="nt">retrieveToken</span><span class="o">(</span><span class="nt">callback</span><span class="o">)</span> <span class="p">{</span>
     <span class="n">var</span> <span class="n">req</span> <span class="o">=</span> <span class="n">new</span> <span class="n">XMLHttpRequest</span><span class="p">;</span>
 
     <span class="n">req</span><span class="o">.</span><span class="n">onload</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="err">{</span>
@@ -185,7 +185,7 @@
 
 
 <p>I pass a parameter called <code>callback</code> - that&#8217;s a very important step, otherwise you would not be able to retrieve the token when you actually need it (<span class="caps">AJAX</span> stands for asynchronous). Now you just pass the token to the layer params like&nbsp;this:</p>
-<div class="highlight"><pre>retrieveToken(function(token) {
+<div class="highlight"><pre><span></span>retrieveToken(function(token) {
     layer.getSource().updateParams({
         token: token
     })

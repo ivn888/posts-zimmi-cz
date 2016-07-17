@@ -75,7 +75,7 @@
 <p>For me, a non-developer, setting the <a href="https://webpack.github.io/">webpack</a> wasn&#8217;t easy. I didn&#8217;t find docs very helpful either. Reading the website for the first time, I didn&#8217;t even understand what it should be used for. I&nbsp;got it working eventually. And I got rid of <code>gulp</code>, <code>gulp-connect</code>, <code>gulp-less</code>, <code>gulp-nodemon</code>, <code>gulp-rename</code>, <code>gulp-replace</code>, <code>gulp-task-listing</code> and <code>gutil</code>. And the whole <code>gulpfile.js</code>. That was a big win for&nbsp;me.</p>
 <h2>But how do you run&nbsp;tasks?</h2>
 <p>Well&hellip;</p>
-<div class="highlight"><pre>npm run start-dev <span class="c1"># which in turn calls the code below</span>
+<div class="highlight"><pre><span></span>npm run start-dev <span class="c1"># which in turn calls the code below</span>
 npm run start-webpack <span class="p">&amp;</span> <span class="nv">NODE_ENV</span><span class="o">=</span>development nodemon server.js <span class="c1"># where start-webpack does the following</span>
 node_modules/webpack-dev-server/bin/webpack-dev-server.js --quiet --inline --hot --watch
 </pre></div>
@@ -98,7 +98,7 @@ node_modules/webpack-dev-server/bin/webpack-dev-server.js --quiet --inline --hot
             <p>Last time I described <a href="https://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/">the setup of my OpenShift Twitter crawler</a> and let it running and downloading data. It&#8217;s been more than two months since I started and I got interesting amount of data. I also made a simple <span class="caps">ETL</span> process to load it into my local PostGIS database, which I&#8217;d like to cover in this&nbsp;post.</p>
 <h2>Extract&nbsp;data</h2>
 <p>Each day is written to the separate sqlite file with a name like <code>tw_day_D_M_YYYY</code>. <code>Bash</code> is used to gzip all the files before downloading them from&nbsp;OpenShift.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 ssh openshift <span class="s">&lt;&lt; EOF</span>
 <span class="s">    cd app-root/data</span>
@@ -116,7 +116,7 @@ tar -xzf twitter.tar.gz <span class="o">&amp;&amp;</span>
 
 <h2>Transform&nbsp;data</h2>
 <p>The transformation part operates on downloaded files and merges them into one big <span class="caps">CSV</span> file. That&#8217;s pretty straightforward. Note that&#8217;s quite simple with sqlite flags, some <code>sed</code> and <code>tail</code> commands.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 rm -rf ./data/csv
 mkdir ./data/csv
@@ -124,9 +124,9 @@ mkdir ./data/csv
 <span class="k">for</span> db in ./data/*.db<span class="p">;</span> <span class="k">do</span>
     <span class="nv">FILENAME</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$db</span><span class="k">)</span>
     <span class="nv">DBNAME</span><span class="o">=</span><span class="si">${</span><span class="nv">FILENAME</span><span class="p">%%.db</span><span class="si">}</span>
-    <span class="nv">CSVNAME</span><span class="o">=</span><span class="nv">$DB</span>NAME.csv
-    <span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$DB</span><span class="s2">NAME to csv...&quot;</span>
-    sqlite3 -header -csv <span class="nv">$db</span> <span class="s2">&quot;select * from </span><span class="nv">$DB</span><span class="s2">NAME;&quot;</span> &gt; ./data/csv/<span class="nv">$C</span>SVNAME
+    <span class="nv">CSVNAME</span><span class="o">=</span><span class="nv">$DBNAME</span>.csv
+    <span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$DBNAME</span><span class="s2"> to csv...&quot;</span>
+    sqlite3 -header -csv <span class="nv">$db</span> <span class="s2">&quot;select * from </span><span class="nv">$DBNAME</span><span class="s2">;&quot;</span> &gt; ./data/csv/<span class="nv">$CSVNAME</span>
 <span class="k">done</span>
 
 <span class="nb">cd</span> ./data/csv
@@ -134,15 +134,15 @@ touch tweets.csv
 <span class="nb">echo</span> <span class="k">$(</span>sed -n 1p <span class="k">$(</span>ls -d -1 *.csv <span class="p">|</span> head -n 1<span class="k">))</span> &gt; tweets.csv <span class="c1"># get column names</span>
 
 <span class="k">for</span> csv in tw_*.csv<span class="p">;</span> <span class="k">do</span>
-    <span class="nb">echo</span> <span class="nv">$c</span>sv
-    tail -n +2 <span class="nv">$c</span>sv &gt;&gt; tweets.csv <span class="c1"># get all lines without the first one</span>
+    <span class="nb">echo</span> <span class="nv">$csv</span>
+    tail -n +2 <span class="nv">$csv</span> &gt;&gt; tweets.csv <span class="c1"># get all lines without the first one</span>
 <span class="k">done</span>
 </pre></div>
 
 
 <h2>Load&nbsp;data</h2>
 <p>In the last step, the data is loaded with <span class="caps">SQL</span> <code>\copy</code> command.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 <span class="nb">export</span> <span class="nv">PG_USE_COPY</span><span class="o">=</span>YES
 
@@ -150,7 +150,7 @@ touch tweets.csv
 <span class="nv">SCHEMA</span><span class="o">=</span>dizertace
 <span class="nv">TABLE</span><span class="o">=</span>tweets
 
-psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
+psql <span class="nv">$DATABASE</span> <span class="s">&lt;&lt; EOF</span>
 <span class="s">    DROP TABLE IF EXISTS $SCHEMA.$TABLE;</span>
 <span class="s">    CREATE UNLOGGED TABLE $SCHEMA.$TABLE (id text, author text, author_id text, tweet text, created_at text, lon float, lat float, lang text);</span>
 <span class="s">    \copy $SCHEMA.$TABLE FROM &#39;data/csv/tweets.csv&#39; CSV HEADER DELIMITER &#39;,&#39;</span>
@@ -185,7 +185,7 @@ psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
 <h2>Subgroup&nbsp;clustering</h2>
 <p>Vozejkmap data is categorized based on the place type (banks, parking lots, pubs, &hellip;). One of the core features of map showing such data should be the easy way to turn these categories on and&nbsp;off.</p>
 <p>As far as I know, it&#8217;s not trivial to do this with the standard Leaflet library. Extending <code>L.control.layers</code> and implement its <code>addOverlay</code>, <code>removeOverlay</code> methods on your own might be the way to add needed behavior. Fortunately, there&#8217;s an easier option thanks to <a href="https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup">Leaflet.FeatureGroup.SubGroup</a> that can handle such use case and is really straightforward. See the code&nbsp;below.</p>
-<div class="highlight"><pre><span class="nx">cluster</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">markerClusterGroup</span><span class="p">({</span>
+<div class="highlight"><pre><span></span><span class="nx">cluster</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">markerClusterGroup</span><span class="p">({</span>
     <span class="nx">chunkedLoading</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">chunkInterval</span><span class="o">:</span> <span class="mi">500</span>
 <span class="p">});</span>
@@ -209,7 +209,7 @@ psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
 <p>Turf is one of those libraries I get amazed easily with, spending a week trying to find a use case, finally putting it aside with <em>&#8220;I&#8217;ll get back to it later&#8221;</em>. I usually don&#8217;t. This time it&#8217;s&nbsp;different.</p>
 <p>I use Turf to get the nearest neighbor for any marker on click. My first try ended up with the same marker being the result as it was a member of a feature collection passed to <code>turf.nearest()</code> method. After snooping around the docs I found <code>turf.remove()</code> method that can filter GeoJSON based on key-value&nbsp;pair.</p>
 <p>Another handy function is <code>turf.distance()</code> that gives you distance between two points. The code below adds an information about the nearest point and its distance into the&nbsp;popup.</p>
-<div class="highlight"><pre><span class="c1">// data is a geojson feature collection</span>
+<div class="highlight"><pre><span></span><span class="c1">// data is a geojson feature collection</span>
 <span class="nx">json</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">geoJson</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">onEachFeature</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">feature</span><span class="p">,</span> <span class="nx">layer</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">layer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
@@ -260,25 +260,25 @@ psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
 </blockquote>
 <h3>Pitfalls</h3>
 <p>If your application doesn&#8217;t generate any traffic, <strong>OpenShift turns it off</strong>. It wakes up once someone visits again. I had no idea about that and spent some time trying to stop that behavior. Obviously, I could have scheduled a cron job on my laptop pinging it every now and then. Luckily, OpenShift can run cron jobs itself. All you need is to embed a cron cartridge into the running application (and install a bunch of ruby dependencies&nbsp;beforehand).</p>
-<div class="highlight"><pre>rhc cartridge add cron-1.4 -a app-name
+<div class="highlight"><pre><span></span>rhc cartridge add cron-1.4 -a app-name
 </pre></div>
 
 
 <p>Then create <code>.openshift/cron/{hourly,daily,weekly,monthly}</code> folder in the git repository and put your script running a simple curl command into one of&nbsp;those.</p>
-<div class="highlight"><pre>curl http://social-zimmi.rhcloud.com &gt; /dev/null
+<div class="highlight"><pre><span></span>curl http://social-zimmi.rhcloud.com &gt; /dev/null
 </pre></div>
 
 
 <p>Another problem was just around the corner. Once in a while, the app stopped writing data to the database without saying a word. What helped was restarting it - the only automatic way to do so being a <code>git push</code> command. Sadly, I haven&#8217;t found a way to restart the app from within itself; it probably can&#8217;t be&nbsp;done.</p>
 <p>When you <code>git push</code>, the gear stops, builds, deploys and restarts the app. By using hot deployment you can minimize the downtime. Just put the <code>hot_deploy</code> file into <code>.openshift/markers</code> folder.</p>
-<div class="highlight"><pre>git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push
+<div class="highlight"><pre><span></span>git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push
 </pre></div>
 
 
 <p>This solved the problem until I realize that <strong>every restart deleted all the data</strong> collected so far. If your data are to stay safe and sound, <strong>save them in <code>process.env.OPENSHIFT_DATA_DIR</code></strong> (which is <code>app-root/data</code>).</p>
 <h3>Anacron to the&nbsp;rescue</h3>
 <p>How do you push an empty commit once a day? With cron of course. Even better, <strong>anacron</strong>.</p>
-<div class="highlight"><pre>mkdir ~/.anacron
+<div class="highlight"><pre><span></span>mkdir ~/.anacron
 <span class="nb">cd</span> ~/.anacron
 mkdir cron.daily cron.weekly cron.monthly spool etc
 
@@ -305,20 +305,20 @@ cat <span class="s">&lt;&lt;EOT &gt;&gt; ~/.zprofile # I use zsh shell</span>
 
 <p>Anacron is to laptop what cron is to 24/7 running server. It just runs automatic jobs when the laptop is running. If it&#8217;s not and the job should be run, it runs it once the <span class="caps">OS</span> boots. Brilliant&nbsp;idea.</p>
 <p>It runs the following code for me to keep the app writing data to the&nbsp;database.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 <span class="nv">workdir</span><span class="o">=</span><span class="s1">&#39;/home/zimmi/documents/zimmi/dizertace/social&#39;</span>
-<span class="nv">logfile</span><span class="o">=</span>$workdir/restart-gear.log
-date &gt; $logfile
+<span class="nv">logfile</span><span class="o">=</span><span class="nv">$workdir</span>/restart-gear.log
+date &gt; <span class="nv">$logfile</span>
 
 <span class="o">{</span> 
 <span class="nv">HOME</span><span class="o">=</span>/home/zimmi
-<span class="nb">cd</span> $workdir <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<span class="nb">cd</span> <span class="nv">$workdir</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git merge origin/master <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
 <span class="nb">echo</span> <span class="s2">&quot;Success&quot;</span> <span class="p">;</span> 
-<span class="o">}</span> &gt;&gt; $logfile 2&gt;<span class="p">&amp;</span>1
+<span class="o">}</span> &gt;&gt; <span class="nv">$logfile</span> 2&gt;<span class="p">&amp;</span>1
 </pre></div>
 
 
@@ -359,7 +359,7 @@ git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
 <p><strong>tl;dr: I hate&nbsp;Esri.</strong></p>
 <p>I found myself in need to access secured layers published via <span class="caps">WMS</span> on ArcGIS Server using username and password I was given, so here&#8217;s a little how-to for anyone who would have to do the&nbsp;same.</p>
 <p>Let&#8217;s start with a simple ol.layer.Image and pretend this is the secured layer we&#8217;re looking&nbsp;for:</p>
-<div class="highlight"><pre>var layer = new ol.layer.Image({
+<div class="highlight"><pre><span></span>var layer = new ol.layer.Image({
     extent: extent,
     source: new ol.source.ImageWMS(/** @type {olx.source.ImageWMSOptions} */ ({
         url: url,
@@ -373,7 +373,7 @@ git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
 
 
 <p>We need to retrieve the token, so we define a&nbsp;function:</p>
-<div class="highlight"><pre><span class="nt">function</span> <span class="nt">retrieveToken</span><span class="o">(</span><span class="nt">callback</span><span class="o">)</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="nt">function</span> <span class="nt">retrieveToken</span><span class="o">(</span><span class="nt">callback</span><span class="o">)</span> <span class="p">{</span>
     <span class="n">var</span> <span class="n">req</span> <span class="o">=</span> <span class="n">new</span> <span class="n">XMLHttpRequest</span><span class="p">;</span>
 
     <span class="n">req</span><span class="o">.</span><span class="n">onload</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="err">{</span>
@@ -390,7 +390,7 @@ git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
 
 
 <p>I pass a parameter called <code>callback</code> - that&#8217;s a very important step, otherwise you would not be able to retrieve the token when you actually need it (<span class="caps">AJAX</span> stands for asynchronous). Now you just pass the token to the layer params like&nbsp;this:</p>
-<div class="highlight"><pre>retrieveToken(function(token) {
+<div class="highlight"><pre><span></span>retrieveToken(function(token) {
     layer.getSource().updateParams({
         token: token
     })
@@ -418,7 +418,7 @@ git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
         </small>
         <section>
             <p>I have found a nice way to get decimal value from degrees of longitude and latitude&nbsp;recently:</p>
-<div class="highlight"><pre><span class="kd">function</span> <span class="nx">format</span><span class="p">(</span><span class="nx">coords</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">format</span><span class="p">(</span><span class="nx">coords</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">decimal</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="nx">output</span>  <span class="o">=</span> <span class="p">[],</span>
         <span class="nx">coords</span>  <span class="o">=</span> <span class="nx">coords</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;  &#39;</span><span class="p">);</span> <span class="c1">// it might be &lt;br&gt; as well</span>
@@ -570,7 +570,7 @@ git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
 
 <p>You can<a href="https://www.zimmi.cz/posts/assets/leaflet-chmi-radar-control/radarcontrol.zip"> grab the code if you like</a>. You add the control to the map as any other&nbsp;control:</p>
 
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">radar</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">Radar</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">radar</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">Radar</span><span class="p">();</span>
 <span class="nx">radar</span><span class="p">.</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
 </pre></div>
 

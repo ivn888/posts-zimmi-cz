@@ -46,7 +46,7 @@
         <section>
             <p><a href="http://www.edpp.cz/pdb_mapa-povodnoveho-planu-mesta/">We&#8217;ve rolled out</a> completely new map <span class="caps">GUI</span> at <a href="http://edpp.cz">edpp.cz</a> built on top of <a href="http://ol3js.org">OpenLayers 3</a>. It looks great and has lots of functions both for <span class="caps">BFU</span> and power users. The only pitfall that came with moving away from OpenLayers 2 were remarkable differences in zoom levels between the old map and the new&nbsp;one.</p>
 <p>Each of our maps is defined by our admins (center, zoom level, layers) at the map creation. Lots of links calling different views of map are created as well. They take form of <code>http://edpp.cz/some-map?0=0&amp;1=0...zoom=5</code>. That <code>zoom=&lt;Number&gt;</code> started causing troubles immediately after the map switch. No way my workmates would update them one by one as there were ~4,500 of them. Sounds like a task for little bit of regular expressions and some <span class="caps">SQL</span>&nbsp;updates.</p>
-<div class="highlight"><pre>UPDATE table
+<div class="highlight"><pre><span></span>UPDATE table
     SET column = regexp_replace(column, &#39;zoom=\d&#39;, &#39;zoom=&#39; || subquery.zoom, &#39;g&#39;)
     FROM (
         SELECT regexp_replace(
@@ -75,7 +75,7 @@
         <section>
             <p>It happens that you receive a file with longitude and latitude just in the opposite order that you would like to have. It&#8217;s fairly easy to switch those without loading it into Excel or Calc and doing <code>Ctrl + C</code> and <code>Ctrl + V</code> on&nbsp;columns.</p>
 <p>If you have a file with tabular data that looks like&nbsp;this:</p>
-<div class="highlight"><pre> 50.52, 60.15
+<div class="highlight"><pre><span></span> 50.52, 60.15
  70.96, 80.1
 -55.23, 62.03
 </pre></div>

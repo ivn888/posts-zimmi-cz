@@ -53,29 +53,29 @@
         <p><a href="http://www.vozejkmap.cz">VozejkMap.cz</a> is a Czech <strong>open data</strong> iniatitive that collects data about wheelchair accessible places, e.g. pubs, toilets, cafes etc. As part of being open, they offer a <a href="http://www.vozejkmap.cz/opendata/"><span class="caps">JSON</span> data download</a>. <span class="caps">JSON</span> is a great text format, not so great spatial format (leaving GeoJSON aside) though. Anyway, nothing that <a href="http://posts.zimmi.cz/tag/postgis/">PostGIS</a> wouldn&#8217;t be able to take care&nbsp;of.</p>
 <h3>Let&#8217;s get some&nbsp;data</h3>
 <p>Using curl or wget, let&#8217;s download the <span class="caps">JSON</span>&nbsp;file:</p>
-<div class="highlight"><pre>wget -O /tmp/locations.json http://www.vozejkmap.cz/opendata/locations.json
+<div class="highlight"><pre><span></span>wget -O /tmp/locations.json http://www.vozejkmap.cz/opendata/locations.json
 </pre></div>
 
 
 <p>We need to split them into rows to load each point into one&nbsp;row:</p>
-<div class="highlight"><pre>sed -i &#39;s/\},{/\n},{/g&#39; /tmp/locations.json
+<div class="highlight"><pre><span></span>sed -i &#39;s/\},{/\n},{/g&#39; /tmp/locations.json
 </pre></div>
 
 
 <p>If you peep into the file, you&#8217;ll see lots of unicode characters we don&#8217;t want to have in our pretty little table. Here&#8217;s how we get rid of&nbsp;them:</p>
-<div class="highlight"><pre>echo -en &quot;$(cat /tmp/locations.json)&quot;
+<div class="highlight"><pre><span></span>echo -en &quot;$(cat /tmp/locations.json)&quot;
 </pre></div>
 
 
 <h3>Let&#8217;s load the&nbsp;data</h3>
 <p>Let&#8217;s just be nice and leave the public schema&nbsp;clean.</p>
-<div class="highlight"><pre>CREATE SCHEMA vozejkmap;
+<div class="highlight"><pre><span></span>CREATE SCHEMA vozejkmap;
 SET search_path=vozejkmap, public;
 </pre></div>
 
 
 <p>Load the&nbsp;data:</p>
-<div class="highlight"><pre>CREATE TABLE vozejkmap_raw(id SERIAL PRIMARY KEY, raw text);
+<div class="highlight"><pre><span></span>CREATE TABLE vozejkmap_raw(id SERIAL PRIMARY KEY, raw text);
 COPY vozejkmap_raw(raw) FROM &#39;/tmp/locations.json&#39; DELIMITERS &#39;#&#39; ESCAPE &#39;\&#39; CSV;
 </pre></div>
 
@@ -88,7 +88,7 @@ COPY vozejkmap_raw(raw) FROM &#39;/tmp/locations.json&#39; DELIMITERS &#39;#&#39
 </ol>
 <h3>Let&#8217;s get dirty with spatial&nbsp;data</h3>
 <p>Great, now what? We loaded all the data into one column. That is not very useful, is it? How about splitting them into separate columns with this query? Shall we call it a <code>split_part</code> hell?</p>
-<div class="highlight"><pre>CREATE TABLE vozejkmap AS
+<div class="highlight"><pre><span></span>CREATE TABLE vozejkmap AS
 SELECT
     id,
     trim(
@@ -177,7 +177,7 @@ FROM vozejkmap_raw;
 
 
 <p>It just splits the <span class="caps">JSON</span> data and creates table out of it according to the <a href="http://www.vozejkmap.cz/opendata/">VozejkMap.cz data specification</a>. Before going on we should create a table with location types to join their numeric codes to real&nbsp;names:</p>
-<div class="highlight"><pre>CREATE TABLE location_type (
+<div class="highlight"><pre><span></span>CREATE TABLE location_type (
     id integer PRIMARY KEY,
     description varchar(255)
 );
@@ -200,7 +200,7 @@ INSERT INTO location_type VALUES(14, &#39;Prodejní a servisní místa Škoda Au
 
 
 <p>Let&#8217;s build some geometry column, constraints and indexes. And don&#8217;t forget to get rid of all the mess (the <code>vozejkmap_raw</code> table).</p>
-<div class="highlight"><pre>DROP TABLE vozejkmap_raw;
+<div class="highlight"><pre><span></span>DROP TABLE vozejkmap_raw;
 ALTER TABLE vozejkmap ADD PRIMARY KEY(id);
 -- 4326 geometry is not very useful for measurements, I might get to that next time
 ALTER TABLE vozejkmap ADD COLUMN geom geometry(point, 4326);

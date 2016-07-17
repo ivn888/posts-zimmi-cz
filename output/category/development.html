@@ -75,7 +75,7 @@
 <p>For me, a non-developer, setting the <a href="https://webpack.github.io/">webpack</a> wasn&#8217;t easy. I didn&#8217;t find docs very helpful either. Reading the website for the first time, I didn&#8217;t even understand what it should be used for. I&nbsp;got it working eventually. And I got rid of <code>gulp</code>, <code>gulp-connect</code>, <code>gulp-less</code>, <code>gulp-nodemon</code>, <code>gulp-rename</code>, <code>gulp-replace</code>, <code>gulp-task-listing</code> and <code>gutil</code>. And the whole <code>gulpfile.js</code>. That was a big win for&nbsp;me.</p>
 <h2>But how do you run&nbsp;tasks?</h2>
 <p>Well&hellip;</p>
-<div class="highlight"><pre>npm run start-dev <span class="c1"># which in turn calls the code below</span>
+<div class="highlight"><pre><span></span>npm run start-dev <span class="c1"># which in turn calls the code below</span>
 npm run start-webpack <span class="p">&amp;</span> <span class="nv">NODE_ENV</span><span class="o">=</span>development nodemon server.js <span class="c1"># where start-webpack does the following</span>
 node_modules/webpack-dev-server/bin/webpack-dev-server.js --quiet --inline --hot --watch
 </pre></div>
@@ -98,7 +98,7 @@ node_modules/webpack-dev-server/bin/webpack-dev-server.js --quiet --inline --hot
             <p>Last time I described <a href="https://www.zimmi.cz/posts/2015/twitter-rest-api-data-mining-on-openshift-part-i/">the setup of my OpenShift Twitter crawler</a> and let it running and downloading data. It&#8217;s been more than two months since I started and I got interesting amount of data. I also made a simple <span class="caps">ETL</span> process to load it into my local PostGIS database, which I&#8217;d like to cover in this&nbsp;post.</p>
 <h2>Extract&nbsp;data</h2>
 <p>Each day is written to the separate sqlite file with a name like <code>tw_day_D_M_YYYY</code>. <code>Bash</code> is used to gzip all the files before downloading them from&nbsp;OpenShift.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 ssh openshift <span class="s">&lt;&lt; EOF</span>
 <span class="s">    cd app-root/data</span>
@@ -116,7 +116,7 @@ tar -xzf twitter.tar.gz <span class="o">&amp;&amp;</span>
 
 <h2>Transform&nbsp;data</h2>
 <p>The transformation part operates on downloaded files and merges them into one big <span class="caps">CSV</span> file. That&#8217;s pretty straightforward. Note that&#8217;s quite simple with sqlite flags, some <code>sed</code> and <code>tail</code> commands.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 rm -rf ./data/csv
 mkdir ./data/csv
@@ -124,9 +124,9 @@ mkdir ./data/csv
 <span class="k">for</span> db in ./data/*.db<span class="p">;</span> <span class="k">do</span>
     <span class="nv">FILENAME</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$db</span><span class="k">)</span>
     <span class="nv">DBNAME</span><span class="o">=</span><span class="si">${</span><span class="nv">FILENAME</span><span class="p">%%.db</span><span class="si">}</span>
-    <span class="nv">CSVNAME</span><span class="o">=</span><span class="nv">$DB</span>NAME.csv
-    <span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$DB</span><span class="s2">NAME to csv...&quot;</span>
-    sqlite3 -header -csv <span class="nv">$db</span> <span class="s2">&quot;select * from </span><span class="nv">$DB</span><span class="s2">NAME;&quot;</span> &gt; ./data/csv/<span class="nv">$C</span>SVNAME
+    <span class="nv">CSVNAME</span><span class="o">=</span><span class="nv">$DBNAME</span>.csv
+    <span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$DBNAME</span><span class="s2"> to csv...&quot;</span>
+    sqlite3 -header -csv <span class="nv">$db</span> <span class="s2">&quot;select * from </span><span class="nv">$DBNAME</span><span class="s2">;&quot;</span> &gt; ./data/csv/<span class="nv">$CSVNAME</span>
 <span class="k">done</span>
 
 <span class="nb">cd</span> ./data/csv
@@ -134,15 +134,15 @@ touch tweets.csv
 <span class="nb">echo</span> <span class="k">$(</span>sed -n 1p <span class="k">$(</span>ls -d -1 *.csv <span class="p">|</span> head -n 1<span class="k">))</span> &gt; tweets.csv <span class="c1"># get column names</span>
 
 <span class="k">for</span> csv in tw_*.csv<span class="p">;</span> <span class="k">do</span>
-    <span class="nb">echo</span> <span class="nv">$c</span>sv
-    tail -n +2 <span class="nv">$c</span>sv &gt;&gt; tweets.csv <span class="c1"># get all lines without the first one</span>
+    <span class="nb">echo</span> <span class="nv">$csv</span>
+    tail -n +2 <span class="nv">$csv</span> &gt;&gt; tweets.csv <span class="c1"># get all lines without the first one</span>
 <span class="k">done</span>
 </pre></div>
 
 
 <h2>Load&nbsp;data</h2>
 <p>In the last step, the data is loaded with <span class="caps">SQL</span> <code>\copy</code> command.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 <span class="nb">export</span> <span class="nv">PG_USE_COPY</span><span class="o">=</span>YES
 
@@ -150,7 +150,7 @@ touch tweets.csv
 <span class="nv">SCHEMA</span><span class="o">=</span>dizertace
 <span class="nv">TABLE</span><span class="o">=</span>tweets
 
-psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
+psql <span class="nv">$DATABASE</span> <span class="s">&lt;&lt; EOF</span>
 <span class="s">    DROP TABLE IF EXISTS $SCHEMA.$TABLE;</span>
 <span class="s">    CREATE UNLOGGED TABLE $SCHEMA.$TABLE (id text, author text, author_id text, tweet text, created_at text, lon float, lat float, lang text);</span>
 <span class="s">    \copy $SCHEMA.$TABLE FROM &#39;data/csv/tweets.csv&#39; CSV HEADER DELIMITER &#39;,&#39;</span>
@@ -189,25 +189,25 @@ psql <span class="nv">$DA</span>TABASE <span class="s">&lt;&lt; EOF</span>
 </blockquote>
 <h3>Pitfalls</h3>
 <p>If your application doesn&#8217;t generate any traffic, <strong>OpenShift turns it off</strong>. It wakes up once someone visits again. I had no idea about that and spent some time trying to stop that behavior. Obviously, I could have scheduled a cron job on my laptop pinging it every now and then. Luckily, OpenShift can run cron jobs itself. All you need is to embed a cron cartridge into the running application (and install a bunch of ruby dependencies&nbsp;beforehand).</p>
-<div class="highlight"><pre>rhc cartridge add cron-1.4 -a app-name
+<div class="highlight"><pre><span></span>rhc cartridge add cron-1.4 -a app-name
 </pre></div>
 
 
 <p>Then create <code>.openshift/cron/{hourly,daily,weekly,monthly}</code> folder in the git repository and put your script running a simple curl command into one of&nbsp;those.</p>
-<div class="highlight"><pre>curl http://social-zimmi.rhcloud.com &gt; /dev/null
+<div class="highlight"><pre><span></span>curl http://social-zimmi.rhcloud.com &gt; /dev/null
 </pre></div>
 
 
 <p>Another problem was just around the corner. Once in a while, the app stopped writing data to the database without saying a word. What helped was restarting it - the only automatic way to do so being a <code>git push</code> command. Sadly, I haven&#8217;t found a way to restart the app from within itself; it probably can&#8217;t be&nbsp;done.</p>
 <p>When you <code>git push</code>, the gear stops, builds, deploys and restarts the app. By using hot deployment you can minimize the downtime. Just put the <code>hot_deploy</code> file into <code>.openshift/markers</code> folder.</p>
-<div class="highlight"><pre>git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push
+<div class="highlight"><pre><span></span>git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push
 </pre></div>
 
 
 <p>This solved the problem until I realize that <strong>every restart deleted all the data</strong> collected so far. If your data are to stay safe and sound, <strong>save them in <code>process.env.OPENSHIFT_DATA_DIR</code></strong> (which is <code>app-root/data</code>).</p>
 <h3>Anacron to the&nbsp;rescue</h3>
 <p>How do you push an empty commit once a day? With cron of course. Even better, <strong>anacron</strong>.</p>
-<div class="highlight"><pre>mkdir ~/.anacron
+<div class="highlight"><pre><span></span>mkdir ~/.anacron
 <span class="nb">cd</span> ~/.anacron
 mkdir cron.daily cron.weekly cron.monthly spool etc
 
@@ -234,20 +234,20 @@ cat <span class="s">&lt;&lt;EOT &gt;&gt; ~/.zprofile # I use zsh shell</span>
 
 <p>Anacron is to laptop what cron is to 24/7 running server. It just runs automatic jobs when the laptop is running. If it&#8217;s not and the job should be run, it runs it once the <span class="caps">OS</span> boots. Brilliant&nbsp;idea.</p>
 <p>It runs the following code for me to keep the app writing data to the&nbsp;database.</p>
-<div class="highlight"><pre><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
 <span class="nv">workdir</span><span class="o">=</span><span class="s1">&#39;/home/zimmi/documents/zimmi/dizertace/social&#39;</span>
-<span class="nv">logfile</span><span class="o">=</span>$workdir/restart-gear.log
-date &gt; $logfile
+<span class="nv">logfile</span><span class="o">=</span><span class="nv">$workdir</span>/restart-gear.log
+date &gt; <span class="nv">$logfile</span>
 
 <span class="o">{</span> 
 <span class="nv">HOME</span><span class="o">=</span>/home/zimmi
-<span class="nb">cd</span> $workdir <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<span class="nb">cd</span> <span class="nv">$workdir</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git merge origin/master <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
 git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
 <span class="nb">echo</span> <span class="s2">&quot;Success&quot;</span> <span class="p">;</span> 
-<span class="o">}</span> &gt;&gt; $logfile 2&gt;<span class="p">&amp;</span>1
+<span class="o">}</span> &gt;&gt; <span class="nv">$logfile</span> 2&gt;<span class="p">&amp;</span>1
 </pre></div>
 
 
@@ -274,7 +274,7 @@ git push <span class="o">&amp;&amp;</span> <span class="se">\</span>
             <p>I&#8217;ve seen a bunch of questions on <span class="caps">GIS</span> StackExchange recently related to <a href="http://sfcgal.org/"><span class="caps">SFCGAL</span></a> extension for <a href="http://postgis.net">PostGIS 2.2</a>. Great news are it can be installed with one simple query <code>CREATE EXTENSION postgis_sfcgal</code>. Not so great news are you have to compile it from source for Ubuntu-based <span class="caps">OS</span> (14.04) as recent versions of required packages are not available in the&nbsp;repositories.</p>
 <p>I tested my solution on elementary <span class="caps">OS</span> 0.3.1 based on Ubuntu 14.04. <strong>And it works!</strong> It installs PostgreSQL 9.4 from repositories together with <span class="caps">GDAL</span> and <span class="caps">GEOS</span> and some other libs PostGIS depends on. PostGIS itself, <span class="caps">CGAL</span>, Boost, <span class="caps">MPFR</span> and <span class="caps">GMP</span> are built from&nbsp;source.</p>
 <p>Here comes the code (commented where&nbsp;needed).</p>
-<div class="highlight"><pre>sudo -i
+<div class="highlight"><pre><span></span>sudo -i
 <span class="nb">echo</span> <span class="s2">&quot;deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main&quot;</span> <span class="p">|</span> tee -a /etc/apt/sources.list
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc <span class="p">|</span> sudo apt-key add -
 apt-get update
@@ -323,16 +323,16 @@ tar xzf postgis-2.2.0.tar.gz
 
 <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>nproc<span class="k">)</span>
 
-<span class="k">if</span> <span class="o">[[</span> <span class="nv">$C</span>ORES &gt; <span class="m">1</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-    <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>expr <span class="nv">$C</span>ORES - 1<span class="k">)</span> <span class="c1"># be nice to your PC</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="nv">$CORES</span> &gt; <span class="m">1</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>expr <span class="nv">$CORES</span> - 1<span class="k">)</span> <span class="c1"># be nice to your PC</span>
 <span class="k">fi</span>
 
 <span class="nb">cd</span> gmp-6.0.0
-./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
+./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> mpfr-3.1.3
-./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
+./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> boost_1_59_0
@@ -342,11 +342,11 @@ sudo ldconfig
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> cgal-releases-CGAL-4.6.3
-cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
+cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> SFCGAL-1.2.0/
-cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
+cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> postgis-2.2.0
@@ -383,7 +383,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
         <section>
             <p>Until recently, <span class="caps">SQL</span> <code>IN</code> and <code>EXISTS</code> were almost exactly the same to me. There is a significant difference both in execution plans and time of execution though, as I found out after not being able to speed up my workmate&#8217;s&nbsp;query.</p>
 <p>Assume two not-as-small-as-they-might-be&nbsp;tables:</p>
-<div class="highlight"><pre><span class="k">BEGIN</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><span class="k">BEGIN</span><span class="p">;</span>
 
 <span class="k">CREATE</span> <span class="n">UNLOGGED</span> <span class="k">TABLE</span> <span class="n">test</span><span class="p">.</span><span class="n">small</span> <span class="k">AS</span>
 <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500000</span><span class="p">)</span> <span class="n">id</span><span class="p">;</span>
@@ -397,7 +397,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
 
 
 <p>To find out what rows from <code>test.big</code> is missing in <code>test.small</code>, you&#8217;ll use one of these&nbsp;queries:</p>
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">id</span>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">id</span>
 <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">big</span>
 <span class="k">WHERE</span> <span class="n">id</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">id</span> <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">small</span><span class="p">);</span>
 
@@ -433,7 +433,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
 
 <p>That&#8217;s not a significant difference in time execution, is&nbsp;it?</p>
 <p>What if you want to find out what rows from <code>test.small</code> is missing in <code>test.big</code>?</p>
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">id</span>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">id</span>
 <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">small</span>
 <span class="k">WHERE</span> <span class="n">id</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">id</span> <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">big</span><span class="p">);</span>
 
@@ -483,14 +483,14 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
         <section>
             <p>I&#8217;ve been running some <span class="caps">GRASS</span>/PostGIS computations on a remote server that were taking hours to finish. Once in a while I checked for their state by issuing <code>tail log_XX.log</code> from my laptop to see if they were ready yet. It suddenly became pretty annoying to check five different logs every ten&nbsp;minutes.</p>
 <p>Instead of waiting and checking the logs, I thought it would be great to automate this. And it would be awesome if checking was fun. So I wrote a simple routine that takes log number as an argument (every process logs to a separate logfile) and checks it every minute until it says <em>done</em>. Right after that <code>notify-send</code> gives me a neat popup and Queen starts playing their <em>We are the champions</em> thanks to <code>mpg123</code>.</p>
-<div class="highlight"><pre><span class="ch">#!/usr/bin/env bash</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
 <span class="nv">item</span><span class="o">=</span><span class="nv">$1</span>
 
 <span class="k">while</span> true<span class="p">;</span> <span class="k">do</span>
     <span class="nb">echo</span> <span class="s2">&quot;############ </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2"> ############&quot;</span>
     <span class="nv">x</span><span class="o">=</span><span class="k">$(</span>ssh user@remote.server <span class="s2">&quot;tail -n 30 path/to/my/log_</span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="k">)</span>
 
-    <span class="k">if</span> <span class="o">[[</span> $<span class="nv">x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
+    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$x</span> <span class="o">==</span> *<span class="s2">&quot;done&quot;</span>* <span class="o">]]</span>
         <span class="k">then</span>
             notify-send -u critical <span class="s2">&quot;Finally </span><span class="si">${</span><span class="nv">item</span><span class="si">}</span><span class="s2">&quot;</span>
             mpg123 -n <span class="m">250</span> ~/Music/queen-we_are_the_champions.mp3
@@ -518,19 +518,19 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
             <p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got it working&nbsp;eventually.</p>
 <h2>Things to know before taking the&nbsp;leap</h2>
 <p>Some domain providers don&#8217;t support <span class="caps">CNAME</span> changes for root domains (zimmi.cz in my case). This means you can&#8217;t simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do&nbsp;so:</p>
-<div class="highlight"><pre>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
+<div class="highlight"><pre><span></span>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
 </pre></div>
 
 
 <p>Which is great until you realize you&#8217;ve just created two different websites. That&#8217;s where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
-<div class="highlight"><pre>zimmi.cz A 174.129.25.170
+<div class="highlight"><pre><span></span>zimmi.cz A 174.129.25.170
 </pre></div>
 
 
 <p>Now everything works fine and you have your <code>www.domain.tld</code> up and&nbsp;running.</p>
 <h2>OpenShift&nbsp;subdomains</h2>
 <p>I wasn&#8217;t successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing <span class="caps">DNS</span> to&nbsp;it:</p>
-<div class="highlight"><pre>posts.zimmi.cz A 174.179.25.170
+<div class="highlight"><pre><span></span>posts.zimmi.cz A 174.179.25.170
 www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
 </pre></div>
 
@@ -561,7 +561,7 @@ www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
         <a href="https://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="https://www.zimmi.cz/posts/tag/bash.html">bash</a>        | <a href="https://www.zimmi.cz/posts/category/development.html">development</a>
         </small>
         <section>
-            <div class="highlight"><pre><span class="x">for f in *; do mv &quot;</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot; &quot;prepend_</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot;; done</span>
+            <div class="highlight"><pre><span></span><span class="x">for f in *; do mv &quot;</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot; &quot;prepend_</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot;; done</span>
 </pre></div>
 
 
@@ -580,7 +580,7 @@ www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
         <section>
             <p>I&#8217;ve upgraded a handful of Geoserver installations and it has never been flawless. If you&#8217;re lucky you end up with just <em>some</em> layers missing, if you&#8217;re not, you&#8217;ll miss a bunch of them (together with layergroups, some stores, workspaces might screw up&nbsp;etc.).</p>
 <p>But how do you check for missing data before switching to the newer version? Thanks to the <a href="http://docs.geoserver.org/stable/en/user/rest/api/index.html"><span class="caps">REST</span> <span class="caps">API</span> implemented within Geoserver</a>, it&#8217;s rather&nbsp;easy.</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
 <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
 

@@ -52,7 +52,7 @@
     <section>
         <p><a href="https://gis.stackexchange.com/questions/107927/counting-self-intersections-of-linestring-using-postgis/140674#140674">Is there a way of using PostgreSQL + PostGIS for finding the number of self intersections in a linestring?</a> was a question that made me think of this problem. I came up with a solution that takes just a few lines of&nbsp;code.</p>
 <p>Assume the following&nbsp;geometries:</p>
-<div class="highlight"><pre>CREATE TABLE test2 (
+<div class="highlight"><pre><span></span>CREATE TABLE test2 (
     id integer NOT NULL,
     wkb_geometry geometry(LineString,5514)
 );
@@ -65,7 +65,7 @@ COPY test2 (id, wkb_geometry) FROM stdin;
 
 <p><img src="https://www.zimmi.cz/posts/assets/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
 <p>Note that those geometries are valid while not being simple, thus, <code>ST_IsValidReason()</code> wouldn&#8217;t help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those&nbsp;two.</p>
-<div class="highlight"><pre>WITH noded AS (
+<div class="highlight"><pre><span></span>WITH noded AS (
 SELECT id, COUNT(id)
 FROM (
     SELECT DISTINCT (ST_DumpPoints(ST_Node(wkb_geometry))).geom, id

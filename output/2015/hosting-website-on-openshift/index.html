@@ -52,19 +52,19 @@
         <p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got it working&nbsp;eventually.</p>
 <h2>Things to know before taking the&nbsp;leap</h2>
 <p>Some domain providers don&#8217;t support <span class="caps">CNAME</span> changes for root domains (zimmi.cz in my case). This means you can&#8217;t simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do&nbsp;so:</p>
-<div class="highlight"><pre>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
+<div class="highlight"><pre><span></span>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
 </pre></div>
 
 
 <p>Which is great until you realize you&#8217;ve just created two different websites. That&#8217;s where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
-<div class="highlight"><pre>zimmi.cz A 174.129.25.170
+<div class="highlight"><pre><span></span>zimmi.cz A 174.129.25.170
 </pre></div>
 
 
 <p>Now everything works fine and you have your <code>www.domain.tld</code> up and&nbsp;running.</p>
 <h2>OpenShift&nbsp;subdomains</h2>
 <p>I wasn&#8217;t successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing <span class="caps">DNS</span> to&nbsp;it:</p>
-<div class="highlight"><pre>posts.zimmi.cz A 174.179.25.170
+<div class="highlight"><pre><span></span>posts.zimmi.cz A 174.179.25.170
 www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
 </pre></div>
 

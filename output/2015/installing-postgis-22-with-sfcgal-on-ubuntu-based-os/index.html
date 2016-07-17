@@ -54,7 +54,7 @@
         <p>I&#8217;ve seen a bunch of questions on <span class="caps">GIS</span> StackExchange recently related to <a href="http://sfcgal.org/"><span class="caps">SFCGAL</span></a> extension for <a href="http://postgis.net">PostGIS 2.2</a>. Great news are it can be installed with one simple query <code>CREATE EXTENSION postgis_sfcgal</code>. Not so great news are you have to compile it from source for Ubuntu-based <span class="caps">OS</span> (14.04) as recent versions of required packages are not available in the&nbsp;repositories.</p>
 <p>I tested my solution on elementary <span class="caps">OS</span> 0.3.1 based on Ubuntu 14.04. <strong>And it works!</strong> It installs PostgreSQL 9.4 from repositories together with <span class="caps">GDAL</span> and <span class="caps">GEOS</span> and some other libs PostGIS depends on. PostGIS itself, <span class="caps">CGAL</span>, Boost, <span class="caps">MPFR</span> and <span class="caps">GMP</span> are built from&nbsp;source.</p>
 <p>Here comes the code (commented where&nbsp;needed).</p>
-<div class="highlight"><pre>sudo -i
+<div class="highlight"><pre><span></span>sudo -i
 <span class="nb">echo</span> <span class="s2">&quot;deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main&quot;</span> <span class="p">|</span> tee -a /etc/apt/sources.list
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc <span class="p">|</span> sudo apt-key add -
 apt-get update
@@ -103,16 +103,16 @@ tar xzf postgis-2.2.0.tar.gz
 
 <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>nproc<span class="k">)</span>
 
-<span class="k">if</span> <span class="o">[[</span> <span class="nv">$C</span>ORES &gt; <span class="m">1</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-    <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>expr <span class="nv">$C</span>ORES - 1<span class="k">)</span> <span class="c1"># be nice to your PC</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="nv">$CORES</span> &gt; <span class="m">1</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>expr <span class="nv">$CORES</span> - 1<span class="k">)</span> <span class="c1"># be nice to your PC</span>
 <span class="k">fi</span>
 
 <span class="nb">cd</span> gmp-6.0.0
-./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
+./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> mpfr-3.1.3
-./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
+./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> boost_1_59_0
@@ -122,11 +122,11 @@ sudo ldconfig
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> cgal-releases-CGAL-4.6.3
-cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
+cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> SFCGAL-1.2.0/
-cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$C</span>ORES <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$C</span>ORES install
+cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
 <span class="nb">cd</span> postgis-2.2.0

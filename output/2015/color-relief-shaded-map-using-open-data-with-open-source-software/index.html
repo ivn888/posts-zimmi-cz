@@ -57,7 +57,7 @@
 <p>I chose <strong>Austria</strong> to play with the&nbsp;data.</p>
 <h2>Obtaining the&nbsp;data</h2>
 <p>It&#8217;s so easy I doubt it&#8217;s even worth a word. Get zipped data with <code>wget</code>, extract them to a&nbsp;directory.</p>
-<div class="highlight"><pre>wget https://cws-download.eea.europa.eu/in-situ/eudem/eu-dem/EUD_CP-DEMS_4500025000-AA.rar -O dem.rar
+<div class="highlight"><pre><span></span>wget https://cws-download.eea.europa.eu/in-situ/eudem/eu-dem/EUD_CP-DEMS_4500025000-AA.rar -O dem.rar
 unrar dem.rar -d copernicus
 <span class="nb">cd</span> copernicus
 </pre></div>
@@ -65,7 +65,7 @@ unrar dem.rar -d copernicus
 
 <h2>Hillshade and color&nbsp;relief</h2>
 <p>Use <span class="caps">GDAL</span> to create hillshade with a simple command. No need to use <code>-s</code> flag to convert units, it already comes in meters. Exaggerate heights a bit with <code>-z</code> flag.</p>
-<div class="highlight"><pre>gdaldem hillshade EUD_CP-DEMS_4500025000-AA.tif hillshade.tif -z 3
+<div class="highlight"><pre><span></span>gdaldem hillshade EUD_CP-DEMS_4500025000-AA.tif hillshade.tif -z 3
 </pre></div>
 
 
@@ -141,7 +141,7 @@ unrar dem.rar -d copernicus
 </table>
 
 <p>I created a color relief with another <span class="caps">GDAL</span>&nbsp;command.</p>
-<div class="highlight"><pre>gdaldem color-relief EUD_CP-DEMS_4500025000-AA.tif ramp_humid.txt color_relief.tif
+<div class="highlight"><pre><span></span>gdaldem color-relief EUD_CP-DEMS_4500025000-AA.tif ramp_humid.txt color_relief.tif
 </pre></div>
 
 
@@ -149,7 +149,7 @@ unrar dem.rar -d copernicus
 <p class="text-center"><img title="Color relief" src="https://www.zimmi.cz/posts/assets/color-relief-shaded-map-using-open-data-and-open-source-software/color_relief.png" class="center"></p>
 
 <p>Add a bit of compression and some overviews to make it smaller and load&nbsp;faster.</p>
-<div class="highlight"><pre>gdal_translate -of GTiff -co <span class="nv">TILED</span><span class="o">=</span>YES -co <span class="nv">COMPRESS</span><span class="o">=</span>DEFLATE color_relief.tif color_relief.compress.tif
+<div class="highlight"><pre><span></span>gdal_translate -of GTiff -co <span class="nv">TILED</span><span class="o">=</span>YES -co <span class="nv">COMPRESS</span><span class="o">=</span>DEFLATE color_relief.tif color_relief.compress.tif
 gdal_translate -of GTiff -co <span class="nv">TILED</span><span class="o">=</span>YES -co <span class="nv">COMPRESS</span><span class="o">=</span>DEFLATE hillshade.tif hillshade.compress.tif
 rm color_relief.tif
 rm hillshade.tif

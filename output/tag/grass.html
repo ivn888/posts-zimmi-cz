@@ -55,7 +55,7 @@
 <p>Two of those four are rather problematic with PostGIS: line smoothing and diffing the original geometries (I didn&#8217;t get to the last one, so it might be 3 of 4 as&nbsp;well).</p>
 <h2>Hello, I&#8217;m <span class="caps">GRASS</span></h2>
 <p>I haven&#8217;t used <span class="caps">GRASS</span> for ages and even back then I didn&#8217;t get to know it much, but it saved the day for me this&nbsp;time.</p>
-<div class="highlight"><pre>grass -text path/to/mapset -c
+<div class="highlight"><pre><span></span>grass -text path/to/mapset -c
 
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>ilot_050 <span class="nv">layer</span><span class="o">=</span>ilot_2015_050 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 <span class="c1"># turn the snapping off, I don&#39;t want the input changed in any way, even though it is not topologically valid</span>

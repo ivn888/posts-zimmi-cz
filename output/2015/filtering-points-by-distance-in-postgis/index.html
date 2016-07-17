@@ -51,7 +51,7 @@
     <section>
         <p>Filtering really big (millions of rows) point datasets by distance might get catchy when solved with wrong PostGIS functions. Without spatial indexes PostGIS would take ages to finish such&nbsp;task.</p>
 <p><a href="https://gis.stackexchange.com/questions/148184/why-the-execution-of-a-query-is-very-slow-using-postgis">Someone over StackExchange asked</a> why the next query had been running for 15 hours (!) with no&nbsp;result:</p>
-<div class="highlight"><pre><span class="k">SELECT</span>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span>
     <span class="n">a</span><span class="p">.</span><span class="n">gid</span><span class="p">,</span>
     <span class="n">b</span><span class="p">.</span><span class="n">gid</span><span class="p">,</span>
     <span class="n">ST_Distance</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">geom</span><span class="p">,</span><span class="n">b</span><span class="p">.</span><span class="n">geom</span><span class="p">)</span>
@@ -78,7 +78,7 @@
 <li><code>ST_Intersects()</code> finally checks whether the point should be included in the&nbsp;result.</li>
 </ol>
 <p>That was a great challenge to test my knowledge of how PostGIS works and here&#8217;s my shot at&nbsp;it:</p>
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="p">(</span>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="p">(</span>
     <span class="k">SELECT</span>
         <span class="n">a</span><span class="p">.</span><span class="n">gid</span><span class="p">,</span>
         <span class="n">b</span><span class="p">.</span><span class="n">gid</span><span class="p">,</span>

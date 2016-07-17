@@ -51,7 +51,7 @@
     </small>
     <section>
         <p>Creating a rectangular grid to cover a given extent with same sized cells is one of the basic <span class="caps">GIS</span> tasks I&#8217;ve had to solve several times so far. I used <span class="caps">QGIS</span> or some Python to give me a bunch of <code>INSERT</code> statements to run in PostGIS database, now I&#8217;ve come with a final solution at&nbsp;last.</p>
-<div class="highlight"><pre>CREATE OR REPLACE FUNCTION cm_grid(
+<div class="highlight"><pre><span></span>CREATE OR REPLACE FUNCTION cm_grid(
     blx float8, -- bottom left x coordinate
     bly float8, -- bottom left y coordinate
     trx float8, -- top right x coordinate
@@ -131,7 +131,7 @@ LANGUAGE plpgsql;
 
 
 <p>And you call it like&nbsp;this:</p>
-<div class="highlight"><pre>CREATE TABLE grid AS
+<div class="highlight"><pre><span></span>CREATE TABLE grid AS
 SELECT *
 FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
 </pre></div>

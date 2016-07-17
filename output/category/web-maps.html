@@ -48,7 +48,7 @@
 <h2>Subgroup&nbsp;clustering</h2>
 <p>Vozejkmap data is categorized based on the place type (banks, parking lots, pubs, &hellip;). One of the core features of map showing such data should be the easy way to turn these categories on and&nbsp;off.</p>
 <p>As far as I know, it&#8217;s not trivial to do this with the standard Leaflet library. Extending <code>L.control.layers</code> and implement its <code>addOverlay</code>, <code>removeOverlay</code> methods on your own might be the way to add needed behavior. Fortunately, there&#8217;s an easier option thanks to <a href="https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup">Leaflet.FeatureGroup.SubGroup</a> that can handle such use case and is really straightforward. See the code&nbsp;below.</p>
-<div class="highlight"><pre><span class="nx">cluster</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">markerClusterGroup</span><span class="p">({</span>
+<div class="highlight"><pre><span></span><span class="nx">cluster</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">markerClusterGroup</span><span class="p">({</span>
     <span class="nx">chunkedLoading</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">chunkInterval</span><span class="o">:</span> <span class="mi">500</span>
 <span class="p">});</span>
@@ -72,7 +72,7 @@
 <p>Turf is one of those libraries I get amazed easily with, spending a week trying to find a use case, finally putting it aside with <em>&#8220;I&#8217;ll get back to it later&#8221;</em>. I usually don&#8217;t. This time it&#8217;s&nbsp;different.</p>
 <p>I use Turf to get the nearest neighbor for any marker on click. My first try ended up with the same marker being the result as it was a member of a feature collection passed to <code>turf.nearest()</code> method. After snooping around the docs I found <code>turf.remove()</code> method that can filter GeoJSON based on key-value&nbsp;pair.</p>
 <p>Another handy function is <code>turf.distance()</code> that gives you distance between two points. The code below adds an information about the nearest point and its distance into the&nbsp;popup.</p>
-<div class="highlight"><pre><span class="c1">// data is a geojson feature collection</span>
+<div class="highlight"><pre><span></span><span class="c1">// data is a geojson feature collection</span>
 <span class="nx">json</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">geoJson</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">onEachFeature</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">feature</span><span class="p">,</span> <span class="nx">layer</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">layer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
@@ -134,12 +134,12 @@
 <p>My goal was to create an animation of all departures from Vaclav Havel airport during one day. These data can be obtained at <a href="http://www.flightstats.com/">FlightStats</a>, I didn&#8217;t find a way make this process automatic though. <a href="http://openflights.org/">OpenFlights</a> might be better source&nbsp;then.</p>
 <h2><span class="caps">SVG</span>&nbsp;creation</h2>
 <p><a href="http://kartograph.org/">Kartograph</a> is a great tool both for <span class="caps">SVG</span> generation and scripting. What a pity it&#8217;s probably a dead project according to the last commit date. After installing Python part of library used to create <span class="caps">SVG</span> files out of vector geometries, it can be run with something like&nbsp;this:</p>
-<div class="highlight"><pre>kartograph --output map.svg --pretty-print --style style.css config.json
+<div class="highlight"><pre><span></span>kartograph --output map.svg --pretty-print --style style.css config.json
 </pre></div>
 
 
 <p>Pretty self-explanatory, let&#8217;s have a look at config&nbsp;file:</p>
-<div class="highlight"><pre><span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;layers&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;countries&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;src&quot;</span><span class="o">:</span> <span class="s2">&quot;ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp&quot;</span><span class="p">,</span>
@@ -189,7 +189,7 @@
 <li><code>export</code>ing coordinates rounded to one decimal place makes your <span class="caps">SVG</span> a lot&nbsp;smaller.</li>
 </ul>
 <p>You can change <span class="caps">SVG</span> look with simple <span class="caps">CSS</span>, just be sure to use layer names as <span class="caps">CSS</span>&nbsp;ids:</p>
-<div class="highlight"><pre><span class="nn">#airports</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="nn">#airports</span> <span class="p">{</span>
     <span class="n">fill</span><span class="o">:</span> <span class="m">#CC0000</span><span class="p">;</span>
     <span class="n">fill</span><span class="o">-</span><span class="nb">opacity</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
     <span class="n">stroke</span><span class="o">:</span> <span class="m">#660000</span><span class="p">;</span>
@@ -217,12 +217,12 @@
 <h2>Data adjustment <span class="amp">&amp;</span>&nbsp;animation</h2>
 <p><strong><span class="caps">SMIL</span></strong> is a <span class="caps">XML</span> based language for multimedia representation. It comes ready for timing, animation, visual transitions etc. I guess it might be considered easier to read for a web development beginner. Once you start using it, you immediately realize it suffers from the same disease like <span class="caps">XML</span> does: it is so&nbsp;wordy!</p>
 <p>Let&#8217;s get back to my example. To animate airports one by one, let&#8217;s give them unique ids, so they look something&nbsp;like:</p>
-<div class="highlight"><pre><span class="nt">&lt;circle</span> <span class="na">id=</span><span class="s">&quot;brs&quot;</span> <span class="na">stroke-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">fill-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">cx=</span><span class="s">&quot;476.597304864&quot;</span> <span class="na">cy=</span><span class="s">&quot;539.487783171&quot;</span> <span class="na">data-abbrev=</span><span class="s">&quot;BRS&quot;</span> <span class="na">data-name=</span><span class="s">&quot;Bristol Int&#39;l&quot;</span> <span class="na">r=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
+<div class="highlight"><pre><span></span><span class="nt">&lt;circle</span> <span class="na">id=</span><span class="s">&quot;brs&quot;</span> <span class="na">stroke-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">fill-opacity=</span><span class="s">&quot;0&quot;</span> <span class="na">cx=</span><span class="s">&quot;476.597304864&quot;</span> <span class="na">cy=</span><span class="s">&quot;539.487783171&quot;</span> <span class="na">data-abbrev=</span><span class="s">&quot;BRS&quot;</span> <span class="na">data-name=</span><span class="s">&quot;Bristol Int&#39;l&quot;</span> <span class="na">r=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
 </pre></div>
 
 
 <p>That&#8217;s something you do by hand as kartograph doesn&#8217;t give ids to <span class="caps">SVG</span> elements. Once you&#8217;re done with that, you can run <span class="caps">SMIL</span> animation. If you look closer at the final map, you&#8217;ll notice there are three properties animated for each airport: fill opacity, stroke opacity and radius. Each property needs to use separate <span class="caps">SMIL</span> <code>&lt;animate /&gt;</code>, which might look like the one&nbsp;below:</p>
-<div class="highlight"><pre><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;fill-opacity&quot;</span>
+<div class="highlight"><pre><span></span><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;fill-opacity&quot;</span>
     <span class="na">id=</span><span class="s">&quot;kos_ani_fo&quot;</span>
     <span class="na">from=</span><span class="s">&quot;0&quot;</span>
     <span class="na">to=</span><span class="s">&quot;1&quot;</span>
@@ -253,12 +253,12 @@
 
 <p>I guess you get the idea how long this would take for more airports. Make sure to notice that <span class="caps">SMIL</span> can start animation based on another animation&#8217;s end (<code>osr_ani.end</code>) - that&#8217;s pretty&nbsp;neat.</p>
 <p>Airways animation works almost the same. First, add unique id to each&nbsp;airway:</p>
-<div class="highlight"><pre><span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">&quot;M550.9,562.9L568.0,495.0 &quot;</span> <span class="na">id=</span><span class="s">&quot;travel-arn&quot;</span><span class="nt">/&gt;</span>
+<div class="highlight"><pre><span></span><span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">&quot;M550.9,562.9L568.0,495.0 &quot;</span> <span class="na">id=</span><span class="s">&quot;travel-arn&quot;</span><span class="nt">/&gt;</span>
 </pre></div>
 
 
 <p>Second, start animation after all the airports are visible on the map. Notice the initial definition of <code>d</code> attribute - it&#8217;s a line with zero&nbsp;length.</p>
-<div class="highlight"><pre><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;d&quot;</span>
+<div class="highlight"><pre><span></span><span class="nt">&lt;animate</span> <span class="na">attributeName=</span><span class="s">&quot;d&quot;</span>
     <span class="na">id=</span><span class="s">&quot;path_ani&quot;</span>
     <span class="na">from=</span><span class="s">&quot;M550.9,562.9L550.9,562.9&quot;</span>
     <span class="na">to=</span><span class="s">&quot;M550.9,562.9L568.0,495.0&quot;</span>
@@ -270,7 +270,7 @@
 
 
 <p>Once airways animation has finished, let airplanes fly around the globe with a simple JavaScript&nbsp;function:</p>
-<div class="highlight"><pre><span class="c">/**</span>
+<div class="highlight"><pre><span></span><span class="c">/**</span>
 <span class="c"> * @param  number coef  scale radius by number of flights to the given destination</span>
 <span class="c"> * @param  string flight_id</span>
 <span class="c"> */</span>
@@ -325,7 +325,7 @@
 <p><strong>tl;dr: I hate&nbsp;Esri.</strong></p>
 <p>I found myself in need to access secured layers published via <span class="caps">WMS</span> on ArcGIS Server using username and password I was given, so here&#8217;s a little how-to for anyone who would have to do the&nbsp;same.</p>
 <p>Let&#8217;s start with a simple ol.layer.Image and pretend this is the secured layer we&#8217;re looking&nbsp;for:</p>
-<div class="highlight"><pre>var layer = new ol.layer.Image({
+<div class="highlight"><pre><span></span>var layer = new ol.layer.Image({
     extent: extent,
     source: new ol.source.ImageWMS(/** @type {olx.source.ImageWMSOptions} */ ({
         url: url,
@@ -339,7 +339,7 @@
 
 
 <p>We need to retrieve the token, so we define a&nbsp;function:</p>
-<div class="highlight"><pre><span class="nt">function</span> <span class="nt">retrieveToken</span><span class="o">(</span><span class="nt">callback</span><span class="o">)</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="nt">function</span> <span class="nt">retrieveToken</span><span class="o">(</span><span class="nt">callback</span><span class="o">)</span> <span class="p">{</span>
     <span class="n">var</span> <span class="n">req</span> <span class="o">=</span> <span class="n">new</span> <span class="n">XMLHttpRequest</span><span class="p">;</span>
 
     <span class="n">req</span><span class="o">.</span><span class="n">onload</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="err">{</span>
@@ -356,7 +356,7 @@
 
 
 <p>I pass a parameter called <code>callback</code> - that&#8217;s a very important step, otherwise you would not be able to retrieve the token when you actually need it (<span class="caps">AJAX</span> stands for asynchronous). Now you just pass the token to the layer params like&nbsp;this:</p>
-<div class="highlight"><pre>retrieveToken(function(token) {
+<div class="highlight"><pre><span></span>retrieveToken(function(token) {
     layer.getSource().updateParams({
         token: token
     })

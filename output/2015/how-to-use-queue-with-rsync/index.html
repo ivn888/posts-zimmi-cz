@@ -51,17 +51,17 @@
     </small>
     <section>
         <p>Having more than 120K <span class="caps">5MB</span>+ images that should be moved to the server is a great oportunity for some automatic bash processing. It might be good idea to use <a href="http://www.imagemagick.org/script/index.php">ImageMagick</a> <a href="http://www.imagemagick.org/script/convert.php">convert tool</a> to make images smaller in a simple for loop. <a href="http://www.gnu.org/software/parallel/"><span class="caps">GNU</span> Parallel</a> can significantly increase the performance by running one job per <span class="caps">CPU</span>&nbsp;core.</p>
-<div class="highlight"><pre>parallel --verbose convert <span class="o">{}</span> -quality 40% <span class="o">{}</span> ::: *.jpg
+<div class="highlight"><pre><span></span>parallel --verbose convert <span class="o">{}</span> -quality 40% <span class="o">{}</span> ::: *.jpg
 </pre></div>
 
 
 <p>The <code>parallel</code> modifies several images per second. Uploading these right away seems to be the next step. But how do you tell <code>rsync</code> to check for modified files every now and then? Another for loop mixed with <code>sleep</code> would work, but it just doesn&#8217;t feel&nbsp;right.</p>
 <p>Luckily, there&#8217;s a <a href="http://linux.die.net/man/1/inotifywait"><code>inotifywait</code></a> tool capable of watching changes to files and taking actions based on those&nbsp;changes.</p>
-<div class="highlight"><pre>inotifywait -e close_write -m --format <span class="s1">&#39;%f&#39;</span> . <span class="p">|</span> <span class="se">\</span>
+<div class="highlight"><pre><span></span>inotifywait -e close_write -m --format <span class="s1">&#39;%f&#39;</span> . <span class="p">|</span> <span class="se">\</span>
 <span class="k">while</span> <span class="nb">read</span> file
 <span class="k">do</span>
-    <span class="nb">echo</span> <span class="nv">$f</span>ile
-    rsync -OWRD0Pq --ignore-existing <span class="nv">$f</span>ile data@localhost
+    <span class="nb">echo</span> <span class="nv">$file</span>
+    rsync -OWRD0Pq --ignore-existing <span class="nv">$file</span> data@localhost
 <span class="k">done</span>
 </pre></div>
 

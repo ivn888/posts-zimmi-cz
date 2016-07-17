@@ -46,7 +46,7 @@
         <section>
             <p><span class="caps">GDAL</span> with its ogr2ogr, ogrinfo and many more is one of the best open source tools to do anything to your spatial data. It is a&nbsp;command line tool, which sort of determines it to be used with <span class="caps">UNIX</span> systems, but you might bump into a Windows guy trying to use it as well once in a&nbsp;while.</p>
 <p>Be careful, it behaves differently on different <span class="caps">OS</span>. Let&#8217;s say you do something like this on <span class="caps">UNIX</span>:</p>
-<div class="highlight"><pre>ogr2ogr -f GeoJSON -where &quot;attribute IN (&#39;value1&#39;, &#39;value2&#39;)&quot; output.json input.json
+<div class="highlight"><pre><span></span>ogr2ogr -f GeoJSON -where &quot;attribute IN (&#39;value1&#39;, &#39;value2&#39;)&quot; output.json input.json
 </pre></div>
 
 
@@ -65,7 +65,7 @@
         </small>
         <section>
             <p>I found an <a href="http://stackoverflow.com/questions/25952380/php-find-a-maximum-average-for-10-subsequent-numbers-in-a-list-of-50-random-numb">interesting question</a> at StackOverflow asking for help finding solution to what I have already mentioned in the title, with <span class="caps">PHP</span>. I gave it a try before reading answers and came up with the following&nbsp;code:</p>
-<div class="highlight"><pre><span class="p">$</span><span class="nv">avg</span><span class="x">  = // value we are looking for</span>
+<div class="highlight"><pre><span></span><span class="p">$</span><span class="nv">avg</span><span class="x">  = // value we are looking for</span>
 <span class="p">$</span><span class="nv">size</span><span class="x"> = count(</span><span class="p">$</span><span class="nv">numbers</span><span class="x">);</span>
 
 <span class="x">for (</span><span class="p">$</span><span class="nv">i</span><span class="x"> = 0; </span><span class="p">$</span><span class="nv">i</span><span class="x"> &lt; </span><span class="p">$</span><span class="nv">size</span><span class="x">; </span><span class="p">$</span><span class="nv">i</span><span class="x"> += 1) </span><span class="err">{</span><span class="x"></span>
@@ -84,7 +84,7 @@
 
 
 <p>That was the first that I could think of. And it worked. The answer given by Dave Chen was much more elegant than my solution (although I think it does something a bit different, but that&#8217;s not the point&nbsp;here):</p>
-<div class="highlight"><pre><span class="p">$</span><span class="nv">number</span><span class="x"> = 10; //numbers in a set</span>
+<div class="highlight"><pre><span></span><span class="p">$</span><span class="nv">number</span><span class="x"> = 10; //numbers in a set</span>
 <span class="p">$</span><span class="nv">max</span><span class="x"> = 0;</span>
 <span class="p">$</span><span class="nv">index</span><span class="x"> = 0;</span>
 
@@ -140,7 +140,7 @@
         <section>
             <p>It happens that you receive a file with longitude and latitude just in the opposite order that you would like to have. It&#8217;s fairly easy to switch those without loading it into Excel or Calc and doing <code>Ctrl + C</code> and <code>Ctrl + V</code> on&nbsp;columns.</p>
 <p>If you have a file with tabular data that looks like&nbsp;this:</p>
-<div class="highlight"><pre> 50.52, 60.15
+<div class="highlight"><pre><span></span> 50.52, 60.15
  70.96, 80.1
 -55.23, 62.03
 </pre></div>
@@ -176,7 +176,7 @@
 <p>I love having clean <span class="caps">OS</span>. That&#8217;s what <a href="http://docker.com">Docker</a> is all about - for me. Running PieCrust on Docker is really easy, it does not clutter your <span class="caps">PC</span> and it just&nbsp;works.</p>
 <p>If you ever want to use PieCrust on Docker, why don&#8217;t you start with this code?
     <span class="caps">FROM</span>&nbsp;centos:centos6</p>
-<div class="highlight"><pre><span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">mirror</span><span class="nc">.webtatic.com</span><span class="o">/</span><span class="nt">yum</span><span class="o">/</span><span class="nt">el6</span><span class="o">/</span><span class="nt">latest</span><span class="nc">.rpm</span>
+<div class="highlight"><pre><span></span><span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">mirror</span><span class="nc">.webtatic.com</span><span class="o">/</span><span class="nt">yum</span><span class="o">/</span><span class="nt">el6</span><span class="o">/</span><span class="nt">latest</span><span class="nc">.rpm</span>
 <span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">download</span><span class="nc">.fedoraproject.org</span><span class="o">/</span><span class="nt">pub</span><span class="o">/</span><span class="nt">epel</span><span class="o">/</span><span class="nt">6</span><span class="o">/</span><span class="nt">x86_64</span><span class="o">/</span><span class="nt">epel-release-6-8</span><span class="nc">.noarch.rpm</span>
 <span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">rpms</span><span class="nc">.famillecollet.com</span><span class="o">/</span><span class="nt">enterprise</span><span class="o">/</span><span class="nt">remi-release-6</span><span class="nc">.rpm</span>
 
@@ -207,7 +207,7 @@
         </small>
         <section>
             <p>I have found a nice way to get decimal value from degrees of longitude and latitude&nbsp;recently:</p>
-<div class="highlight"><pre><span class="kd">function</span> <span class="nx">format</span><span class="p">(</span><span class="nx">coords</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">format</span><span class="p">(</span><span class="nx">coords</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">decimal</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="nx">output</span>  <span class="o">=</span> <span class="p">[],</span>
         <span class="nx">coords</span>  <span class="o">=</span> <span class="nx">coords</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;  &#39;</span><span class="p">);</span> <span class="c1">// it might be &lt;br&gt; as well</span>

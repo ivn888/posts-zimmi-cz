@@ -49,7 +49,7 @@
 <h2><span class="caps">QGIS</span> project&nbsp;file</h2>
 <p><span class="caps">QGIS</span> project, the .qgs file, is a pure <span class="caps">XML</span> and, unlike <span class="caps">ESRI</span>&#8217;s .mxd, can be edited with any text editor. That&#8217;s great advantage when you need to prepare one project for many different operators. My project has to load some database layers that should be different for different operators that have different database&nbsp;accounts.</p>
 <p>How do you do that? It&#8217;s enough to create a project using your own credentials and then replace them with <code>USERNAME</code> and <code>PASSWORD</code> strings as seen below. What happens when the user loads the&nbsp;project?</p>
-<div class="highlight"><pre><span class="nt">&lt;datasource&gt;</span>dbname=&#39;database&#39; host=host port=5432 user=&#39;USERNAME&#39; password=&#39;PASSWORD&#39; sslmode=require key=&#39;qgis_id&#39; srid=5514 type=POLYGON table=&quot;schema&quot;.&quot;table&quot; (wkb_geometry) sql=<span class="nt">&lt;/datasource&gt;</span>
+<div class="highlight"><pre><span></span><span class="nt">&lt;datasource&gt;</span>dbname=&#39;database&#39; host=host port=5432 user=&#39;USERNAME&#39; password=&#39;PASSWORD&#39; sslmode=require key=&#39;qgis_id&#39; srid=5514 type=POLYGON table=&quot;schema&quot;.&quot;table&quot; (wkb_geometry) sql=<span class="nt">&lt;/datasource&gt;</span>
 </pre></div>
 
 
