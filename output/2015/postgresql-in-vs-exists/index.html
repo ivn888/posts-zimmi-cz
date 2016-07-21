@@ -51,7 +51,7 @@
     <section>
         <p>Until recently, <span class="caps">SQL</span> <code>IN</code> and <code>EXISTS</code> were almost exactly the same to me. There is a significant difference both in execution plans and time of execution though, as I found out after not being able to speed up my workmate&#8217;s&nbsp;query.</p>
 <p>Assume two not-as-small-as-they-might-be&nbsp;tables:</p>
-<div class="highlight"><pre><span></span><span class="k">BEGIN</span><span class="p">;</span>
+<div class="highlight"><pre><span class="k">BEGIN</span><span class="p">;</span>
 
 <span class="k">CREATE</span> <span class="n">UNLOGGED</span> <span class="k">TABLE</span> <span class="n">test</span><span class="p">.</span><span class="n">small</span> <span class="k">AS</span>
 <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500000</span><span class="p">)</span> <span class="n">id</span><span class="p">;</span>
@@ -65,7 +65,7 @@
 
 
 <p>To find out what rows from <code>test.big</code> is missing in <code>test.small</code>, you&#8217;ll use one of these&nbsp;queries:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">id</span>
+<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">id</span>
 <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">big</span>
 <span class="k">WHERE</span> <span class="n">id</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">id</span> <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">small</span><span class="p">);</span>
 
@@ -101,7 +101,7 @@
 
 <p>That&#8217;s not a significant difference in time execution, is&nbsp;it?</p>
 <p>What if you want to find out what rows from <code>test.small</code> is missing in <code>test.big</code>?</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">id</span>
+<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">id</span>
 <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">small</span>
 <span class="k">WHERE</span> <span class="n">id</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">id</span> <span class="k">FROM</span> <span class="n">test</span><span class="p">.</span><span class="n">big</span><span class="p">);</span>
 

@@ -54,25 +54,25 @@
 <p>Two of those four are rather problematic with PostGIS: line smoothing and diffing the original geometries (I didn&#8217;t get to the last one, so it might be 3 of 4 as&nbsp;well).</p>
 <h2>Hello, I&#8217;m <span class="caps">GRASS</span></h2>
 <p>I haven&#8217;t used <span class="caps">GRASS</span> for ages and even back then I didn&#8217;t get to know it much, but it saved the day for me this&nbsp;time.</p>
-<div class="highlight"><pre><span></span>grass -text path/to/mapset -c
+<div class="highlight"><pre>grass -text path/to/mapset -c
 
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>ilot_050 <span class="nv">layer</span><span class="o">=</span>ilot_2015_050 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
-<span class="c1"># turn the snapping off, I don&#39;t want the input changed in any way, even though it is not topologically valid</span>
+<span class="c"># turn the snapping off, I don&#39;t want the input changed in any way, even though it is not topologically valid</span>
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>lollipops_050 <span class="nv">layer</span><span class="o">=</span>lollipops.lollipops_2015_050_tmp <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=db user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>holes_050 <span class="nv">layer</span><span class="o">=</span>phase_3.holes_050 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.db.addcolumn <span class="nv">map</span><span class="o">=</span>ilot_050 <span class="nv">columns</span><span class="o">=</span><span class="s2">&quot;id_0 int&quot;</span>
 v.db.update <span class="nv">map</span><span class="o">=</span>ilot_050 <span class="nv">column</span><span class="o">=</span>id_0 <span class="nv">value</span><span class="o">=</span>1
 
-<span class="c1"># dissolve didn&#39;t work without a column specified, dunno why</span>
+<span class="c"># dissolve didn&#39;t work without a column specified, dunno why</span>
 v.dissolve <span class="nv">input</span><span class="o">=</span>ilot_050 <span class="nv">column</span><span class="o">=</span>id_0 <span class="nv">output</span><span class="o">=</span>ilot_050_dissolve --overwrite
 v.buffer <span class="nv">input</span><span class="o">=</span>ilot_050_dissolve <span class="nv">output</span><span class="o">=</span>ilot_050_buffer <span class="nv">distance</span><span class="o">=</span><span class="m">20</span> --overwrite
 
-<span class="c1"># v.out and v.in routine used just because I didn&#39;t get the way attributes work in GRASS, would do it differently next time</span>
+<span class="c"># v.out and v.in routine used just because I didn&#39;t get the way attributes work in GRASS, would do it differently next time</span>
 v.out.ogr <span class="nv">input</span><span class="o">=</span>ilot_050_buffer <span class="nv">output</span><span class="o">=</span>ilot_050_buffer <span class="nv">format</span><span class="o">=</span>ESRI_Shapefile --overwrite
 v.in.ogr <span class="nv">input</span><span class="o">=</span>ilot_050_buffer <span class="nv">output</span><span class="o">=</span>ilot_050_buffer <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.overlay <span class="nv">ainput</span><span class="o">=</span>ilot_050_buffer <span class="nv">binput</span><span class="o">=</span>holes_050 <span class="nv">operator</span><span class="o">=</span>or <span class="nv">output</span><span class="o">=</span>combined_050_01 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 
-<span class="c1"># tried v.patch to combine the three layers, it gave some strange results in the final overlay</span>
+<span class="c"># tried v.patch to combine the three layers, it gave some strange results in the final overlay</span>
 v.overlay <span class="nv">ainput</span><span class="o">=</span>combined_050_01 <span class="nv">binput</span><span class="o">=</span>lollipops_050 <span class="nv">operator</span><span class="o">=</span>or <span class="nv">output</span><span class="o">=</span>combined_050_02 <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.out.ogr <span class="nv">input</span><span class="o">=</span>combined_050_02 <span class="nv">output</span><span class="o">=</span>combined_050 <span class="nv">format</span><span class="o">=</span>ESRI_Shapefile --overwrite
 v.in.ogr <span class="nv">input</span><span class="o">=</span>combined_050 <span class="nv">output</span><span class="o">=</span>combined_050_in <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
@@ -80,7 +80,7 @@ v.db.addcolumn <span class="nv">map</span><span class="o">=</span>combined_050_i
 v.db.update <span class="nv">map</span><span class="o">=</span>combined_050_in <span class="nv">column</span><span class="o">=</span>id_1 <span class="nv">value</span><span class="o">=</span>1
 v.dissolve <span class="nv">input</span><span class="o">=</span>combined_050_in <span class="nv">column</span><span class="o">=</span>id_1 <span class="nv">output</span><span class="o">=</span>combined_050_dissolve --overwrite
 
-<span class="c1"># get rid of &lt; 10cm edges</span>
+<span class="c"># get rid of &lt; 10cm edges</span>
 v.generalize <span class="nv">input</span><span class="o">=</span>combined_050_dissolve <span class="nv">output</span><span class="o">=</span>combined_050_gen <span class="nv">method</span><span class="o">=</span>reduction <span class="nv">threshold</span><span class="o">=</span>0.1 --overwrite
 v.out.ogr <span class="nv">input</span><span class="o">=</span>combined_050_gen <span class="nv">output</span><span class="o">=</span>combined_050_gen <span class="nv">format</span><span class="o">=</span>ESRI_Shapefile --overwrite
 v.in.ogr <span class="nv">input</span><span class="o">=</span>combined_050_gen <span class="nv">output</span><span class="o">=</span>combined_050_gen <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
@@ -90,7 +90,7 @@ v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&
 v.in.ogr <span class="nv">input</span><span class="o">=</span><span class="s2">&quot;PG:host=localhost dbname=ign user=postgres password=postgres&quot;</span> <span class="nv">output</span><span class="o">=</span>grid <span class="nv">layer</span><span class="o">=</span>grid <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
 v.db.connect -d <span class="nv">map</span><span class="o">=</span>buffer_050
 
-<span class="c1"># instead of v.out and v.in routine</span>
+<span class="c"># instead of v.out and v.in routine</span>
 db.connect <span class="nv">driver</span><span class="o">=</span>sqlite <span class="nv">database</span><span class="o">=</span><span class="s1">&#39;$GISDBASE/$LOCATION_NAME/$MAPSET/sqlite.db&#39;</span>
 v.db.addtable <span class="nv">map</span><span class="o">=</span>buffer_050
 v.overlay <span class="nv">ainput</span><span class="o">=</span>buffer_050 <span class="nv">binput</span><span class="o">=</span>grid <span class="nv">operator</span><span class="o">=</span>and <span class="nv">output</span><span class="o">=</span>buffer_050_grid <span class="nv">snap</span><span class="o">=</span>-1 --overwrite
@@ -122,7 +122,7 @@ v.out.postgis <span class="nv">input</span><span class="o">=</span>buffer_050_gr
             <p>At <a href="http://clevermaps.cz">CleverMaps</a> we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird&nbsp;challenges.</p>
 <h2>Give me the biggest land users&nbsp;nearby</h2>
 <p><em>Find the biggest land users in surrounding cadastral communities for each cadastral community (~ 13K)</em> being the latest task, here&#8217;s the query I tackled it&nbsp;with:</p>
-<div class="highlight"><pre><span></span>WITH users_ AS (
+<div class="highlight"><pre>WITH users_ AS (
     SELECT
         cad_code,
         id,
@@ -186,7 +186,7 @@ JOIN ints
         <section>
             <p><a href="https://gis.stackexchange.com/questions/107927/counting-self-intersections-of-linestring-using-postgis/140674#140674">Is there a way of using PostgreSQL + PostGIS for finding the number of self intersections in a linestring?</a> was a question that made me think of this problem. I came up with a solution that takes just a few lines of&nbsp;code.</p>
 <p>Assume the following&nbsp;geometries:</p>
-<div class="highlight"><pre><span></span>CREATE TABLE test2 (
+<div class="highlight"><pre>CREATE TABLE test2 (
     id integer NOT NULL,
     wkb_geometry geometry(LineString,5514)
 );
@@ -199,7 +199,7 @@ COPY test2 (id, wkb_geometry) FROM stdin;
 
 <p><img src="https://www.zimmi.cz/posts/assets/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
 <p>Note that those geometries are valid while not being simple, thus, <code>ST_IsValidReason()</code> wouldn&#8217;t help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those&nbsp;two.</p>
-<div class="highlight"><pre><span></span>WITH noded AS (
+<div class="highlight"><pre>WITH noded AS (
 SELECT id, COUNT(id)
 FROM (
     SELECT DISTINCT (ST_DumpPoints(ST_Node(wkb_geometry))).geom, id
@@ -247,7 +247,7 @@ SELECT noded.id, noded.count - test.count cnt FROM noded JOIN test USING (id);
         </small>
         <section>
             <p>Creating a rectangular grid to cover a given extent with same sized cells is one of the basic <span class="caps">GIS</span> tasks I&#8217;ve had to solve several times so far. I used <span class="caps">QGIS</span> or some Python to give me a bunch of <code>INSERT</code> statements to run in PostGIS database, now I&#8217;ve come with a final solution at&nbsp;last.</p>
-<div class="highlight"><pre><span></span>CREATE OR REPLACE FUNCTION cm_grid(
+<div class="highlight"><pre>CREATE OR REPLACE FUNCTION cm_grid(
     blx float8, -- bottom left x coordinate
     bly float8, -- bottom left y coordinate
     trx float8, -- top right x coordinate
@@ -327,7 +327,7 @@ LANGUAGE plpgsql;
 
 
 <p>And you call it like&nbsp;this:</p>
-<div class="highlight"><pre><span></span>CREATE TABLE grid AS
+<div class="highlight"><pre>CREATE TABLE grid AS
 SELECT *
 FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
 </pre></div>
@@ -375,7 +375,7 @@ FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
 <p>Let&#8217;s put it the other way round. First, split buffers by rectangular grid, doing union on each cell&nbsp;separately.</p>
 <h3>Import</h3>
 <p>Using the swiss knife of <span class="caps">GIS</span> to import the&nbsp;data:</p>
-<div class="highlight"><pre><span></span>export SHAPE_ENCODING=&quot;ISO-8859-1&quot;
+<div class="highlight"><pre>export SHAPE_ENCODING=&quot;ISO-8859-1&quot;
 ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; parcels.shp -lco ENCODING=UTF-8 -t_srs &quot;EPSG:2154&quot;
 ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; grid.shp -lco ENCODING=UTF-8 -t_srs &quot;EPSG:2154&quot;
 </pre></div>
@@ -383,7 +383,7 @@ ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; grid.shp -lco ENCOD
 
 <h3>PostGIS&nbsp;processing</h3>
 <p>Recently I stumbled upon a psql <code>\set</code> command. Launching several queries on the same table, it might be useful to define it&#8217;s name with <code>\set table tablename</code>:</p>
-<div class="highlight"><pre><span></span>\set table &#39;parcels&#39;
+<div class="highlight"><pre>\set table &#39;parcels&#39;
 -- prepare separate table for holes (inner rings)
 DROP TABLE IF EXISTS holes;
 CREATE TABLE holes (
@@ -395,7 +395,7 @@ path integer);
 
 
 <p>I found the following query an easy way to get all the rings from geometries having more than one&nbsp;ring:</p>
-<div class="highlight"><pre><span></span>INSERT INTO holes (ilot_id, wkb_geometry, path) (
+<div class="highlight"><pre>INSERT INTO holes (ilot_id, wkb_geometry, path) (
 SELECT id,
     (ST_DumpRings(wkb_geometry)).geom::geometry(&#39;Polygon&#39;, 2154) as wkb_geometry,
     unnest((ST_DumpRings(wkb_geometry)).path) as path
@@ -406,7 +406,7 @@ WHERE ST_NRings(wkb_geometry) &gt; 1
 
 
 <p>Here&#8217;s a little trick. Doing some checks I found out that some of the polygons had two rings without having any inner ring, both of them being the same. I guess this comes from some kind of human error. This query thus deletes all rings with <code>path = 0</code> (exterior rings). At the same time, it deals with that <em>invalid</em> polygons by checking their spatial relationship to&nbsp;parcels.</p>
-<div class="highlight"><pre><span></span>DELETE FROM holes
+<div class="highlight"><pre>DELETE FROM holes
     WHERE path = 0
     OR id IN (
         SELECT holes.id
@@ -422,7 +422,7 @@ WHERE ST_NRings(wkb_geometry) &gt; 1
 
 
 <p>To my surprise, it is possible that parcel has a hole with another parcel being in that hole. Argh. Find those and get rid of&nbsp;them.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS ints;
+<div class="highlight"><pre>DROP TABLE IF EXISTS ints;
 CREATE TABLE ints AS
     SELECT holes.*
     FROM holes
@@ -434,7 +434,7 @@ WHERE id IN (SELECT id FROM ints);
 
 
 <p>I still need to get the difference between the hole geometry and the parcel that resides inside it - this difference is the actual hole I&#8217;m looking&nbsp;for.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS diff_ints;
+<div class="highlight"><pre>DROP TABLE IF EXISTS diff_ints;
 CREATE TABLE diff_ints AS
     SELECT
         ints.id,
@@ -449,7 +449,7 @@ CREATE TABLE diff_ints AS
 
 
 <p>And I&#8217;m done with holes. Get back to&nbsp;buffers.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS buffer;
+<div class="highlight"><pre>DROP TABLE IF EXISTS buffer;
 CREATE TABLE buffer AS
     SELECT id, ST_Buffer(wkb_geometry, 20) wkb_geometry
     FROM :table;
@@ -460,7 +460,7 @@ VACUUM ANALYZE buffer;
 
 
 <p>Combine all the parts&nbsp;together.</p>
-<div class="highlight"><pre><span></span><span class="nt">DROP</span> <span class="nt">TABLE</span> <span class="nt">IF</span> <span class="nt">EXISTS</span> <span class="nt">diff</span><span class="o">;</span>
+<div class="highlight"><pre><span class="nt">DROP</span> <span class="nt">TABLE</span> <span class="nt">IF</span> <span class="nt">EXISTS</span> <span class="nt">diff</span><span class="o">;</span>
 <span class="nt">CREATE</span> <span class="nt">TABLE</span> <span class="nt">diff</span> <span class="nt">AS</span>
     <span class="nt">SELECT</span> <span class="nt">a</span><span class="nc">.id</span><span class="o">,</span> <span class="nt">ST_Difference</span><span class="o">(</span><span class="nt">a</span><span class="nc">.wkb_geometry</span><span class="o">,</span> <span class="nt">ST_Union</span><span class="o">(</span><span class="nt">ST_MakeValid</span><span class="o">(</span><span class="nt">b</span><span class="nc">.wkb_geometry</span><span class="o">)))</span> <span class="nt">as</span> <span class="nt">wkb_geometry</span>
     <span class="nt">FROM</span> <span class="nt">buffer</span> <span class="nt">a</span><span class="o">,</span> <span class="nd">:table</span> <span class="nt">b</span>
@@ -476,7 +476,7 @@ VACUUM ANALYZE buffer;
 
 
 <p>Collect the geometries in every cell, simplify them a little, snap them to 3 decimal numbers, make them valid and dump them to simple features. This query takes ~300,000 ms which is orders of magnitude faster than my initial&nbsp;attempt.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS uni;
+<div class="highlight"><pre>DROP TABLE IF EXISTS uni;
 CREATE TABLE uni AS
 SELECT
     g.ogc_fid AS grid_id,
@@ -502,20 +502,20 @@ GROUP BY g.ogc_fid;
 
 
 <p>After running the query it is reasonable to check the results. I&#8217;m only interested in polygonal geometries, <code>ST_GeometryType()</code> would tell me of any other geometry type. Invalid geometries are not&nbsp;allowed.</p>
-<div class="highlight"><pre><span></span>SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
+<div class="highlight"><pre>SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
 SELECT COUNT(1) FROM uni WHERE NOT ST_IsValid(wkb_geometry);
 </pre></div>
 
 
 <p>Add primary key on serial column as a last <span class="caps">SQL</span>&nbsp;step.</p>
-<div class="highlight"><pre><span></span>ALTER TABLE uni ADD COLUMN id serial;
+<div class="highlight"><pre>ALTER TABLE uni ADD COLUMN id serial;
 ALTER TABLE uni ADD PRIMARY KEY(id);
 </pre></div>
 
 
 <h3>Export</h3>
 <p>And spit it out as a&nbsp;shapefile.</p>
-<div class="highlight"><pre><span></span>ogr2ogr -f &quot;ESRI Shapefile&quot; output.shp PG:&quot;dbname=ign user=postgres&quot; uni -s_srs &quot;EPSG:2154&quot; -t_srs &quot;EPSG:2154&quot; -lco ENCODING=UTF-8
+<div class="highlight"><pre>ogr2ogr -f &quot;ESRI Shapefile&quot; output.shp PG:&quot;dbname=ign user=postgres&quot; uni -s_srs &quot;EPSG:2154&quot; -t_srs &quot;EPSG:2154&quot; -lco ENCODING=UTF-8
 </pre></div>
 
 
@@ -539,7 +539,7 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
         <section>
             <p>Using <span class="caps">WMS</span> in real time might easily become pain in the ass due to low connection speed or slow server response. Downloading images beforehand seems to be a reasonable choice both to avoid any slowdowns and to improve user experience when working with <span class="caps">WMS</span>&nbsp;layers.</p>
 <p><a href="https://geopython.github.io/OWSLib/">OWSLib</a> is a great tool to help you get images from <span class="caps">WMS</span> server. Code and some comments&nbsp;follow.</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -547,40 +547,40 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
 
 <span class="n">BOTTOM_LEFT</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">679363</span><span class="p">,</span><span class="o">-</span><span class="mi">1120688</span><span class="p">)</span>
 <span class="n">TOP_RIGHT</span>   <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">565171</span><span class="p">,</span><span class="o">-</span><span class="mi">1042703</span><span class="p">)</span>
-<span class="n">SRS_WIDTH</span>   <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">639084</span> <span class="o">-</span> <span class="o">-</span><span class="mi">638825</span><span class="p">)</span> <span class="c1"># tile width in units of crs =&gt; 259 m</span>
-<span class="n">SRS_HEIGHT</span>  <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">1070426</span> <span class="o">-</span> <span class="o">-</span><span class="mi">1070273</span><span class="p">)</span> <span class="c1"># tile height in units of crs =&gt; 153 m</span>
+<span class="n">SRS_WIDTH</span>   <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">639084</span> <span class="o">-</span> <span class="o">-</span><span class="mi">638825</span><span class="p">)</span> <span class="c"># tile width in units of crs =&gt; 259 m</span>
+<span class="n">SRS_HEIGHT</span>  <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mi">1070426</span> <span class="o">-</span> <span class="o">-</span><span class="mi">1070273</span><span class="p">)</span> <span class="c"># tile height in units of crs =&gt; 153 m</span>
 <span class="n">PX_WIDTH</span>    <span class="o">=</span> <span class="mi">977</span>
 <span class="n">PX_HEIGHT</span>   <span class="o">=</span> <span class="mi">578</span>
 
-<span class="n">FORMAT</span>      <span class="o">=</span> <span class="s1">&#39;image/png&#39;</span>
-<span class="n">LAYERS</span>      <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;KN&#39;</span><span class="p">,</span> <span class="s1">&#39;RST_PK&#39;</span><span class="p">]</span>
+<span class="n">FORMAT</span>      <span class="o">=</span> <span class="s">&#39;image/png&#39;</span>
+<span class="n">LAYERS</span>      <span class="o">=</span> <span class="p">[</span><span class="s">&#39;KN&#39;</span><span class="p">,</span> <span class="s">&#39;RST_PK&#39;</span><span class="p">]</span>
 <span class="n">SIZE</span>        <span class="o">=</span> <span class="p">(</span><span class="n">PX_WIDTH</span><span class="p">,</span> <span class="n">PX_HEIGHT</span><span class="p">)</span>
-<span class="n">SRS</span>         <span class="o">=</span> <span class="s1">&#39;EPSG:5514&#39;</span>
-<span class="n">STYLES</span>      <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">]</span>
+<span class="n">SRS</span>         <span class="o">=</span> <span class="s">&#39;EPSG:5514&#39;</span>
+<span class="n">STYLES</span>      <span class="o">=</span> <span class="p">[</span><span class="s">&#39;default&#39;</span><span class="p">,</span> <span class="s">&#39;default&#39;</span><span class="p">]</span>
 <span class="n">TRANSPARENT</span> <span class="o">=</span> <span class="bp">True</span>
 
-<span class="n">DIRECTORY</span> <span class="o">=</span> <span class="s1">&#39;tiles/&#39;</span>
-<span class="n">SLEEP</span>     <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span> <span class="c1"># seconds</span>
+<span class="n">DIRECTORY</span> <span class="o">=</span> <span class="s">&#39;tiles/&#39;</span>
+<span class="n">SLEEP</span>     <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span> <span class="c"># seconds</span>
 
-<span class="n">dx</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># area width in units of crs</span>
-<span class="n">dy</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># area height in units of crs</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c"># area width in units of crs</span>
+<span class="n">dy</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TOP_RIGHT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c"># area height in units of crs</span>
 
 <span class="n">cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dx</span> <span class="o">/</span> <span class="n">SRS_WIDTH</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="n">rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dy</span> <span class="o">/</span> <span class="n">SRS_HEIGHT</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
 
 <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;world_file.pngw&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_template</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;world_file.pngw&#39;</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_template</span><span class="p">:</span>
     <span class="n">tmpl</span> <span class="o">=</span> <span class="n">wld_template</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-<span class="n">wms</span> <span class="o">=</span> <span class="n">WebMapService</span><span class="p">(</span><span class="s1">&#39;http://services.cuzk.cz/wms/wms.asp&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;1.1.1&#39;</span><span class="p">)</span>
+<span class="n">wms</span> <span class="o">=</span> <span class="n">WebMapService</span><span class="p">(</span><span class="s">&#39;http://services.cuzk.cz/wms/wms.asp&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.1.1&#39;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.png&#39;</span><span class="p">):</span>
             <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">continue</span>
 
@@ -601,16 +601,16 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
             <span class="n">transparent</span><span class="o">=</span><span class="n">TRANSPARENT</span>
         <span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">png</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.png&#39;</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">png</span><span class="p">:</span>
             <span class="n">png</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.pngw&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DIRECTORY</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;/kn_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.pngw&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wld_file</span><span class="p">:</span>
             <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tmpl</span><span class="p">)</span>
-            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">SRS_WIDTH</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">((</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SRS_HEIGHT</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">SRS_WIDTH</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">wld_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">((</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SRS_HEIGHT</span> <span class="o">+</span> <span class="n">BOTTOM_LEFT</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
         <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span> <span class="s1">&#39; out of &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rows</span> <span class="o">*</span> <span class="n">cols</span><span class="p">)</span>
+        <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span> <span class="s">&#39; out of &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rows</span> <span class="o">*</span> <span class="n">cols</span><span class="p">)</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">SLEEP</span><span class="p">)</span>
 </pre></div>
 
@@ -646,19 +646,19 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
             <p>I decided to migrate <a href="http://www.zimmi.cz">my web</a> to <a href="http://openshift.com">OpenShift</a>. It was a bit frustrating but I got it working&nbsp;eventually.</p>
 <h2>Things to know before taking the&nbsp;leap</h2>
 <p>Some domain providers don&#8217;t support <span class="caps">CNAME</span> changes for root domains (zimmi.cz in my case). This means you can&#8217;t simply tell your domain to serve content from OpenShift address. But what you can do is to tell your <code>www</code> subdomain to do&nbsp;so:</p>
-<div class="highlight"><pre><span></span>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
+<div class="highlight"><pre>www.zimmi.cz CNAME hp-zimmi.rhcloud.com
 </pre></div>
 
 
 <p>Which is great until you realize you&#8217;ve just created two different websites. That&#8217;s where <a href="http://wwwizer.com/">wwwizer</a> lends you a hand and lets you redirect your naked domain to your <code>www</code> domain:</p>
-<div class="highlight"><pre><span></span>zimmi.cz A 174.129.25.170
+<div class="highlight"><pre>zimmi.cz A 174.129.25.170
 </pre></div>
 
 
 <p>Now everything works fine and you have your <code>www.domain.tld</code> up and&nbsp;running.</p>
 <h2>OpenShift&nbsp;subdomains</h2>
 <p>I wasn&#8217;t successful creating a subdomain on the same application where I run my domain. This can be easily solved by creating another application and pointing <span class="caps">DNS</span> to&nbsp;it:</p>
-<div class="highlight"><pre><span></span>posts.zimmi.cz A 174.179.25.170
+<div class="highlight"><pre>posts.zimmi.cz A 174.179.25.170
 www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
 </pre></div>
 
@@ -686,7 +686,7 @@ www.posts.zimmi.cz CNAME posts-zimmi.rhcloud.com
 <h2>Retrieving data from the PostGIS&nbsp;database</h2>
 <p>Our goal is to build the whole map as a static <span class="caps">HTML</span> page without any backend logic. Thus, data needs to be extracted from the database into the format readable with Leaflet - <a href="http://geojson.org/">GeoJSON</a>.</p>
 <p>That&#8217;s fairly easy with the <a href="http://www.postgresonline.com/journal/archives/267-Creating-GeoJSON-Feature-Collections-with-JSON-and-PostGIS-functions.html">postgresonline.com tutorial</a>. It took me quite a time to find out what the following query does. Splitting it into smaller chunks helped a&nbsp;lot.</p>
-<div class="highlight"><pre><span></span>SELECT row_to_json(fc)
+<div class="highlight"><pre>SELECT row_to_json(fc)
 FROM (
 SELECT &#39;FeatureCollection&#39; AS type,
     array_to_json(array_agg(f)) AS features
@@ -699,7 +699,7 @@ FROM vozejkmap AS lg ) AS f )  AS fc \g /path/to/file.json;
 
 
 <p>To get all rows with <code>type</code>, <code>geometry</code> and <code>properties</code> columns (these are the ones defined in GeoJSON specification, see the link above), run&nbsp;this:</p>
-<div class="highlight"><pre><span></span>SELECT &#39;Feature&#39; AS type,
+<div class="highlight"><pre>SELECT &#39;Feature&#39; AS type,
             ST_AsGeoJSON(lg.geom)::json As geometry,
             row_to_json((SELECT l FROM (SELECT id, title, location_type, description, author_name, attr1, attr2, attr3) AS l
       )) AS properties
@@ -708,7 +708,7 @@ FROM vozejkmap AS lg ) AS f )  AS fc \g /path/to/file.json;
 
 
 <p><code>array_agg()</code> squashes all the rows into an array while <code>array_to_json()</code> returns the array as <span class="caps">JSON</span>.</p>
-<div class="highlight"><pre><span></span>SELECT &#39;FeatureCollection&#39; AS type,
+<div class="highlight"><pre>SELECT &#39;FeatureCollection&#39; AS type,
     array_to_json(array_agg(f)) AS features
     FROM (SELECT &#39;Feature&#39; AS type,
         ST_AsGeoJSON(lg.geom)::json As geometry,
@@ -751,7 +751,7 @@ FROM vozejkmap AS lg ) AS f
         <section>
             <p><a href="http://www.edpp.cz/pdb_mapa-povodnoveho-planu-mesta/">We&#8217;ve rolled out</a> completely new map <span class="caps">GUI</span> at <a href="http://edpp.cz">edpp.cz</a> built on top of <a href="http://ol3js.org">OpenLayers 3</a>. It looks great and has lots of functions both for <span class="caps">BFU</span> and power users. The only pitfall that came with moving away from OpenLayers 2 were remarkable differences in zoom levels between the old map and the new&nbsp;one.</p>
 <p>Each of our maps is defined by our admins (center, zoom level, layers) at the map creation. Lots of links calling different views of map are created as well. They take form of <code>http://edpp.cz/some-map?0=0&amp;1=0...zoom=5</code>. That <code>zoom=&lt;Number&gt;</code> started causing troubles immediately after the map switch. No way my workmates would update them one by one as there were ~4,500 of them. Sounds like a task for little bit of regular expressions and some <span class="caps">SQL</span>&nbsp;updates.</p>
-<div class="highlight"><pre><span></span>UPDATE table
+<div class="highlight"><pre>UPDATE table
     SET column = regexp_replace(column, &#39;zoom=\d&#39;, &#39;zoom=&#39; || subquery.zoom, &#39;g&#39;)
     FROM (
         SELECT regexp_replace(

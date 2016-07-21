@@ -60,7 +60,7 @@
 <li>The script takes one argument - raster&nbsp;name.</li>
 <li>Profit!</li>
 </ol>
-<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env bash</span>
 
 <span class="nv">OBEC</span><span class="o">=</span><span class="nv">$1</span>
 <span class="nv">BASE</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$OBEC</span> _jpeg.tif<span class="k">)</span>
@@ -81,7 +81,7 @@ gdalwarp -dstalpha -s_srs <span class="s1">&#39;EPSG:5514&#39;</span> -t_srs <sp
 
 <p>Note that if <code>gdalwarp</code> doesn&#8217;t recognize an <span class="caps">EPSG</span> code (which is the case for my country national grid), you might pass it as a <span class="caps">PROJ</span>.4&nbsp;string.</p>
 <p>According to the point 5 in the above list, the script needs to be run in a&nbsp;loop:</p>
-<div class="highlight"><pre><span></span><span class="k">for</span> f in *_jpeg.tif<span class="p">;</span>
+<div class="highlight"><pre><span class="k">for</span> f in *_jpeg.tif<span class="p">;</span>
     <span class="k">do</span> the_script_above.sh <span class="nv">$f</span>
 <span class="p">;</span><span class="k">done</span>
 </pre></div>

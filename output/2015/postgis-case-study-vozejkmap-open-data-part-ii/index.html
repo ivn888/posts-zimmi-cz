@@ -60,7 +60,7 @@
 <h2>Retrieving data from the PostGIS&nbsp;database</h2>
 <p>Our goal is to build the whole map as a static <span class="caps">HTML</span> page without any backend logic. Thus, data needs to be extracted from the database into the format readable with Leaflet - <a href="http://geojson.org/">GeoJSON</a>.</p>
 <p>That&#8217;s fairly easy with the <a href="http://www.postgresonline.com/journal/archives/267-Creating-GeoJSON-Feature-Collections-with-JSON-and-PostGIS-functions.html">postgresonline.com tutorial</a>. It took me quite a time to find out what the following query does. Splitting it into smaller chunks helped a&nbsp;lot.</p>
-<div class="highlight"><pre><span></span>SELECT row_to_json(fc)
+<div class="highlight"><pre>SELECT row_to_json(fc)
 FROM (
 SELECT &#39;FeatureCollection&#39; AS type,
     array_to_json(array_agg(f)) AS features
@@ -73,7 +73,7 @@ FROM vozejkmap AS lg ) AS f )  AS fc \g /path/to/file.json;
 
 
 <p>To get all rows with <code>type</code>, <code>geometry</code> and <code>properties</code> columns (these are the ones defined in GeoJSON specification, see the link above), run&nbsp;this:</p>
-<div class="highlight"><pre><span></span>SELECT &#39;Feature&#39; AS type,
+<div class="highlight"><pre>SELECT &#39;Feature&#39; AS type,
             ST_AsGeoJSON(lg.geom)::json As geometry,
             row_to_json((SELECT l FROM (SELECT id, title, location_type, description, author_name, attr1, attr2, attr3) AS l
       )) AS properties
@@ -82,7 +82,7 @@ FROM vozejkmap AS lg ) AS f )  AS fc \g /path/to/file.json;
 
 
 <p><code>array_agg()</code> squashes all the rows into an array while <code>array_to_json()</code> returns the array as <span class="caps">JSON</span>.</p>
-<div class="highlight"><pre><span></span>SELECT &#39;FeatureCollection&#39; AS type,
+<div class="highlight"><pre>SELECT &#39;FeatureCollection&#39; AS type,
     array_to_json(array_agg(f)) AS features
     FROM (SELECT &#39;Feature&#39; AS type,
         ST_AsGeoJSON(lg.geom)::json As geometry,

@@ -60,7 +60,7 @@
 </ul>
 <p>I got some data about <a href="http://www.dibavod.cz/download.php?id_souboru=1413">rivers</a> and <a href="http://www.dibavod.cz/download.php?id_souboru=1416">dams</a> from <a href="http://www.dibavod.cz"><span class="caps">DIBAVOD</span></a> open datasets to play&nbsp;with.</p>
 <p>First define the foreign server&nbsp;object:</p>
-<div class="highlight"><pre><span></span>CREATE SERVER dibavod
+<div class="highlight"><pre>CREATE SERVER dibavod
 FOREIGN DATA WRAPPER ogr_fdw
 OPTIONS (
     datasource &#39;/downloads/dibavod&#39;,
@@ -72,7 +72,7 @@ OPTIONS (
 
 <p>Note the <span class="caps">OGR</span> specific driver configuration options are available inside <code>config_options</code>. In case of <span class="caps">ESRI</span> Shapefiles, the <code>datasource</code> is the directory your files reside&nbsp;in.</p>
 <p>Let&#8217;s create PostgreSQL tables (use <code>ogrinfo</code> or Paul&#8217;s <code>ogr_fdw_info</code> to list the&nbsp;columns):</p>
-<div class="highlight"><pre><span></span>CREATE FOREIGN TABLE rivers (
+<div class="highlight"><pre>CREATE FOREIGN TABLE rivers (
     fid integer,
     utokj_id numeric,
     utokjn_id numeric,

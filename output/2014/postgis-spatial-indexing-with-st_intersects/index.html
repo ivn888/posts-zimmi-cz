@@ -55,14 +55,14 @@
 <p><a href="http://slides.com/michalzimmermann">I was preparing</a> my second lecture on PostGIS and I was experimenting a bit and came up with an interesting thing on this&nbsp;matter:</p>
 <p>Let&#8217;s have two <span class="caps">SQL</span> relations, <code>roads</code> and <code>regions</code>. I would like to retrieve every road that intersects a certain region. Spatial indexes were built beforehand on both&nbsp;tables.</p>
 <p>First&nbsp;try:</p>
-<div class="highlight"><pre><span></span>EXPLAIN ANALYZE SELECT roads.* FROM roads
+<div class="highlight"><pre>EXPLAIN ANALYZE SELECT roads.* FROM roads
 JOIN regions ON ST_Intersects(roads.geom, regions.geom)
 WHERE regions.&quot;NAZEV&quot; = &#39;Jihomoravský&#39;;`
 </pre></div>
 
 
 <p>And here comes the&nbsp;result:</p>
-<div class="highlight"><pre><span></span>Nested Loop  (cost=4.85..324.26 rows=249 width=214) (actual time=45.102..5101.472 rows=74253 loops=1)
+<div class="highlight"><pre>Nested Loop  (cost=4.85..324.26 rows=249 width=214) (actual time=45.102..5101.472 rows=74253 loops=1)
 -&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.015..0.018 rows=1 loops=1)
      Filter: ((&quot;NAZEV&quot;)::text = &#39;Jihomoravský&#39;::text)
      Rows Removed by Filter: 13
@@ -79,14 +79,14 @@ Total runtime: 5181.459 ms
 
 <p>I was pretty satisfied with the result, I kept digging deeper&nbsp;though.</p>
 <p>Second&nbsp;try:</p>
-<div class="highlight"><pre><span></span>EXPLAIN ANALYZE SELECT roads.* FROM roads
+<div class="highlight"><pre>EXPLAIN ANALYZE SELECT roads.* FROM roads
 JOIN regions ON roads.geom &amp;&amp; regions.geom
 WHERE regions.&quot;NAZEV&quot; = &#39;Jihomoravský&#39; AND ST_Intersects(roads.geom, regions.geom);
 </pre></div>
 
 
 <p>And the&nbsp;result:</p>
-<div class="highlight"><pre><span></span>Nested Loop  (cost=0.29..21.19 rows=1 width=214) (actual time=3.041..3850.302 rows=74253 loops=1)
+<div class="highlight"><pre>Nested Loop  (cost=0.29..21.19 rows=1 width=214) (actual time=3.041..3850.302 rows=74253 loops=1)
 -&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.021..0.024 rows=1 loops=1)
      Filter: ((&quot;NAZEV&quot;)::text = &#39;Jihomoravský&#39;::text)
      Rows Removed by Filter: 13

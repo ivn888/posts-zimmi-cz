@@ -72,7 +72,7 @@
 <p>Let&#8217;s put it the other way round. First, split buffers by rectangular grid, doing union on each cell&nbsp;separately.</p>
 <h3>Import</h3>
 <p>Using the swiss knife of <span class="caps">GIS</span> to import the&nbsp;data:</p>
-<div class="highlight"><pre><span></span>export SHAPE_ENCODING=&quot;ISO-8859-1&quot;
+<div class="highlight"><pre>export SHAPE_ENCODING=&quot;ISO-8859-1&quot;
 ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; parcels.shp -lco ENCODING=UTF-8 -t_srs &quot;EPSG:2154&quot;
 ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; grid.shp -lco ENCODING=UTF-8 -t_srs &quot;EPSG:2154&quot;
 </pre></div>
@@ -80,7 +80,7 @@ ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; grid.shp -lco ENCOD
 
 <h3>PostGIS&nbsp;processing</h3>
 <p>Recently I stumbled upon a psql <code>\set</code> command. Launching several queries on the same table, it might be useful to define it&#8217;s name with <code>\set table tablename</code>:</p>
-<div class="highlight"><pre><span></span>\set table &#39;parcels&#39;
+<div class="highlight"><pre>\set table &#39;parcels&#39;
 -- prepare separate table for holes (inner rings)
 DROP TABLE IF EXISTS holes;
 CREATE TABLE holes (
@@ -92,7 +92,7 @@ path integer);
 
 
 <p>I found the following query an easy way to get all the rings from geometries having more than one&nbsp;ring:</p>
-<div class="highlight"><pre><span></span>INSERT INTO holes (ilot_id, wkb_geometry, path) (
+<div class="highlight"><pre>INSERT INTO holes (ilot_id, wkb_geometry, path) (
 SELECT id,
     (ST_DumpRings(wkb_geometry)).geom::geometry(&#39;Polygon&#39;, 2154) as wkb_geometry,
     unnest((ST_DumpRings(wkb_geometry)).path) as path
@@ -103,7 +103,7 @@ WHERE ST_NRings(wkb_geometry) &gt; 1
 
 
 <p>Here&#8217;s a little trick. Doing some checks I found out that some of the polygons had two rings without having any inner ring, both of them being the same. I guess this comes from some kind of human error. This query thus deletes all rings with <code>path = 0</code> (exterior rings). At the same time, it deals with that <em>invalid</em> polygons by checking their spatial relationship to&nbsp;parcels.</p>
-<div class="highlight"><pre><span></span>DELETE FROM holes
+<div class="highlight"><pre>DELETE FROM holes
     WHERE path = 0
     OR id IN (
         SELECT holes.id
@@ -119,7 +119,7 @@ WHERE ST_NRings(wkb_geometry) &gt; 1
 
 
 <p>To my surprise, it is possible that parcel has a hole with another parcel being in that hole. Argh. Find those and get rid of&nbsp;them.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS ints;
+<div class="highlight"><pre>DROP TABLE IF EXISTS ints;
 CREATE TABLE ints AS
     SELECT holes.*
     FROM holes
@@ -131,7 +131,7 @@ WHERE id IN (SELECT id FROM ints);
 
 
 <p>I still need to get the difference between the hole geometry and the parcel that resides inside it - this difference is the actual hole I&#8217;m looking&nbsp;for.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS diff_ints;
+<div class="highlight"><pre>DROP TABLE IF EXISTS diff_ints;
 CREATE TABLE diff_ints AS
     SELECT
         ints.id,
@@ -146,7 +146,7 @@ CREATE TABLE diff_ints AS
 
 
 <p>And I&#8217;m done with holes. Get back to&nbsp;buffers.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS buffer;
+<div class="highlight"><pre>DROP TABLE IF EXISTS buffer;
 CREATE TABLE buffer AS
     SELECT id, ST_Buffer(wkb_geometry, 20) wkb_geometry
     FROM :table;
@@ -157,7 +157,7 @@ VACUUM ANALYZE buffer;
 
 
 <p>Combine all the parts&nbsp;together.</p>
-<div class="highlight"><pre><span></span><span class="nt">DROP</span> <span class="nt">TABLE</span> <span class="nt">IF</span> <span class="nt">EXISTS</span> <span class="nt">diff</span><span class="o">;</span>
+<div class="highlight"><pre><span class="nt">DROP</span> <span class="nt">TABLE</span> <span class="nt">IF</span> <span class="nt">EXISTS</span> <span class="nt">diff</span><span class="o">;</span>
 <span class="nt">CREATE</span> <span class="nt">TABLE</span> <span class="nt">diff</span> <span class="nt">AS</span>
     <span class="nt">SELECT</span> <span class="nt">a</span><span class="nc">.id</span><span class="o">,</span> <span class="nt">ST_Difference</span><span class="o">(</span><span class="nt">a</span><span class="nc">.wkb_geometry</span><span class="o">,</span> <span class="nt">ST_Union</span><span class="o">(</span><span class="nt">ST_MakeValid</span><span class="o">(</span><span class="nt">b</span><span class="nc">.wkb_geometry</span><span class="o">)))</span> <span class="nt">as</span> <span class="nt">wkb_geometry</span>
     <span class="nt">FROM</span> <span class="nt">buffer</span> <span class="nt">a</span><span class="o">,</span> <span class="nd">:table</span> <span class="nt">b</span>
@@ -173,7 +173,7 @@ VACUUM ANALYZE buffer;
 
 
 <p>Collect the geometries in every cell, simplify them a little, snap them to 3 decimal numbers, make them valid and dump them to simple features. This query takes ~300,000 ms which is orders of magnitude faster than my initial&nbsp;attempt.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS uni;
+<div class="highlight"><pre>DROP TABLE IF EXISTS uni;
 CREATE TABLE uni AS
 SELECT
     g.ogc_fid AS grid_id,
@@ -199,20 +199,20 @@ GROUP BY g.ogc_fid;
 
 
 <p>After running the query it is reasonable to check the results. I&#8217;m only interested in polygonal geometries, <code>ST_GeometryType()</code> would tell me of any other geometry type. Invalid geometries are not&nbsp;allowed.</p>
-<div class="highlight"><pre><span></span>SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
+<div class="highlight"><pre>SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
 SELECT COUNT(1) FROM uni WHERE NOT ST_IsValid(wkb_geometry);
 </pre></div>
 
 
 <p>Add primary key on serial column as a last <span class="caps">SQL</span>&nbsp;step.</p>
-<div class="highlight"><pre><span></span>ALTER TABLE uni ADD COLUMN id serial;
+<div class="highlight"><pre>ALTER TABLE uni ADD COLUMN id serial;
 ALTER TABLE uni ADD PRIMARY KEY(id);
 </pre></div>
 
 
 <h3>Export</h3>
 <p>And spit it out as a&nbsp;shapefile.</p>
-<div class="highlight"><pre><span></span>ogr2ogr -f &quot;ESRI Shapefile&quot; output.shp PG:&quot;dbname=ign user=postgres&quot; uni -s_srs &quot;EPSG:2154&quot; -t_srs &quot;EPSG:2154&quot; -lco ENCODING=UTF-8
+<div class="highlight"><pre>ogr2ogr -f &quot;ESRI Shapefile&quot; output.shp PG:&quot;dbname=ign user=postgres&quot; uni -s_srs &quot;EPSG:2154&quot; -t_srs &quot;EPSG:2154&quot; -lco ENCODING=UTF-8
 </pre></div>
 
 

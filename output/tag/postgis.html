@@ -63,7 +63,7 @@
 <h2>Subgroup&nbsp;clustering</h2>
 <p>Vozejkmap data is categorized based on the place type (banks, parking lots, pubs, &hellip;). One of the core features of map showing such data should be the easy way to turn these categories on and&nbsp;off.</p>
 <p>As far as I know, it&#8217;s not trivial to do this with the standard Leaflet library. Extending <code>L.control.layers</code> and implement its <code>addOverlay</code>, <code>removeOverlay</code> methods on your own might be the way to add needed behavior. Fortunately, there&#8217;s an easier option thanks to <a href="https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup">Leaflet.FeatureGroup.SubGroup</a> that can handle such use case and is really straightforward. See the code&nbsp;below.</p>
-<div class="highlight"><pre><span></span><span class="nx">cluster</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">markerClusterGroup</span><span class="p">({</span>
+<div class="highlight"><pre><span class="nx">cluster</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">markerClusterGroup</span><span class="p">({</span>
     <span class="nx">chunkedLoading</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">chunkInterval</span><span class="o">:</span> <span class="mi">500</span>
 <span class="p">});</span>
@@ -87,7 +87,7 @@
 <p>Turf is one of those libraries I get amazed easily with, spending a week trying to find a use case, finally putting it aside with <em>&#8220;I&#8217;ll get back to it later&#8221;</em>. I usually don&#8217;t. This time it&#8217;s&nbsp;different.</p>
 <p>I use Turf to get the nearest neighbor for any marker on click. My first try ended up with the same marker being the result as it was a member of a feature collection passed to <code>turf.nearest()</code> method. After snooping around the docs I found <code>turf.remove()</code> method that can filter GeoJSON based on key-value&nbsp;pair.</p>
 <p>Another handy function is <code>turf.distance()</code> that gives you distance between two points. The code below adds an information about the nearest point and its distance into the&nbsp;popup.</p>
-<div class="highlight"><pre><span></span><span class="c1">// data is a geojson feature collection</span>
+<div class="highlight"><pre><span class="c1">// data is a geojson feature collection</span>
 <span class="nx">json</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">geoJson</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">onEachFeature</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">feature</span><span class="p">,</span> <span class="nx">layer</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">layer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
@@ -133,7 +133,7 @@
             <p>I&#8217;ve seen a bunch of questions on <span class="caps">GIS</span> StackExchange recently related to <a href="http://sfcgal.org/"><span class="caps">SFCGAL</span></a> extension for <a href="http://postgis.net">PostGIS 2.2</a>. Great news are it can be installed with one simple query <code>CREATE EXTENSION postgis_sfcgal</code>. Not so great news are you have to compile it from source for Ubuntu-based <span class="caps">OS</span> (14.04) as recent versions of required packages are not available in the&nbsp;repositories.</p>
 <p>I tested my solution on elementary <span class="caps">OS</span> 0.3.1 based on Ubuntu 14.04. <strong>And it works!</strong> It installs PostgreSQL 9.4 from repositories together with <span class="caps">GDAL</span> and <span class="caps">GEOS</span> and some other libs PostGIS depends on. PostGIS itself, <span class="caps">CGAL</span>, Boost, <span class="caps">MPFR</span> and <span class="caps">GMP</span> are built from&nbsp;source.</p>
 <p>Here comes the code (commented where&nbsp;needed).</p>
-<div class="highlight"><pre><span></span>sudo -i
+<div class="highlight"><pre>sudo -i
 <span class="nb">echo</span> <span class="s2">&quot;deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main&quot;</span> <span class="p">|</span> tee -a /etc/apt/sources.list
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc <span class="p">|</span> sudo apt-key add -
 apt-get update
@@ -157,7 +157,7 @@ apt-get install -y postgresql-9.4 <span class="se">\</span>
     m4 <span class="se">\</span>
     icu-devtools
 
-<span class="nb">exit</span> <span class="c1"># leave root otherwise postgis will choke</span>
+<span class="nb">exit</span> <span class="c"># leave root otherwise postgis will choke</span>
 
 <span class="nb">cd</span> /tmp
 touch download.txt
@@ -171,7 +171,7 @@ cat <span class="s">&lt;&lt;EOT &gt;&gt; download.txt</span>
 
 <span class="s">EOT</span>
 
-cat download.txt <span class="p">|</span> xargs -n <span class="m">1</span> -P <span class="m">8</span> wget <span class="c1"># make wget a little bit faster</span>
+cat download.txt <span class="p">|</span> xargs -n <span class="m">1</span> -P <span class="m">8</span> wget <span class="c"># make wget a little bit faster</span>
 
 tar xjf gmp-6.0.0a.tar.bz2
 tar xzf mpfr-3.1.3.tar.gz
@@ -183,32 +183,32 @@ tar xzf postgis-2.2.0.tar.gz
 <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>nproc<span class="k">)</span>
 
 <span class="k">if</span> <span class="o">[[</span> <span class="nv">$CORES</span> &gt; <span class="m">1</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-    <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>expr <span class="nv">$CORES</span> - 1<span class="k">)</span> <span class="c1"># be nice to your PC</span>
+    <span class="nv">CORES</span><span class="o">=</span><span class="k">$(</span>expr <span class="nv">$CORES</span> - 1<span class="k">)</span> <span class="c"># be nice to your PC</span>
 <span class="k">fi</span>
 
-<span class="nb">cd</span> gmp-6.0.0
+<span class="nb">cd </span>gmp-6.0.0
 ./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
-<span class="nb">cd</span> mpfr-3.1.3
+<span class="nb">cd </span>mpfr-3.1.3
 ./configure <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
-<span class="nb">cd</span> boost_1_59_0
-./bootstrap.sh --prefix<span class="o">=</span>/usr/local --with-libraries<span class="o">=</span>all <span class="o">&amp;&amp;</span> sudo ./b2 install <span class="c1"># there might be some warnings along the way, don&#39;t panic</span>
+<span class="nb">cd </span>boost_1_59_0
+./bootstrap.sh --prefix<span class="o">=</span>/usr/local --with-libraries<span class="o">=</span>all <span class="o">&amp;&amp;</span> sudo ./b2 install <span class="c"># there might be some warnings along the way, don&#39;t panic</span>
 <span class="nb">echo</span> <span class="s2">&quot;/usr/local/lib&quot;</span> <span class="p">|</span> sudo tee /etc/ld.so.conf.d/boost.conf
 sudo ldconfig
 
 <span class="nb">cd</span> ..
-<span class="nb">cd</span> cgal-releases-CGAL-4.6.3
+<span class="nb">cd </span>cgal-releases-CGAL-4.6.3
 cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
-<span class="nb">cd</span> SFCGAL-1.2.0/
+<span class="nb">cd </span>SFCGAL-1.2.0/
 cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span> <span class="o">&amp;&amp;</span> sudo make -j <span class="nv">$CORES</span> install
 
 <span class="nb">cd</span> ..
-<span class="nb">cd</span> postgis-2.2.0
+<span class="nb">cd </span>postgis-2.2.0
 ./configure <span class="se">\</span>
     --with-geosconfig<span class="o">=</span>/usr/bin/geos-config <span class="se">\</span>
     --with-xml2config<span class="o">=</span>/usr/bin/xml2-config <span class="se">\</span>
@@ -219,7 +219,7 @@ cmake . <span class="o">&amp;&amp;</span> make -j <span class="nv">$CORES</span>
     --with-raster <span class="se">\</span>
     --with-topology <span class="se">\</span>
     --with-sfcgal<span class="o">=</span>/usr/local/bin/sfcgal-config <span class="o">&amp;&amp;</span> <span class="se">\</span>
-make <span class="o">&amp;&amp;</span> make cheatsheets <span class="o">&amp;&amp;</span> sudo make install <span class="c1"># deliberately one CPU only</span>
+make <span class="o">&amp;&amp;</span> make cheatsheets <span class="o">&amp;&amp;</span> sudo make install <span class="c"># deliberately one CPU only</span>
 
 sudo -u postgres psql
 sudo -u postgres createdb spatial_template
@@ -272,7 +272,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
 <h3>Atlas generation&nbsp;settings</h3>
 <p><strong>Coverage layer</strong> is presumably the only thing you really need - as the name suggests, it covers your area of interest. One map will be created for each feature in this layer, unless you decide to use some <strong>filtering</strong> - which I&nbsp;did.</p>
 <p><strong>Output filenames</strong> can be tweaked to your needs, here&#8217;s what such a function might look like. If there is a slash in the land block <span class="caps">ID</span> (<span class="caps">XXXXXXX</span>/Y), the filename is set to <code>USER-ID_XXXXXXX-00Y_M_00</code>, <code>USER-ID_XXXXXXX-000_M_00</code> otherwise.</p>
-<div class="highlight"><pre><span></span><span class="k">CASE</span> <span class="k">WHEN</span> <span class="n">strpos</span><span class="p">(</span><span class="n">attribute</span><span class="p">(</span><span class="err">$</span><span class="n">atlasfeature</span><span class="p">,</span> <span class="s1">&#39;kod_pb&#39;</span><span class="p">),</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+<div class="highlight"><pre><span class="k">CASE</span> <span class="k">WHEN</span> <span class="n">strpos</span><span class="p">(</span><span class="n">attribute</span><span class="p">(</span><span class="err">$</span><span class="n">atlasfeature</span><span class="p">,</span> <span class="s1">&#39;kod_pb&#39;</span><span class="p">),</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
     <span class="k">THEN</span>
         <span class="n">ji</span> <span class="o">||</span> <span class="s1">&#39;_&#39;</span> <span class="o">||</span>
         <span class="n">substr</span><span class="p">(</span>
@@ -308,7 +308,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
 </ul>
 <h3>Styling the map using atlas&nbsp;features</h3>
 <p>Atlas features are a great help for <strong>map customization</strong>. As mentioned earlier, in my case, only one land block label per map should be visible. That can be achieved with a simple label dialog&nbsp;expression:</p>
-<div class="highlight"><pre><span></span><span class="k">CASE</span>
+<div class="highlight"><pre><span class="k">CASE</span>
     <span class="k">WHEN</span> <span class="err">$</span><span class="n">id</span> <span class="o">=</span> <span class="err">$</span><span class="n">atlasfeatureid</span>
     <span class="k">THEN</span> <span class="ss">&quot;kod_pb&quot;</span>
 <span class="k">END</span>
@@ -316,7 +316,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
 
 
 <p><span class="caps">QGIS</span> keeps reference to each coverage layer feature <span class="caps">ID</span> during atlas generation, so you can use it for comparison. The best part is you can use IDs with <strong>any layer</strong> you&nbsp;need:</p>
-<div class="highlight"><pre><span></span><span class="k">CASE</span>
+<div class="highlight"><pre><span class="k">CASE</span>
     <span class="k">WHEN</span> <span class="n">attribute</span><span class="p">(</span><span class="err">$</span><span class="n">atlasfeature</span><span class="p">,</span> <span class="s1">&#39;kod_pb&#39;</span><span class="p">)</span> <span class="o">=</span> <span class="ss">&quot;kod_pb&quot;</span>
     <span class="k">THEN</span> <span class="ss">&quot;kod_zp&quot;</span>
 <span class="k">END</span>
@@ -331,7 +331,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
 <p>Roughly speaking, generating 300 maps takes an hour or so, I guess that depends on the map complexity and hardware&nbsp;though.</p>
 <h3>Adding textual&nbsp;content</h3>
 <p><span class="caps">SVG</span> output is just plain old <span class="caps">XML</span> that you can edit by hand or by script. A simple Python script, part of map post-processing, loads <span class="caps">SVG</span> from the database and adds it to the left pane of each&nbsp;map.</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span>
+<div class="highlight"><pre><span class="k">SELECT</span>
       <span class="n">ji</span><span class="p">,</span>
       <span class="n">kod_pb</span><span class="p">,</span>
       <span class="n">concat</span><span class="p">(</span>
@@ -359,19 +359,19 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
 
 
 <p>Each column from the previous query is a result of <code>SELECT</code> similar to the one&nbsp;below.</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">concat</span><span class="p">(</span><span class="s1">&#39;&lt;text fill=&quot;#000000&quot; fill-opacity=&quot;1&quot; stroke=&quot;none&quot;&gt;BrK: &#39;</span><span class="p">,</span> <span class="n">dv_brk</span><span class="p">,</span> <span class="s1">&#39; ha / &#39;</span><span class="p">,</span> <span class="ss">&quot;MV_BRK&quot;</span><span class="p">,</span> <span class="s1">&#39; ha;&#39;</span><span class="p">,</span> <span class="n">kod_dpz</span><span class="p">,</span> <span class="s1">&#39;&lt;/text&gt;&#39;</span><span class="p">)</span> <span class="n">vcs_brk</span>
+<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">concat</span><span class="p">(</span><span class="s1">&#39;&lt;text fill=&quot;#000000&quot; fill-opacity=&quot;1&quot; stroke=&quot;none&quot;&gt;BrK: &#39;</span><span class="p">,</span> <span class="n">dv_brk</span><span class="p">,</span> <span class="s1">&#39; ha / &#39;</span><span class="p">,</span> <span class="ss">&quot;MV_BRK&quot;</span><span class="p">,</span> <span class="s1">&#39; ha;&#39;</span><span class="p">,</span> <span class="n">kod_dpz</span><span class="p">,</span> <span class="s1">&#39;&lt;/text&gt;&#39;</span><span class="p">)</span> <span class="n">vcs_brk</span>
 </pre></div>
 
 
 <p>The <code>transform="matrix(1.18081,0,0,1.18081,270.0,550.0)</code> part puts the text on the right spot. Great finding about <span class="caps">SVG</span> is that it places each <code>&lt;text&gt;</code> element on the new line, so you don&#8217;t need to deal with calculating the position in your&nbsp;script.</p>
 <p>Scale adjustment is done with a dirty lambda&nbsp;function.</p>
-<div class="highlight"><pre><span></span><span class="n">content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">r&quot;&gt;(\d{1,3}\.\d{3,5})&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span> <span class="p">:</span><span class="s2">&quot;&gt;    &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))))</span> <span class="o">+</span> <span class="s2">&quot;&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="n">old_map</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<div class="highlight"><pre><span class="n">content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&quot;&gt;(\d{1,3}\.\d{3,5})&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span> <span class="p">:</span><span class="s">&quot;&gt;    &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))))</span> <span class="o">+</span> <span class="s">&quot;&lt;/text&gt;&quot;</span><span class="p">,</span> <span class="n">old_map</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 </pre></div>
 
 
 <h3><span class="caps">SVG</span> to <span class="caps">JPEG</span>&nbsp;conversion</h3>
 <p>We deliver maps as <span class="caps">JPEG</span> files with 150 <span class="caps">DPI</span> on A4 paper format. <a href="http://www.imagemagick.org/script/index.php">ImageMagick</a> converts the formats with a simple shell&nbsp;command:</p>
-<div class="highlight"><pre><span></span>convert -density <span class="m">150</span> -resize 1753x1240 input.svg output.jpg
+<div class="highlight"><pre>convert -density <span class="m">150</span> -resize 1753x1240 input.svg output.jpg
 </pre></div>
 
 
@@ -392,7 +392,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
         <section>
             <p>Filtering really big (millions of rows) point datasets by distance might get catchy when solved with wrong PostGIS functions. Without spatial indexes PostGIS would take ages to finish such&nbsp;task.</p>
 <p><a href="https://gis.stackexchange.com/questions/148184/why-the-execution-of-a-query-is-very-slow-using-postgis">Someone over StackExchange asked</a> why the next query had been running for 15 hours (!) with no&nbsp;result:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span>
+<div class="highlight"><pre><span class="k">SELECT</span>
     <span class="n">a</span><span class="p">.</span><span class="n">gid</span><span class="p">,</span>
     <span class="n">b</span><span class="p">.</span><span class="n">gid</span><span class="p">,</span>
     <span class="n">ST_Distance</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">geom</span><span class="p">,</span><span class="n">b</span><span class="p">.</span><span class="n">geom</span><span class="p">)</span>
@@ -419,7 +419,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
 <li><code>ST_Intersects()</code> finally checks whether the point should be included in the&nbsp;result.</li>
 </ol>
 <p>That was a great challenge to test my knowledge of how PostGIS works and here&#8217;s my shot at&nbsp;it:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="p">(</span>
+<div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="p">(</span>
     <span class="k">SELECT</span>
         <span class="n">a</span><span class="p">.</span><span class="n">gid</span><span class="p">,</span>
         <span class="n">b</span><span class="p">.</span><span class="n">gid</span><span class="p">,</span>
@@ -456,7 +456,7 @@ sudo -u postgres psql -d spatial_template -c <span class="s2">&quot;SELECT postg
             <p>At <a href="http://clevermaps.cz">CleverMaps</a> we heavily rely on the cadastre of real estate, which is probably the biggest data source in my country. Using their excellent knowledge of this data set, my teammates often supply me with all kinds of weird&nbsp;challenges.</p>
 <h2>Give me the biggest land users&nbsp;nearby</h2>
 <p><em>Find the biggest land users in surrounding cadastral communities for each cadastral community (~ 13K)</em> being the latest task, here&#8217;s the query I tackled it&nbsp;with:</p>
-<div class="highlight"><pre><span></span>WITH users_ AS (
+<div class="highlight"><pre>WITH users_ AS (
     SELECT
         cad_code,
         id,
@@ -520,7 +520,7 @@ JOIN ints
         <section>
             <p><a href="https://gis.stackexchange.com/questions/107927/counting-self-intersections-of-linestring-using-postgis/140674#140674">Is there a way of using PostgreSQL + PostGIS for finding the number of self intersections in a linestring?</a> was a question that made me think of this problem. I came up with a solution that takes just a few lines of&nbsp;code.</p>
 <p>Assume the following&nbsp;geometries:</p>
-<div class="highlight"><pre><span></span>CREATE TABLE test2 (
+<div class="highlight"><pre>CREATE TABLE test2 (
     id integer NOT NULL,
     wkb_geometry geometry(LineString,5514)
 );
@@ -533,7 +533,7 @@ COPY test2 (id, wkb_geometry) FROM stdin;
 
 <p><img src="https://www.zimmi.cz/posts/assets/postgis-count-line-self-intersections/lines.png" title="Self-intersecting lines" class="img-responsive centered"></p>
 <p>Note that those geometries are valid while not being simple, thus, <code>ST_IsValidReason()</code> wouldn&#8217;t help much. What if we compared it to their single counterparts? Those would have had vertices at intersections. Once you know the original number of vertices and the number of simple geometry vertices, it is fairly easy to subtract those&nbsp;two.</p>
-<div class="highlight"><pre><span></span>WITH noded AS (
+<div class="highlight"><pre>WITH noded AS (
 SELECT id, COUNT(id)
 FROM (
     SELECT DISTINCT (ST_DumpPoints(ST_Node(wkb_geometry))).geom, id
@@ -581,7 +581,7 @@ SELECT noded.id, noded.count - test.count cnt FROM noded JOIN test USING (id);
         </small>
         <section>
             <p>Creating a rectangular grid to cover a given extent with same sized cells is one of the basic <span class="caps">GIS</span> tasks I&#8217;ve had to solve several times so far. I used <span class="caps">QGIS</span> or some Python to give me a bunch of <code>INSERT</code> statements to run in PostGIS database, now I&#8217;ve come with a final solution at&nbsp;last.</p>
-<div class="highlight"><pre><span></span>CREATE OR REPLACE FUNCTION cm_grid(
+<div class="highlight"><pre>CREATE OR REPLACE FUNCTION cm_grid(
     blx float8, -- bottom left x coordinate
     bly float8, -- bottom left y coordinate
     trx float8, -- top right x coordinate
@@ -661,7 +661,7 @@ LANGUAGE plpgsql;
 
 
 <p>And you call it like&nbsp;this:</p>
-<div class="highlight"><pre><span></span>CREATE TABLE grid AS
+<div class="highlight"><pre>CREATE TABLE grid AS
 SELECT *
 FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
 </pre></div>
@@ -709,7 +709,7 @@ FROM cm_grid(-675593.69, -1057711.19, -672254.69, -1054849.19, 333.47, 333.47);
 <p>Let&#8217;s put it the other way round. First, split buffers by rectangular grid, doing union on each cell&nbsp;separately.</p>
 <h3>Import</h3>
 <p>Using the swiss knife of <span class="caps">GIS</span> to import the&nbsp;data:</p>
-<div class="highlight"><pre><span></span>export SHAPE_ENCODING=&quot;ISO-8859-1&quot;
+<div class="highlight"><pre>export SHAPE_ENCODING=&quot;ISO-8859-1&quot;
 ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; parcels.shp -lco ENCODING=UTF-8 -t_srs &quot;EPSG:2154&quot;
 ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; grid.shp -lco ENCODING=UTF-8 -t_srs &quot;EPSG:2154&quot;
 </pre></div>
@@ -717,7 +717,7 @@ ogr2ogr -f PostgreSQL PG:&quot;dbname=db user=postgres&quot; grid.shp -lco ENCOD
 
 <h3>PostGIS&nbsp;processing</h3>
 <p>Recently I stumbled upon a psql <code>\set</code> command. Launching several queries on the same table, it might be useful to define it&#8217;s name with <code>\set table tablename</code>:</p>
-<div class="highlight"><pre><span></span>\set table &#39;parcels&#39;
+<div class="highlight"><pre>\set table &#39;parcels&#39;
 -- prepare separate table for holes (inner rings)
 DROP TABLE IF EXISTS holes;
 CREATE TABLE holes (
@@ -729,7 +729,7 @@ path integer);
 
 
 <p>I found the following query an easy way to get all the rings from geometries having more than one&nbsp;ring:</p>
-<div class="highlight"><pre><span></span>INSERT INTO holes (ilot_id, wkb_geometry, path) (
+<div class="highlight"><pre>INSERT INTO holes (ilot_id, wkb_geometry, path) (
 SELECT id,
     (ST_DumpRings(wkb_geometry)).geom::geometry(&#39;Polygon&#39;, 2154) as wkb_geometry,
     unnest((ST_DumpRings(wkb_geometry)).path) as path
@@ -740,7 +740,7 @@ WHERE ST_NRings(wkb_geometry) &gt; 1
 
 
 <p>Here&#8217;s a little trick. Doing some checks I found out that some of the polygons had two rings without having any inner ring, both of them being the same. I guess this comes from some kind of human error. This query thus deletes all rings with <code>path = 0</code> (exterior rings). At the same time, it deals with that <em>invalid</em> polygons by checking their spatial relationship to&nbsp;parcels.</p>
-<div class="highlight"><pre><span></span>DELETE FROM holes
+<div class="highlight"><pre>DELETE FROM holes
     WHERE path = 0
     OR id IN (
         SELECT holes.id
@@ -756,7 +756,7 @@ WHERE ST_NRings(wkb_geometry) &gt; 1
 
 
 <p>To my surprise, it is possible that parcel has a hole with another parcel being in that hole. Argh. Find those and get rid of&nbsp;them.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS ints;
+<div class="highlight"><pre>DROP TABLE IF EXISTS ints;
 CREATE TABLE ints AS
     SELECT holes.*
     FROM holes
@@ -768,7 +768,7 @@ WHERE id IN (SELECT id FROM ints);
 
 
 <p>I still need to get the difference between the hole geometry and the parcel that resides inside it - this difference is the actual hole I&#8217;m looking&nbsp;for.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS diff_ints;
+<div class="highlight"><pre>DROP TABLE IF EXISTS diff_ints;
 CREATE TABLE diff_ints AS
     SELECT
         ints.id,
@@ -783,7 +783,7 @@ CREATE TABLE diff_ints AS
 
 
 <p>And I&#8217;m done with holes. Get back to&nbsp;buffers.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS buffer;
+<div class="highlight"><pre>DROP TABLE IF EXISTS buffer;
 CREATE TABLE buffer AS
     SELECT id, ST_Buffer(wkb_geometry, 20) wkb_geometry
     FROM :table;
@@ -794,7 +794,7 @@ VACUUM ANALYZE buffer;
 
 
 <p>Combine all the parts&nbsp;together.</p>
-<div class="highlight"><pre><span></span><span class="nt">DROP</span> <span class="nt">TABLE</span> <span class="nt">IF</span> <span class="nt">EXISTS</span> <span class="nt">diff</span><span class="o">;</span>
+<div class="highlight"><pre><span class="nt">DROP</span> <span class="nt">TABLE</span> <span class="nt">IF</span> <span class="nt">EXISTS</span> <span class="nt">diff</span><span class="o">;</span>
 <span class="nt">CREATE</span> <span class="nt">TABLE</span> <span class="nt">diff</span> <span class="nt">AS</span>
     <span class="nt">SELECT</span> <span class="nt">a</span><span class="nc">.id</span><span class="o">,</span> <span class="nt">ST_Difference</span><span class="o">(</span><span class="nt">a</span><span class="nc">.wkb_geometry</span><span class="o">,</span> <span class="nt">ST_Union</span><span class="o">(</span><span class="nt">ST_MakeValid</span><span class="o">(</span><span class="nt">b</span><span class="nc">.wkb_geometry</span><span class="o">)))</span> <span class="nt">as</span> <span class="nt">wkb_geometry</span>
     <span class="nt">FROM</span> <span class="nt">buffer</span> <span class="nt">a</span><span class="o">,</span> <span class="nd">:table</span> <span class="nt">b</span>
@@ -810,7 +810,7 @@ VACUUM ANALYZE buffer;
 
 
 <p>Collect the geometries in every cell, simplify them a little, snap them to 3 decimal numbers, make them valid and dump them to simple features. This query takes ~300,000 ms which is orders of magnitude faster than my initial&nbsp;attempt.</p>
-<div class="highlight"><pre><span></span>DROP TABLE IF EXISTS uni;
+<div class="highlight"><pre>DROP TABLE IF EXISTS uni;
 CREATE TABLE uni AS
 SELECT
     g.ogc_fid AS grid_id,
@@ -836,20 +836,20 @@ GROUP BY g.ogc_fid;
 
 
 <p>After running the query it is reasonable to check the results. I&#8217;m only interested in polygonal geometries, <code>ST_GeometryType()</code> would tell me of any other geometry type. Invalid geometries are not&nbsp;allowed.</p>
-<div class="highlight"><pre><span></span>SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
+<div class="highlight"><pre>SELECT DISTINCT ST_GeometryType(wkb_geometry) FROM uni;
 SELECT COUNT(1) FROM uni WHERE NOT ST_IsValid(wkb_geometry);
 </pre></div>
 
 
 <p>Add primary key on serial column as a last <span class="caps">SQL</span>&nbsp;step.</p>
-<div class="highlight"><pre><span></span>ALTER TABLE uni ADD COLUMN id serial;
+<div class="highlight"><pre>ALTER TABLE uni ADD COLUMN id serial;
 ALTER TABLE uni ADD PRIMARY KEY(id);
 </pre></div>
 
 
 <h3>Export</h3>
 <p>And spit it out as a&nbsp;shapefile.</p>
-<div class="highlight"><pre><span></span>ogr2ogr -f &quot;ESRI Shapefile&quot; output.shp PG:&quot;dbname=ign user=postgres&quot; uni -s_srs &quot;EPSG:2154&quot; -t_srs &quot;EPSG:2154&quot; -lco ENCODING=UTF-8
+<div class="highlight"><pre>ogr2ogr -f &quot;ESRI Shapefile&quot; output.shp PG:&quot;dbname=ign user=postgres&quot; uni -s_srs &quot;EPSG:2154&quot; -t_srs &quot;EPSG:2154&quot; -lco ENCODING=UTF-8
 </pre></div>
 
 
@@ -881,7 +881,7 @@ ALTER TABLE uni ADD PRIMARY KEY(id);
 <h2>Retrieving data from the PostGIS&nbsp;database</h2>
 <p>Our goal is to build the whole map as a static <span class="caps">HTML</span> page without any backend logic. Thus, data needs to be extracted from the database into the format readable with Leaflet - <a href="http://geojson.org/">GeoJSON</a>.</p>
 <p>That&#8217;s fairly easy with the <a href="http://www.postgresonline.com/journal/archives/267-Creating-GeoJSON-Feature-Collections-with-JSON-and-PostGIS-functions.html">postgresonline.com tutorial</a>. It took me quite a time to find out what the following query does. Splitting it into smaller chunks helped a&nbsp;lot.</p>
-<div class="highlight"><pre><span></span>SELECT row_to_json(fc)
+<div class="highlight"><pre>SELECT row_to_json(fc)
 FROM (
 SELECT &#39;FeatureCollection&#39; AS type,
     array_to_json(array_agg(f)) AS features
@@ -894,7 +894,7 @@ FROM vozejkmap AS lg ) AS f )  AS fc \g /path/to/file.json;
 
 
 <p>To get all rows with <code>type</code>, <code>geometry</code> and <code>properties</code> columns (these are the ones defined in GeoJSON specification, see the link above), run&nbsp;this:</p>
-<div class="highlight"><pre><span></span>SELECT &#39;Feature&#39; AS type,
+<div class="highlight"><pre>SELECT &#39;Feature&#39; AS type,
             ST_AsGeoJSON(lg.geom)::json As geometry,
             row_to_json((SELECT l FROM (SELECT id, title, location_type, description, author_name, attr1, attr2, attr3) AS l
       )) AS properties
@@ -903,7 +903,7 @@ FROM vozejkmap AS lg ) AS f )  AS fc \g /path/to/file.json;
 
 
 <p><code>array_agg()</code> squashes all the rows into an array while <code>array_to_json()</code> returns the array as <span class="caps">JSON</span>.</p>
-<div class="highlight"><pre><span></span>SELECT &#39;FeatureCollection&#39; AS type,
+<div class="highlight"><pre>SELECT &#39;FeatureCollection&#39; AS type,
     array_to_json(array_agg(f)) AS features
     FROM (SELECT &#39;Feature&#39; AS type,
         ST_AsGeoJSON(lg.geom)::json As geometry,

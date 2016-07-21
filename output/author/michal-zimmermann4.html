@@ -47,29 +47,29 @@
             <p><a href="http://www.vozejkmap.cz">VozejkMap.cz</a> is a Czech <strong>open data</strong> iniatitive that collects data about wheelchair accessible places, e.g. pubs, toilets, cafes etc. As part of being open, they offer a <a href="http://www.vozejkmap.cz/opendata/"><span class="caps">JSON</span> data download</a>. <span class="caps">JSON</span> is a great text format, not so great spatial format (leaving GeoJSON aside) though. Anyway, nothing that <a href="http://posts.zimmi.cz/tag/postgis/">PostGIS</a> wouldn&#8217;t be able to take care&nbsp;of.</p>
 <h3>Let&#8217;s get some&nbsp;data</h3>
 <p>Using curl or wget, let&#8217;s download the <span class="caps">JSON</span>&nbsp;file:</p>
-<div class="highlight"><pre><span></span>wget -O /tmp/locations.json http://www.vozejkmap.cz/opendata/locations.json
+<div class="highlight"><pre>wget -O /tmp/locations.json http://www.vozejkmap.cz/opendata/locations.json
 </pre></div>
 
 
 <p>We need to split them into rows to load each point into one&nbsp;row:</p>
-<div class="highlight"><pre><span></span>sed -i &#39;s/\},{/\n},{/g&#39; /tmp/locations.json
+<div class="highlight"><pre>sed -i &#39;s/\},{/\n},{/g&#39; /tmp/locations.json
 </pre></div>
 
 
 <p>If you peep into the file, you&#8217;ll see lots of unicode characters we don&#8217;t want to have in our pretty little table. Here&#8217;s how we get rid of&nbsp;them:</p>
-<div class="highlight"><pre><span></span>echo -en &quot;$(cat /tmp/locations.json)&quot;
+<div class="highlight"><pre>echo -en &quot;$(cat /tmp/locations.json)&quot;
 </pre></div>
 
 
 <h3>Let&#8217;s load the&nbsp;data</h3>
 <p>Let&#8217;s just be nice and leave the public schema&nbsp;clean.</p>
-<div class="highlight"><pre><span></span>CREATE SCHEMA vozejkmap;
+<div class="highlight"><pre>CREATE SCHEMA vozejkmap;
 SET search_path=vozejkmap, public;
 </pre></div>
 
 
 <p>Load the&nbsp;data:</p>
-<div class="highlight"><pre><span></span>CREATE TABLE vozejkmap_raw(id SERIAL PRIMARY KEY, raw text);
+<div class="highlight"><pre>CREATE TABLE vozejkmap_raw(id SERIAL PRIMARY KEY, raw text);
 COPY vozejkmap_raw(raw) FROM &#39;/tmp/locations.json&#39; DELIMITERS &#39;#&#39; ESCAPE &#39;\&#39; CSV;
 </pre></div>
 
@@ -82,7 +82,7 @@ COPY vozejkmap_raw(raw) FROM &#39;/tmp/locations.json&#39; DELIMITERS &#39;#&#39
 </ol>
 <h3>Let&#8217;s get dirty with spatial&nbsp;data</h3>
 <p>Great, now what? We loaded all the data into one column. That is not very useful, is it? How about splitting them into separate columns with this query? Shall we call it a <code>split_part</code> hell?</p>
-<div class="highlight"><pre><span></span>CREATE TABLE vozejkmap AS
+<div class="highlight"><pre>CREATE TABLE vozejkmap AS
 SELECT
     id,
     trim(
@@ -171,7 +171,7 @@ FROM vozejkmap_raw;
 
 
 <p>It just splits the <span class="caps">JSON</span> data and creates table out of it according to the <a href="http://www.vozejkmap.cz/opendata/">VozejkMap.cz data specification</a>. Before going on we should create a table with location types to join their numeric codes to real&nbsp;names:</p>
-<div class="highlight"><pre><span></span>CREATE TABLE location_type (
+<div class="highlight"><pre>CREATE TABLE location_type (
     id integer PRIMARY KEY,
     description varchar(255)
 );
@@ -194,7 +194,7 @@ INSERT INTO location_type VALUES(14, &#39;Prodejní a servisní místa Škoda Au
 
 
 <p>Let&#8217;s build some geometry column, constraints and indexes. And don&#8217;t forget to get rid of all the mess (the <code>vozejkmap_raw</code> table).</p>
-<div class="highlight"><pre><span></span>DROP TABLE vozejkmap_raw;
+<div class="highlight"><pre>DROP TABLE vozejkmap_raw;
 ALTER TABLE vozejkmap ADD PRIMARY KEY(id);
 -- 4326 geometry is not very useful for measurements, I might get to that next time
 ALTER TABLE vozejkmap ADD COLUMN geom geometry(point, 4326);
@@ -224,14 +224,14 @@ UPDATE vozejkmap SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326);
 <p><a href="http://slides.com/michalzimmermann">I was preparing</a> my second lecture on PostGIS and I was experimenting a bit and came up with an interesting thing on this&nbsp;matter:</p>
 <p>Let&#8217;s have two <span class="caps">SQL</span> relations, <code>roads</code> and <code>regions</code>. I would like to retrieve every road that intersects a certain region. Spatial indexes were built beforehand on both&nbsp;tables.</p>
 <p>First&nbsp;try:</p>
-<div class="highlight"><pre><span></span>EXPLAIN ANALYZE SELECT roads.* FROM roads
+<div class="highlight"><pre>EXPLAIN ANALYZE SELECT roads.* FROM roads
 JOIN regions ON ST_Intersects(roads.geom, regions.geom)
 WHERE regions.&quot;NAZEV&quot; = &#39;Jihomoravský&#39;;`
 </pre></div>
 
 
 <p>And here comes the&nbsp;result:</p>
-<div class="highlight"><pre><span></span>Nested Loop  (cost=4.85..324.26 rows=249 width=214) (actual time=45.102..5101.472 rows=74253 loops=1)
+<div class="highlight"><pre>Nested Loop  (cost=4.85..324.26 rows=249 width=214) (actual time=45.102..5101.472 rows=74253 loops=1)
 -&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.015..0.018 rows=1 loops=1)
      Filter: ((&quot;NAZEV&quot;)::text = &#39;Jihomoravský&#39;::text)
      Rows Removed by Filter: 13
@@ -248,14 +248,14 @@ Total runtime: 5181.459 ms
 
 <p>I was pretty satisfied with the result, I kept digging deeper&nbsp;though.</p>
 <p>Second&nbsp;try:</p>
-<div class="highlight"><pre><span></span>EXPLAIN ANALYZE SELECT roads.* FROM roads
+<div class="highlight"><pre>EXPLAIN ANALYZE SELECT roads.* FROM roads
 JOIN regions ON roads.geom &amp;&amp; regions.geom
 WHERE regions.&quot;NAZEV&quot; = &#39;Jihomoravský&#39; AND ST_Intersects(roads.geom, regions.geom);
 </pre></div>
 
 
 <p>And the&nbsp;result:</p>
-<div class="highlight"><pre><span></span>Nested Loop  (cost=0.29..21.19 rows=1 width=214) (actual time=3.041..3850.302 rows=74253 loops=1)
+<div class="highlight"><pre>Nested Loop  (cost=0.29..21.19 rows=1 width=214) (actual time=3.041..3850.302 rows=74253 loops=1)
 -&gt;  Seq Scan on regions  (cost=0.00..12.62 rows=1 width=32) (actual time=0.021..0.024 rows=1 loops=1)
      Filter: ((&quot;NAZEV&quot;)::text = &#39;Jihomoravský&#39;::text)
      Rows Removed by Filter: 13
@@ -281,7 +281,7 @@ Total runtime: 3930.270 ms
         <a href="https://www.zimmi.cz/posts/tag/linux.html">linux</a>,         <a href="https://www.zimmi.cz/posts/tag/bash.html">bash</a>        | <a href="https://www.zimmi.cz/posts/category/development.html">development</a>
         </small>
         <section>
-            <div class="highlight"><pre><span></span><span class="x">for f in *; do mv &quot;</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot; &quot;prepend_</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot;; done</span>
+            <div class="highlight"><pre><span class="x">for f in *; do mv &quot;</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot; &quot;prepend_</span><span class="p">$</span><span class="nv">f</span><span class="x">&quot;; done</span>
 </pre></div>
 
 
@@ -300,22 +300,22 @@ Total runtime: 3930.270 ms
         <section>
             <p>I&#8217;ve upgraded a handful of Geoserver installations and it has never been flawless. If you&#8217;re lucky you end up with just <em>some</em> layers missing, if you&#8217;re not, you&#8217;ll miss a bunch of them (together with layergroups, some stores, workspaces might screw up&nbsp;etc.).</p>
 <p>But how do you check for missing data before switching to the newer version? Thanks to the <a href="http://docs.geoserver.org/stable/en/user/rest/api/index.html"><span class="caps">REST</span> <span class="caps">API</span> implemented within Geoserver</a>, it&#8217;s rather&nbsp;easy.</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
 <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
 
-<span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://example.com/geoserver/rest/layers&#39;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">))</span>
+<span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://example.com/geoserver/rest/layers&#39;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s">&#39;username&#39;</span><span class="p">,</span> <span class="s">&#39;password&#39;</span><span class="p">))</span>
 
 <span class="n">html</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">html</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">html</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">):</span>
     <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">href</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
     <span class="k">print</span> <span class="n">i</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;list.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;list.txt&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
 </pre></div>
 
 
@@ -337,7 +337,7 @@ Total runtime: 3930.270 ms
         <section>
             <p><span class="caps">GDAL</span> with its ogr2ogr, ogrinfo and many more is one of the best open source tools to do anything to your spatial data. It is a&nbsp;command line tool, which sort of determines it to be used with <span class="caps">UNIX</span> systems, but you might bump into a Windows guy trying to use it as well once in a&nbsp;while.</p>
 <p>Be careful, it behaves differently on different <span class="caps">OS</span>. Let&#8217;s say you do something like this on <span class="caps">UNIX</span>:</p>
-<div class="highlight"><pre><span></span>ogr2ogr -f GeoJSON -where &quot;attribute IN (&#39;value1&#39;, &#39;value2&#39;)&quot; output.json input.json
+<div class="highlight"><pre>ogr2ogr -f GeoJSON -where &quot;attribute IN (&#39;value1&#39;, &#39;value2&#39;)&quot; output.json input.json
 </pre></div>
 
 
@@ -356,7 +356,7 @@ Total runtime: 3930.270 ms
         </small>
         <section>
             <p>I found an <a href="http://stackoverflow.com/questions/25952380/php-find-a-maximum-average-for-10-subsequent-numbers-in-a-list-of-50-random-numb">interesting question</a> at StackOverflow asking for help finding solution to what I have already mentioned in the title, with <span class="caps">PHP</span>. I gave it a try before reading answers and came up with the following&nbsp;code:</p>
-<div class="highlight"><pre><span></span><span class="p">$</span><span class="nv">avg</span><span class="x">  = // value we are looking for</span>
+<div class="highlight"><pre><span class="p">$</span><span class="nv">avg</span><span class="x">  = // value we are looking for</span>
 <span class="p">$</span><span class="nv">size</span><span class="x"> = count(</span><span class="p">$</span><span class="nv">numbers</span><span class="x">);</span>
 
 <span class="x">for (</span><span class="p">$</span><span class="nv">i</span><span class="x"> = 0; </span><span class="p">$</span><span class="nv">i</span><span class="x"> &lt; </span><span class="p">$</span><span class="nv">size</span><span class="x">; </span><span class="p">$</span><span class="nv">i</span><span class="x"> += 1) </span><span class="err">{</span><span class="x"></span>
@@ -375,7 +375,7 @@ Total runtime: 3930.270 ms
 
 
 <p>That was the first that I could think of. And it worked. The answer given by Dave Chen was much more elegant than my solution (although I think it does something a bit different, but that&#8217;s not the point&nbsp;here):</p>
-<div class="highlight"><pre><span></span><span class="p">$</span><span class="nv">number</span><span class="x"> = 10; //numbers in a set</span>
+<div class="highlight"><pre><span class="p">$</span><span class="nv">number</span><span class="x"> = 10; //numbers in a set</span>
 <span class="p">$</span><span class="nv">max</span><span class="x"> = 0;</span>
 <span class="p">$</span><span class="nv">index</span><span class="x"> = 0;</span>
 
@@ -431,7 +431,7 @@ Total runtime: 3930.270 ms
         <section>
             <p>It happens that you receive a file with longitude and latitude just in the opposite order that you would like to have. It&#8217;s fairly easy to switch those without loading it into Excel or Calc and doing <code>Ctrl + C</code> and <code>Ctrl + V</code> on&nbsp;columns.</p>
 <p>If you have a file with tabular data that looks like&nbsp;this:</p>
-<div class="highlight"><pre><span></span> 50.52, 60.15
+<div class="highlight"><pre> 50.52, 60.15
  70.96, 80.1
 -55.23, 62.03
 </pre></div>
@@ -460,7 +460,7 @@ Total runtime: 3930.270 ms
 <p><strong>tl;dr: I hate&nbsp;Esri.</strong></p>
 <p>I found myself in need to access secured layers published via <span class="caps">WMS</span> on ArcGIS Server using username and password I was given, so here&#8217;s a little how-to for anyone who would have to do the&nbsp;same.</p>
 <p>Let&#8217;s start with a simple ol.layer.Image and pretend this is the secured layer we&#8217;re looking&nbsp;for:</p>
-<div class="highlight"><pre><span></span>var layer = new ol.layer.Image({
+<div class="highlight"><pre>var layer = new ol.layer.Image({
     extent: extent,
     source: new ol.source.ImageWMS(/** @type {olx.source.ImageWMSOptions} */ ({
         url: url,
@@ -474,28 +474,28 @@ Total runtime: 3930.270 ms
 
 
 <p>We need to retrieve the token, so we define a&nbsp;function:</p>
-<div class="highlight"><pre><span></span><span class="nt">function</span> <span class="nt">retrieveToken</span><span class="o">(</span><span class="nt">callback</span><span class="o">)</span> <span class="p">{</span>
-    <span class="n">var</span> <span class="n">req</span> <span class="o">=</span> <span class="n">new</span> <span class="n">XMLHttpRequest</span><span class="p">;</span>
+<div class="highlight"><pre><span class="kd">function</span> <span class="nx">retrieveToken</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">req</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">;</span>
 
-    <span class="n">req</span><span class="o">.</span><span class="n">onload</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="err">{</span>
-        <span class="n">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;200&quot;</span><span class="p">)</span> <span class="err">{</span>
-            <span class="n">var</span> <span class="n">response</span> <span class="o">=</span> <span class="n">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">responseText</span><span class="p">);</span>
-            <span class="n">if</span> <span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span> <span class="err">{</span>
-                <span class="n">callback</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">contents</span><span class="p">);</span> <span class="o">//</span> <span class="n">response</span> <span class="n">contents</span> <span class="n">is</span> <span class="n">where</span> <span class="n">the</span> <span class="n">token</span> <span class="n">is</span> <span class="n">stored</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">status</span> <span class="o">==</span> <span class="s2">&quot;200&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">responseText</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">callback</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">contents</span><span class="p">);</span> <span class="c1">// response contents is where the token is stored</span>
         <span class="p">}</span>
-    <span class="err">}</span><span class="o">;</span>
-    <span class="nt">req</span><span class="nc">.open</span><span class="o">(</span><span class="s2">&quot;get&quot;</span><span class="o">,</span> <span class="s2">&quot;http://server.address/arcgis/tokens/?request=getToken&amp;username=username&amp;password=password&amp;expiration=60&quot;</span><span class="o">,</span> <span class="nt">true</span><span class="o">);</span>
-    <span class="nt">req</span><span class="nc">.send</span><span class="o">()</span>
-<span class="err">}</span>
+    <span class="p">};</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;http://server.address/arcgis/tokens/?request=getToken&amp;username=username&amp;password=password&amp;expiration=60&quot;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">send</span><span class="p">()</span>
+<span class="p">}</span>
 </pre></div>
 
 
 <p>I pass a parameter called <code>callback</code> - that&#8217;s a very important step, otherwise you would not be able to retrieve the token when you actually need it (<span class="caps">AJAX</span> stands for asynchronous). Now you just pass the token to the layer params like&nbsp;this:</p>
-<div class="highlight"><pre><span></span>retrieveToken(function(token) {
-    layer.getSource().updateParams({
-        token: token
-    })
-}
+<div class="highlight"><pre><span class="nx">retrieveToken</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">layer</span><span class="p">.</span><span class="nx">getSource</span><span class="p">().</span><span class="nx">updateParams</span><span class="p">({</span>
+        <span class="nx">token</span><span class="o">:</span> <span class="nx">token</span>
+    <span class="p">})</span>
+<span class="p">}</span>
 </pre></div>
 
 
@@ -529,7 +529,7 @@ Total runtime: 3930.270 ms
 <p>I love having clean <span class="caps">OS</span>. That&#8217;s what <a href="http://docker.com">Docker</a> is all about - for me. Running PieCrust on Docker is really easy, it does not clutter your <span class="caps">PC</span> and it just&nbsp;works.</p>
 <p>If you ever want to use PieCrust on Docker, why don&#8217;t you start with this code?
     <span class="caps">FROM</span>&nbsp;centos:centos6</p>
-<div class="highlight"><pre><span></span><span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">mirror</span><span class="nc">.webtatic.com</span><span class="o">/</span><span class="nt">yum</span><span class="o">/</span><span class="nt">el6</span><span class="o">/</span><span class="nt">latest</span><span class="nc">.rpm</span>
+<div class="highlight"><pre><span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">mirror</span><span class="nc">.webtatic.com</span><span class="o">/</span><span class="nt">yum</span><span class="o">/</span><span class="nt">el6</span><span class="o">/</span><span class="nt">latest</span><span class="nc">.rpm</span>
 <span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">download</span><span class="nc">.fedoraproject.org</span><span class="o">/</span><span class="nt">pub</span><span class="o">/</span><span class="nt">epel</span><span class="o">/</span><span class="nt">6</span><span class="o">/</span><span class="nt">x86_64</span><span class="o">/</span><span class="nt">epel-release-6-8</span><span class="nc">.noarch.rpm</span>
 <span class="nt">RUN</span> <span class="nt">rpm</span> <span class="nt">-Uvh</span> <span class="nt">http</span><span class="o">://</span><span class="nt">rpms</span><span class="nc">.famillecollet.com</span><span class="o">/</span><span class="nt">enterprise</span><span class="o">/</span><span class="nt">remi-release-6</span><span class="nc">.rpm</span>
 

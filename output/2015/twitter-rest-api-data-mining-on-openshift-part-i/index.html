@@ -59,25 +59,25 @@
 </blockquote>
 <h3>Pitfalls</h3>
 <p>If your application doesn&#8217;t generate any traffic, <strong>OpenShift turns it off</strong>. It wakes up once someone visits again. I had no idea about that and spent some time trying to stop that behavior. Obviously, I could have scheduled a cron job on my laptop pinging it every now and then. Luckily, OpenShift can run cron jobs itself. All you need is to embed a cron cartridge into the running application (and install a bunch of ruby dependencies&nbsp;beforehand).</p>
-<div class="highlight"><pre><span></span>rhc cartridge add cron-1.4 -a app-name
+<div class="highlight"><pre>rhc cartridge add cron-1.4 -a app-name
 </pre></div>
 
 
 <p>Then create <code>.openshift/cron/{hourly,daily,weekly,monthly}</code> folder in the git repository and put your script running a simple curl command into one of&nbsp;those.</p>
-<div class="highlight"><pre><span></span>curl http://social-zimmi.rhcloud.com &gt; /dev/null
+<div class="highlight"><pre>curl http://social-zimmi.rhcloud.com &gt; /dev/null
 </pre></div>
 
 
 <p>Another problem was just around the corner. Once in a while, the app stopped writing data to the database without saying a word. What helped was restarting it - the only automatic way to do so being a <code>git push</code> command. Sadly, I haven&#8217;t found a way to restart the app from within itself; it probably can&#8217;t be&nbsp;done.</p>
 <p>When you <code>git push</code>, the gear stops, builds, deploys and restarts the app. By using hot deployment you can minimize the downtime. Just put the <code>hot_deploy</code> file into <code>.openshift/markers</code> folder.</p>
-<div class="highlight"><pre><span></span>git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push
+<div class="highlight"><pre>git commit --allow-empty -m <span class="s2">&quot;Restart gear&quot;</span> <span class="o">&amp;&amp;</span> git push
 </pre></div>
 
 
 <p>This solved the problem until I realize that <strong>every restart deleted all the data</strong> collected so far. If your data are to stay safe and sound, <strong>save them in <code>process.env.OPENSHIFT_DATA_DIR</code></strong> (which is <code>app-root/data</code>).</p>
 <h3>Anacron to the&nbsp;rescue</h3>
 <p>How do you push an empty commit once a day? With cron of course. Even better, <strong>anacron</strong>.</p>
-<div class="highlight"><pre><span></span>mkdir ~/.anacron
+<div class="highlight"><pre>mkdir ~/.anacron
 <span class="nb">cd</span> ~/.anacron
 mkdir cron.daily cron.weekly cron.monthly spool etc
 
@@ -104,7 +104,7 @@ cat <span class="s">&lt;&lt;EOT &gt;&gt; ~/.zprofile # I use zsh shell</span>
 
 <p>Anacron is to laptop what cron is to 24/7 running server. It just runs automatic jobs when the laptop is running. If it&#8217;s not and the job should be run, it runs it once the <span class="caps">OS</span> boots. Brilliant&nbsp;idea.</p>
 <p>It runs the following code for me to keep the app writing data to the&nbsp;database.</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span class="c">#!/bin/bash</span>
 
 <span class="nv">workdir</span><span class="o">=</span><span class="s1">&#39;/home/zimmi/documents/zimmi/dizertace/social&#39;</span>
 <span class="nv">logfile</span><span class="o">=</span><span class="nv">$workdir</span>/restart-gear.log
