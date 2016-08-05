@@ -1,5 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="https://www.zimmi.cz/posts/" rel="alternate"></link><link href="https://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>https://www.zimmi.cz/posts/</id><updated>2016-08-03T20:10:00+02:00</updated><entry><title>Dead Simple Random Points in Polygons with PostGIS</title><link href="https://www.zimmi.cz/posts/2016/dead-simple-random-points-in-polygons-with-postgis/" rel="alternate"></link><published>2016-08-03T20:10:00+02:00</published><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2016-08-03:posts/2016/dead-simple-random-points-in-polygons-with-postgis/</id><summary type="html">&lt;p&gt;Since PostgreSQL 9.3 there has been a handy little keyword called &lt;code&gt;LATERAL&lt;/code&gt;, which - combined with &lt;code&gt;JOIN&lt;/code&gt; - might rock your &lt;span class="caps"&gt;GIS&lt;/span&gt; world in a second. To keep it simple, a &lt;code&gt;LATERAL JOIN&lt;/code&gt; enables a subquery in the &lt;code&gt;FROM&lt;/code&gt; part of a query to reference columns from preceding expressions in the &lt;code&gt;FROM&lt;/code&gt; list. What the&amp;nbsp;heck?&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Michal Zimmermann</title><link href="https://www.zimmi.cz/posts/" rel="alternate"></link><link href="https://www.zimmi.cz/posts/atom.xml" rel="self"></link><id>https://www.zimmi.cz/posts/</id><updated>2016-08-05T19:39:00+02:00</updated><entry><title>Finding Polygons Lying across Other Polygons with PostGIS</title><link href="https://www.zimmi.cz/posts/2016/finding-polygons-lying-across-other-polygons-with-postgis/" rel="alternate"></link><published>2016-08-05T19:39:00+02:00</published><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2016-08-05:posts/2016/finding-polygons-lying-across-other-polygons-with-postgis/</id><summary type="html">&lt;p&gt;Doing overlays (&lt;code&gt;ST_Intersection()&lt;/code&gt;) in PostGIS based on spatial relationships (&lt;code&gt;ST_Intersects()&lt;/code&gt;, &lt;code&gt;ST_Contains()&lt;/code&gt;, &amp;hellip;) is so easy it is not something you get particularly excited&amp;nbsp;about.&lt;/p&gt;
+&lt;p&gt;Today I faced a bit more interesting task: &lt;strong&gt;given two polygon layers, get me all the polygons from layer A such that they lie across the polygons from layer B and&amp;hellip; a picture worth a thousand words,&amp;nbsp;right?&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="text-center"&gt;&lt;img src="https://www.zimmi.cz/posts/assets/finding-polygons-lying-across-other-polygons-with-postgis/polygons.svg" /&gt;&lt;/div&gt;
+
+&lt;p&gt;I hope you got the idea, it is fairly&amp;nbsp;simple:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Intersect A (red, blue) with B&amp;nbsp;(green)&lt;/li&gt;
+&lt;li&gt;Subtract the result of previous from layer&amp;nbsp;A&lt;/li&gt;
+&lt;li&gt;Combine results from steps 1 and&amp;nbsp;2&lt;/li&gt;
+&lt;li&gt;Keep polygon only if its id occurs more than twice (that means it went straight through the layer&amp;nbsp;B)&lt;/li&gt;
+&lt;li&gt;Profit!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- codeblock --&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;WITH&lt;/span&gt; &lt;span class="n"&gt;overlays&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+&lt;span class="cm"&gt;/* nothing fancy here */&lt;/span&gt;
+    &lt;span class="k"&gt;SELECT&lt;/span&gt;
+        &lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ogc_fid&lt;/span&gt; &lt;span class="n"&gt;a_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ogc_fid&lt;/span&gt; &lt;span class="n"&gt;b_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;ST_Intersection&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;ST_Area&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_Intersection&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;area_shared&lt;/span&gt;
+    &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;
+    &lt;span class="k"&gt;JOIN&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="k"&gt;ON&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_Intersects&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;span class="n"&gt;diffs&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+&lt;span class="cm"&gt;/* note this is a 1:1 relationship in ST_Difference */&lt;/span&gt;
+&lt;span class="cm"&gt;/* a little hack is needed to prevent PostGIS from returning its usual difference mess */&lt;/span&gt;
+    &lt;span class="k"&gt;SELECT&lt;/span&gt;
+        &lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;a_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_Dump&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_Difference&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_Buffer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0001&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;))).&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;-- ugly hack&lt;/span&gt;
+        &lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;area_shared&lt;/span&gt;
+    &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;overlays&lt;/span&gt; &lt;span class="n"&gt;o&lt;/span&gt;
+    &lt;span class="k"&gt;JOIN&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="k"&gt;ON&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;a_id&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;),&lt;/span&gt;
+
+&lt;span class="n"&gt;merged&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+&lt;span class="cm"&gt;/* put those two result sets together */&lt;/span&gt;
+    &lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;overlays&lt;/span&gt;
+    &lt;span class="k"&gt;UNION&lt;/span&gt; &lt;span class="k"&gt;ALL&lt;/span&gt;
+    &lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;diffs&lt;/span&gt;
+&lt;span class="p"&gt;),&lt;/span&gt;
+
+&lt;span class="n"&gt;merged_reduced&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+&lt;span class="cm"&gt;/* get only those A polygons that consist of three parts at least for each intersection with B polygon */&lt;/span&gt;
+  &lt;span class="k"&gt;SELECT&lt;/span&gt;
+    &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;
+  &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;merged&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;
+  &lt;span class="k"&gt;JOIN&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="k"&gt;SELECT&lt;/span&gt;
+      &lt;span class="n"&gt;a_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="n"&gt;b_id&lt;/span&gt;
+    &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;merged&lt;/span&gt;
+    &lt;span class="k"&gt;GROUP&lt;/span&gt; &lt;span class="k"&gt;BY&lt;/span&gt; &lt;span class="n"&gt;a_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b_id&lt;/span&gt;
+    &lt;span class="k"&gt;HAVING&lt;/span&gt; &lt;span class="k"&gt;COUNT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+  &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="k"&gt;ON&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;a_id&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;a_id&lt;/span&gt; &lt;span class="k"&gt;AND&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b_id&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b_id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="cm"&gt;/* do as you wish with the result */&lt;/span&gt;
+&lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+&lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;merged_reduced&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In my case, centerlines of layer B were also included and their length inside each intersection was used to divide the area of the smallest part with. It was fun,&amp;nbsp;actually.&lt;/p&gt;</summary><category term="postgis"></category><category term="postgresql"></category><category term="sql"></category></entry><entry><title>Dead Simple Random Points in Polygons with PostGIS</title><link href="https://www.zimmi.cz/posts/2016/dead-simple-random-points-in-polygons-with-postgis/" rel="alternate"></link><published>2016-08-03T20:10:00+02:00</published><author><name>Michal Zimmermann</name></author><id>tag:www.zimmi.cz,2016-08-03:posts/2016/dead-simple-random-points-in-polygons-with-postgis/</id><summary type="html">&lt;p&gt;Since PostgreSQL 9.3 there has been a handy little keyword called &lt;code&gt;LATERAL&lt;/code&gt;, which - combined with &lt;code&gt;JOIN&lt;/code&gt; - might rock your &lt;span class="caps"&gt;GIS&lt;/span&gt; world in a second. To keep it simple, a &lt;code&gt;LATERAL JOIN&lt;/code&gt; enables a subquery in the &lt;code&gt;FROM&lt;/code&gt; part of a query to reference columns from preceding expressions in the &lt;code&gt;FROM&lt;/code&gt; list. What the&amp;nbsp;heck?&lt;/p&gt;
 &lt;p&gt;Imagine that not so unusual request to &lt;strong&gt;generate random points in polygons&lt;/strong&gt; (something I needed to do today). Do it automatically without your favorite piece of desktop &lt;span class="caps"&gt;GIS&lt;/span&gt;&amp;nbsp;software.&lt;/p&gt;
 &lt;p&gt;It is pretty easy using &lt;code&gt;LATERAL JOIN&lt;/code&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;

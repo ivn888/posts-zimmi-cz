@@ -504,10 +504,44 @@
 	"buffers":
 	[
 		{
-			"file": "content/2016/syncing-two-postgresql-databases-faster.md",
 			"settings":
 			{
-				"buffer_size": 3198,
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "content/2016/dead-simple-random-points-in-polygons-with-postgis.md",
+			"settings":
+			{
+				"buffer_size": 3080,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "<!DOCTYPE html>\n<html lang=\"en\" prefix=\"og: http://ogp.me/ns#\">\n<head>\n        <title>Michal Zimmermann | category: Tools</title>\n        <meta charset=\"utf-8\" />\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n        <link href=\"https://www.zimmi.cz/posts/atom.xml\" type=\"application/atom+xml\" rel=\"alternate\" title=\"Michal Zimmermann Full Atom Feed\" />\n        <link href=\"https://www.zimmi.cz/posts/feed.xml\" type=\"application/rss+xml\" rel=\"alternate\" title=\"Michal Zimmermann Full RSS Feed\" />\n        <link rel=\"stylesheet\" href=\"https://www.zimmi.cz/posts/theme/css/style.min.css?d5d1e141\">\n</head>\n\n<body id=\"index\" class=\"home\">\n    <nav class=\"top-bar card-1\" data-topbar role=\"navigation\">\n        <ul class=\"title-area\">\n            <li class=\"name\">\n                <h1><a href=\"/posts\">Home</a></h1>\n            </li>\n     <!-- Remove the class \"menu-icon\" to get rid of menu icon. Take out \"Menu\" to just have icon alone -->\n            <li class=\"toggle-topbar menu-icon\"><a href=\"#\"><span></span></a></li>\n        </ul>\n        <section class=\"top-bar-section\">\n    <!-- Right Nav Section -->\n            <ul class=\"right\">\n                <li><a href=\"https://www.zimmi.cz/posts/categories\">Categories</a></li>\n                <li><a href=\"https://www.zimmi.cz/posts/tags\">Tags</a></li>\n                <li><a href=\"https://www.zimmi.cz/posts/feed.xml\">RSS feed</a></li>\n            </ul>\n        </section>\n    </nav>\n        <div class=\"row\">\n          <div class=\"large-12 columns header\">\n            <h1><a href=\"/posts\">Michal Zimmermann</a> <small>Pieces of knowledge from the world of GIS.</small></h1>\n          </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"large-12 columns\">\n<h2 class=\"text-center\">Articles in the Tools category</h2>\n\n    <div class=\"panel card card-1\">\n        <div class=\"post-name\">\n            <h1><a href=\"https://www.zimmi.cz/posts/2015/qgis-tips-for-collaborative-mapping/\" rel=\"bookmark\" title=\"Permalink to QGIS Tips For Collaborative Mapping\"><span class=\"caps\">QGIS</span> Tips For Collaborative&nbsp;Mapping</a></h1>\n            <small>Written on Jul 21, 2015\n        and marked as\n        <a href=\"https://www.zimmi.cz/posts/tag/qgis.html\">qgis</a>        | <a href=\"https://www.zimmi.cz/posts/category/tools.html\">Tools</a>\n        </small>\n        <section>\n            <p>Right now I&#8217;m setting up a project aimed at crop evaluation over ortophotos, <span class=\"caps\">HR</span> and <span class=\"caps\">VHR</span> imagery. All the steps of evaluation will be done in <span class=\"caps\">QGIS</span> with PostGIS used for data storage and&nbsp;post-processing.</p>\n<p>In the initial phase, fifteen <span class=\"caps\">GIS</span> operators will be using <span class=\"caps\">QGIS</span> to reshape geometries and fill attribute data accordingly. Fifteen are not so many, but it is enough to be a possible source of errors. Luckily, there are many things you can do with <span class=\"caps\">QGIS</span> to prevent people from making&nbsp;mistakes.</p>\n<h2><span class=\"caps\">QGIS</span> project&nbsp;file</h2>\n<p><span class=\"caps\">QGIS</span> project, the .qgs file, is a pure <span class=\"caps\">XML</span> and, unlike <span class=\"caps\">ESRI</span>&#8217;s .mxd, can be edited with any text editor. That&#8217;s great advantage when you need to prepare one project for many different operators. My project has to load some database layers that should be different for different operators that have different database&nbsp;accounts.</p>\n<p>How do you do that? It&#8217;s enough to create a project using your own credentials and then replace them with <code>USERNAME</code> and <code>PASSWORD</code> strings as seen below. What happens when the user loads the&nbsp;project?</p>\n<div class=\"highlight\"><pre><span class=\"nt\">&lt;datasource&gt;</span>dbname=&#39;database&#39; host=host port=5432 user=&#39;USERNAME&#39; password=&#39;PASSWORD&#39; sslmode=require key=&#39;qgis_id&#39; srid=5514 type=POLYGON table=&quot;schema&quot;.&quot;table&quot; (wkb_geometry) sql=<span class=\"nt\">&lt;/datasource&gt;</span>\n</pre></div>\n\n\n<p>A popup window will be shown asking him/her to handle bad layers, as <span class=\"caps\">QGIS</span> will not be able to connect to the layer. When he/she fills in right credentials (just once), the layer will be loaded. Don&#8217;t forget to <strong>use a table name that doesn&#8217;t exist</strong>, <span class=\"caps\">QGIS</span> will use the credentials stored with PostGIS connection otherwise and won&#8217;t ask for them. <em>I don&#8217;t like this&nbsp;behaviour.</em></p>\n<p>Using this multiple times for each user-specific layer is a great time&nbsp;saver.</p>\n<h2>Adjust attribute table to fit your&nbsp;needs</h2>\n<p><span class=\"caps\">QGIS</span> attribute table has so many settings you probably don&#8217;t use on daily basis and yet they might be invaluable in such project. All of them are available from layer properties under the Fields&nbsp;tab.</p>\n<p class='text-center'><img src=\"https://www.zimmi.cz/posts/assets/qgis-tips-for-collaborative-mapping/hidden.png\" width=50% class=\"img-responsive centered\"></p>\n\n<p>Sadly, our PostGIS layers are very wide in terms of column count. Not all of the columns are to be edited or even seen by operators, so it might be a good idea to hide them by setting their Edit Widget to Hidden. Those that should be seen, but not edited, might be set as not editable by unchecking that&nbsp;option.</p>\n<p>Lots of our attributes use enumerations provided by our project partner as <span class=\"caps\">CSV</span> files. We use them in <span class=\"caps\">QGIS</span> as value maps, so operators don&#8217;t have to type them manually - we both make their work easier and eliminate mistakes they&nbsp;made.</p>\n<p class='text-center'><img src=\"https://www.zimmi.cz/posts/assets/qgis-tips-for-collaborative-mapping/valuemap.png\" width=50% class=\"img-responsive centered\"></p>\n\n<p>Note <span class=\"caps\">QGIS</span> swallows the first row of the given <span class=\"caps\">CSV</span> file as if it was a header. Don&#8217;t forget about this when creating your own enumerations. Once set, operators will see a friendly combo box instead of a hostile blank input in the attribute&nbsp;table.</p>\n<p>These are just small adjustments that can make a big difference in your <span class=\"caps\">QGIS</span>&nbsp;workflow.</p>\n        </section>\n        </div>\n    </div>\n\n<div class=\"pagination row\">\n    <div class=\"large-6 columns\">\n    </div>\n    <div class=\"large-6 columns\">\n    </div>\n    <!-- <p class=\"paginator\">\n    </p> -->\n</div>            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"large-12 columns footer\">\n                <footer>\n                    <address>\n                    Written by <a href=\"http://www.zimmi.cz\">Michal Zimmermann</a>.\n                    Proudly powered by <a href=\"http://getpelican.com/\">Pelican</a>,\n                    which takes great advantage of <a href=\"http://python.org\">Python</a>.\n                    </address><!-- /#about -->\n                </footer><!-- /#contentinfo -->\n            </div>\n        </div>\n    <script type=\"text/javascript\">\n    var _gaq = _gaq || [];\n    _gaq.push(['_setAccount', 'UA-43432739-2']);\n    _gaq.push(['_trackPageview']);\n    (function() {\n        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\n        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\n        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\n    })();\n    </script>\n<script src=\"https://www.zimmi.cz/posts/theme/js/packed.js?8bee1467\"></script>\n<script>\n$(document).foundation();\n</script>\n</body>\n</html>",
+			"file": "output/category/tools.html",
+			"file_size": 7829,
+			"file_write_time": 131147222851996296,
+			"settings":
+			{
+				"buffer_size": 7828,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "output/index.html",
+			"settings":
+			{
+				"buffer_size": 85101,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/zimmi/.ssh/config",
+			"settings":
+			{
+				"buffer_size": 238,
 				"line_ending": "Unix"
 			}
 		}
@@ -519,10 +553,14 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 131.0,
-		"last_filter": "",
+		"height": 179.0,
+		"last_filter": "rename",
 		"selected_items":
 		[
+			[
+				"rename",
+				"File: Rename"
+			],
 			[
 				"css",
 				"Set Syntax: CSS"
@@ -534,10 +572,6 @@
 			[
 				"bash",
 				"Set Syntax: Shell Script (Bash)"
-			],
-			[
-				"rename",
-				"File: Rename"
 			],
 			[
 				"MARkdo",
@@ -687,10 +721,11 @@
 	[
 		"/home/zimmi/dev/zimmi.cz/posts",
 		"/home/zimmi/dev/zimmi.cz/posts/content",
-		"/home/zimmi/dev/zimmi.cz/posts/content/2016"
+		"/home/zimmi/dev/zimmi.cz/posts/output"
 	],
 	"file_history":
 	[
+		"/home/zimmi/dev/zimmi.cz/posts/content/2016/syncing-two-postgresql-databases-faster.md",
 		"/home/zimmi/dev/zimmi.cz/posts/content/theme/simple/templates/pagination.html",
 		"/home/zimmi/dev/zimmi.cz/posts/content/theme/simple/templates/index.html",
 		"/home/zimmi/dev/zimmi.cz/posts/content/theme/simple/static/css/screen.css",
@@ -817,8 +852,7 @@
 		"/home/zimmi/documents/clevermaps/cm-datasources/.git/rebase-merge/git-rebase-todo",
 		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_budouc_zplatnene.yml",
 		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_lv.yml",
-		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_jine.yml",
-		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_rizeni.yml"
+		"/home/zimmi/documents/clevermaps/cm-datasources/api_symap/db/reinstallable/do_delivery_jine.yml"
 	],
 	"find":
 	{
@@ -1059,24 +1093,228 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "content/2016/syncing-two-postgresql-databases-faster.md",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3198,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1964,
-								1964
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"default_dir": "/home/zimmi/dev/zimmi.cz/posts",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "content/2016/dead-simple-random-points-in-polygons-with-postgis.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3080,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								689,
+								689
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "output/category/tools.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7828,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								524,
+								524
 							]
 						],
 						"settings":
@@ -1088,15 +1326,15 @@
 								{
 									"1":
 									[
-										1974,
-										1975
+										527,
+										528
 									]
 								},
 								"icon":
 								{
 									"1":
 									[
-										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"Packages/BracketHighlighter/icons/double_quote.png",
 										"brackethighlighter.default"
 									]
 								},
@@ -1104,8 +1342,8 @@
 								{
 									"1":
 									[
-										1859,
-										1860
+										495,
+										496
 									]
 								},
 								"unmatched":
@@ -1114,11 +1352,16 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -1129,31 +1372,21 @@
 								"bh_square_open",
 								"bh_square_close",
 								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
@@ -1164,21 +1397,247 @@
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
 							],
-							"syntax": "Packages/Markdown/Markdown.sublime-syntax",
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 536.0,
+						"translation.y": 620.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "output/index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 85101,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										14,
+										15
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/angle_bracket.png",
+										"brackethighlighter.default"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										0,
+										1
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/home/zimmi/.ssh/config",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 238,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								203,
+								203
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1232,6 +1691,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"output",
+				"output/category/tools.html"
+			],
 			[
 				"analyzin",
 				"content/2014/analyzing-twitter-languages-with-streaming-api.md"
