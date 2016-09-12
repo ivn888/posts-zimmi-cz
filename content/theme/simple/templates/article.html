@@ -13,6 +13,7 @@
   {% for tag in article.tags %}
     <meta name="tags" content="{{tag}}" />
   {% endfor %}
+  <meta property="og:image" content="https://pbs.twimg.com/profile_images/770323886290440192/3G5hqp11_400x400.jpg" />
   <meta property="og:title" content="{{ article.title|striptags }}" />
   <meta property="og:description" content="{{ article.content|striptags|truncate }}" />
   <meta property="og:url" content="{{ SITEURL }}/{{ article.url }}" />
